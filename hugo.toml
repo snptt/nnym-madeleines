@@ -1,4 +1,4 @@
-baseURL = 'nnym-madeleines.vercel.app'
+baseURL = 'https://nnym-madeleines.vercel.app'
 languageCode = 'zh-cn'
 title = 'My website'
 theme = 'typo'
@@ -11,7 +11,6 @@ tag = 'tags'
 description = "A Bio Blog"
 
 # Appearance settings
-theme = 'auto'
 colorPalette = 'default'
 hideHeader = false
 
