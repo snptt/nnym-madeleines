@@ -27,9 +27,8 @@
         .invitation-card {
             width: 100%;
             max-width: 550px;
-            height: auto; /* 改为自适应高度 */
-            min-height: 90vh; /* 最小高度确保卡片可见 */
-            max-height: none; /* 移除最大高度限制 */
+            height: 90vh;
+            max-height: 800px;
             background: rgba(255, 255, 255, 0.08);
             backdrop-filter: blur(12px);
             border-radius: 24px;
@@ -49,18 +48,18 @@
         }
         
         .header {
-            padding: 40px 20px 20px; /* 减少上下内边距 */
+            padding: 50px 20px 30px;
             position: relative;
             flex-shrink: 0;
         }
         
         .moon {
-            width: 100px; /* 缩小月亮尺寸 */
-            height: 100px;
+            width: 130px;
+            height: 130px;
             background: radial-gradient(circle, #f9f3c5, #f0d775);
             border-radius: 50%;
-            margin: 0 auto 20px;
-            box-shadow: 0 0 30px #f0d775, 0 0 60px rgba(240, 215, 117, 0.4);
+            margin: 0 auto 25px;
+            box-shadow: 0 0 40px #f0d775, 0 0 80px rgba(240, 215, 117, 0.4);
             position: relative;
             animation: float 8s ease-in-out infinite;
             z-index: 2;
@@ -69,29 +68,29 @@
         .moon::after {
             content: '';
             position: absolute;
-            width: 15px;
-            height: 15px;
+            width: 20px;
+            height: 20px;
             background: rgba(0, 0, 0, 0.1);
             border-radius: 50%;
-            top: 25px;
-            left: 20px;
-            box-shadow: 25px -12px 0 -5px rgba(0, 0, 0, 0.1),
-                        12px 30px 0 -3px rgba(0, 0, 0, 0.1),
-                        -15px 20px 0 -7px rgba(0, 0, 0, 0.1);
+            top: 30px;
+            left: 25px;
+            box-shadow: 30px -15px 0 -5px rgba(0, 0, 0, 0.1),
+                        15px 40px 0 -3px rgba(0, 0, 0, 0.1),
+                        -20px 25px 0 -7px rgba(0, 0, 0, 0.1);
         }
         
         @keyframes float {
             0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+            50% { transform: translateY(-12px); }
         }
         
         h1 {
             font-family: 'Ma Shan Zheng', cursive;
-            font-size: 2.5rem; /* 减小字体大小 */
-            margin-bottom: 8px;
+            font-size: 3.2rem;
+            margin-bottom: 10px;
             color: #f0d775;
-            text-shadow: 0 0 10px rgba(240, 215, 117, 0.6);
-            letter-spacing: 1px;
+            text-shadow: 0 0 15px rgba(240, 215, 117, 0.6);
+            letter-spacing: 2px;
             opacity: 0;
             transition: opacity 2s ease;
         }
@@ -101,12 +100,12 @@
         }
         
         .subtitle {
-            font-size: 1.2rem; /* 减小字体大小 */
+            font-size: 1.4rem;
             opacity: 0.9;
             font-weight: 300;
-            letter-spacing: 0.5px;
+            letter-spacing: 1px;
             opacity: 0;
-            transform: translateY(15px);
+            transform: translateY(20px);
             transition: opacity 2s ease 2s, transform 2s ease 2s;
         }
         
@@ -116,22 +115,21 @@
         }
         
         .content {
-            padding: 20px; /* 减少内边距 */
+            padding: 30px;
             flex-grow: 1;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            min-height: 0; /* 允许内容收缩 */
         }
         
         .event-info {
-            margin-bottom: 30px; /* 减少下边距 */
+            margin-bottom: 40px;
         }
         
         .info-line {
-            margin-bottom: 20px; /* 减少下边距 */
+            margin-bottom: 30px;
             opacity: 0;
-            transform: translateY(15px);
+            transform: translateY(20px);
             transition: opacity 2s ease, transform 2s ease;
         }
         
@@ -141,44 +139,43 @@
         }
         
         .date {
-            font-size: 1.8rem; /* 减小字体大小 */
+            font-size: 2.2rem;
             color: #f0d775;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
             font-weight: bold;
         }
         
         .location {
-            font-size: 1.5rem; /* 减小字体大小 */
+            font-size: 1.8rem;
             color: #fff;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
         }
         
         .activities {
-            font-size: 1.3rem; /* 减小字体大小 */
+            font-size: 1.5rem;
             color: rgba(255, 255, 255, 0.9);
-            line-height: 1.4;
+            line-height: 1.5;
         }
         
         .blessing-container {
             margin-top: auto;
             padding: 15px;
             flex-shrink: 0;
-            min-height: 80px; /* 确保祝福语容器有足够高度 */
         }
         
         .blessing {
             font-family: 'ZCOOL QingKe HuangYou', cursive;
-            font-size: 1.1rem; /* 减小字体大小 */
-            line-height: 1.5;
-            min-height: 50px; /* 减小最小高度 */
+            font-size: 1.3rem;
+            line-height: 1.6;
+            min-height: 60px;
             display: flex;
             align-items: center;
             justify-content: center;
             position: relative;
             z-index: 1;
             transition: all 1.5s ease;
-            padding: 8px;
-            color: #e6e6e6;
+            padding: 10px;
+            color: #e6e6e6; /* 比背景更深的颜色 */
             opacity: 0;
             text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
         }
@@ -189,19 +186,18 @@
         
         .footer {
             text-align: center;
-            padding: 15px; /* 减少内边距 */
-            font-size: 0.9rem; /* 减小字体大小 */
+            padding: 20px;
+            font-size: 1rem;
             opacity: 0.8;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
-            letter-spacing: 0.5px;
+            letter-spacing: 1px;
             flex-shrink: 0;
-            line-height: 1.4; /* 调整行高 */
         }
         
         .lantern {
             position: absolute;
-            width: 30px; /* 缩小灯笼尺寸 */
-            height: 40px;
+            width: 35px;
+            height: 45px;
             background: #b21f1f;
             border-radius: 50%;
             animation: swing 6s infinite ease-in-out;
@@ -212,33 +208,33 @@
         .lantern:before {
             content: '';
             position: absolute;
-            width: 10px;
-            height: 15px;
+            width: 12px;
+            height: 18px;
             background: #f0d775;
-            top: -15px;
-            left: 10px;
+            top: -18px;
+            left: 11.5px;
             border-radius: 5px;
         }
         
         .lantern:after {
             content: '';
             position: absolute;
-            width: 8px;
-            height: 12px;
+            width: 10px;
+            height: 15px;
             background: #f0d775;
-            bottom: -12px;
-            left: 11px;
+            bottom: -15px;
+            left: 12.5px;
             border-radius: 0 0 5px 5px;
         }
         
         .lantern.left {
-            top: 20px;
-            left: 25px;
+            top: 25px;
+            left: 35px;
         }
         
         .lantern.right {
-            top: 20px;
-            right: 25px;
+            top: 25px;
+            right: 35px;
         }
         
         @keyframes swing {
@@ -278,148 +274,25 @@
         
         .leaf {
             position: absolute;
-            font-size: 20px; /* 减小叶子尺寸 */
+            font-size: 24px;
             opacity: 0;
             transform-origin: center;
             transition: transform 0.8s ease-out;
         }
         
         .trigger-leaf {
-            font-size: 24px; /* 减小触发叶子尺寸 */
+            font-size: 28px;
             z-index: 3;
         }
         
-        /* 移动端优化 */
         @media (max-width: 600px) {
-            body {
-                padding: 10px; /* 减少body内边距 */
-                min-height: 100vh;
-                display: block; /* 改为块级布局 */
-            }
-            
-            .invitation-card {
-                height: auto; /* 完全自适应高度 */
-                min-height: calc(100vh - 20px); /* 计算最小高度 */
-                margin: 0 auto; /* 居中显示 */
-            }
-            
-            .header {
-                padding: 30px 15px 15px; /* 进一步减少内边距 */
-            }
-            
-            h1 { 
-                font-size: 2rem; 
-                margin-bottom: 5px;
-            }
-            
-            .subtitle { 
-                font-size: 1rem; 
-            }
-            
-            .content {
-                padding: 15px;
-                flex-grow: 1;
-                min-height: 0;
-            }
-            
-            .date { 
-                font-size: 1.5rem; 
-            }
-            
-            .location { 
-                font-size: 1.3rem; 
-            }
-            
-            .activities { 
-                font-size: 1.1rem; 
-            }
-            
-            .blessing { 
-                font-size: 1rem; 
-                min-height: 40px;
-            }
-            
-            .footer {
-                padding: 10px;
-                font-size: 0.8rem;
-            }
-            
-            .moon {
-                width: 80px;
-                height: 80px;
-            }
-            
-            .moon::after {
-                width: 12px;
-                height: 12px;
-                top: 20px;
-                left: 15px;
-                box-shadow: 20px -10px 0 -5px rgba(0, 0, 0, 0.1),
-                            10px 25px 0 -3px rgba(0, 0, 0, 0.1),
-                            -12px 15px 0 -7px rgba(0, 0, 0, 0.1);
-            }
-            
-            .lantern.left, .lantern.right { 
-                display: block; /* 显示灯笼但缩小 */
-                width: 25px;
-                height: 35px;
-            }
-            
-            .lantern.left {
-                top: 15px;
-                left: 15px;
-            }
-            
-            .lantern.right {
-                top: 15px;
-                right: 15px;
-            }
-            
-            .lantern:before {
-                width: 8px;
-                height: 12px;
-                top: -12px;
-                left: 8.5px;
-            }
-            
-            .lantern:after {
-                width: 6px;
-                height: 10px;
-                bottom: -10px;
-                left: 9.5px;
-            }
-        }
-        
-        /* 超小屏幕优化 */
-        @media (max-width: 400px) {
-            .header {
-                padding: 20px 10px 10px;
-            }
-            
-            h1 { 
-                font-size: 1.8rem; 
-            }
-            
-            .subtitle { 
-                font-size: 0.9rem; 
-            }
-            
-            .date { 
-                font-size: 1.3rem; 
-            }
-            
-            .location { 
-                font-size: 1.1rem; 
-            }
-            
-            .activities { 
-                font-size: 1rem; 
-            }
-            
-            .moon {
-                width: 70px;
-                height: 70px;
-            }
+            h1 { font-size: 2.5rem; }
+            .subtitle { font-size: 1.2rem; }
+            .date { font-size: 1.8rem; }
+            .location { font-size: 1.5rem; }
+            .activities { font-size: 1.3rem; }
+            .lantern.left, .lantern.right { display: none; }
+            .blessing { font-size: 1.1rem; }
         }
     </style>
 </head>
@@ -459,7 +332,7 @@
         </div>
         
         <div class="footer">
-            <p>秋风送爽，丹桂飘香</p>
+            <p>秋风送爽，丹桂飘香</p><br>
             <p>期待与你共度美好中秋时光</p>
         </div>
     </div>
@@ -504,12 +377,12 @@
         // 创建星星背景
         function createStars() {
             const starsContainer = document.getElementById('stars');
-            const starCount = 30; // 进一步减少星星数量以适应移动端
+            const starCount = 40; // 减少星星数量
             
             for (let i = 0; i < starCount; i++) {
                 const star = document.createElement('div');
                 star.className = 'star';
-                star.style.width = Math.random() * 2 + 1 + 'px';
+                star.style.width = Math.random() * 3 + 1 + 'px';
                 star.style.height = star.style.width;
                 star.style.left = Math.random() * 100 + '%';
                 star.style.top = Math.random() * 100 + '%';
@@ -523,7 +396,7 @@
         // 创建背景飘落的叶子
         function createBackgroundLeaves() {
             const leavesContainer = document.getElementById('leaves');
-            const leafCount = 2;
+            const leafCount = 2; // 稍微增加叶子数量
             const leafChars = ['🍂', '🍁'];
             
             for (let i = 0; i < leafCount; i++) {
@@ -535,7 +408,7 @@
                 leaf.style.left = Math.random() * 100 + '%';
                 leaf.style.top = '-50px';
                 leaf.style.opacity = '0.8';
-                leaf.style.fontSize = (Math.random() * 8 + 16) + 'px'; // 减小字体大小范围
+                leaf.style.fontSize = (Math.random() * 10 + 20) + 'px';
                 
                 leavesContainer.appendChild(leaf);
                 
@@ -546,7 +419,8 @@
         
         // 背景叶子动画函数
         function animateBackgroundLeaf(leaf) {
-            const duration = Math.random() * 8000 + 12000;
+            // 设置动画参数 - 加快速度
+            const duration = Math.random() * 8000 + 12000; // 12-20秒，比之前快
             const startX = parseFloat(leaf.style.left);
             const startTime = Date.now();
             
@@ -559,11 +433,11 @@
                 leaf.style.top = `${currentY}px`;
                 
                 // 添加左右飘摇效果（使用正弦波）
-                const swayAmount = 30 * Math.sin(progress * Math.PI * 6);
+                const swayAmount = 30 * Math.sin(progress * Math.PI * 6); // 左右摆动
                 leaf.style.left = `calc(${startX}% + ${swayAmount}px)`;
                 
                 // 添加旋转效果
-                const rotation = 360 * progress;
+                const rotation = 360 * progress; // 下落过程中旋转360度
                 leaf.style.transform = `rotate(${rotation}deg)`;
                 
                 // 经过月亮时淡化效果
@@ -585,7 +459,7 @@
                     leaf.style.left = Math.random() * 100 + '%';
                     setTimeout(() => {
                         animateBackgroundLeaf(leaf);
-                    }, Math.random() * 5000 + 3000);
+                    }, Math.random() * 5000 + 3000); // 随机延迟后重新开始
                 }
             }
             
@@ -606,7 +480,7 @@
             triggerLeaf.style.left = '45%';
             triggerLeaf.style.top = '-50px';
             triggerLeaf.style.opacity = '1';
-            triggerLeaf.style.fontSize = '24px';
+            triggerLeaf.style.fontSize = '28px';
             
             leavesContainer.appendChild(triggerLeaf);
             
@@ -618,9 +492,9 @@
             // 计算大标题上方的位置（大标题顶部向上偏移10px）
             const targetY = mainTitleRect.top - cardRect.top - 10;
             
-            // 使用JavaScript动画控制叶子下落
+            // 使用JavaScript动画控制叶子下落 - 加快速度
             let startTime = null;
-            const duration = 3000;
+            const duration = 3000; // 3秒完成下落（比之前快）
             
             function animateLeaf(timestamp) {
                 if (!startTime) startTime = timestamp;
@@ -632,11 +506,11 @@
                 triggerLeaf.style.top = `${currentY}px`;
                 
                 // 添加左右飘摇效果（使用正弦波）
-                const swayAmount = 25 * Math.sin(percentage * Math.PI * 5);
+                const swayAmount = 25 * Math.sin(percentage * Math.PI * 5); // 左右摆动
                 triggerLeaf.style.left = `calc(45% + ${swayAmount}px)`;
                 
                 // 添加旋转效果
-                const rotation = 180 * percentage;
+                const rotation = 180 * percentage; // 下落过程中旋转180度
                 triggerLeaf.style.transform = `rotate(${rotation}deg)`;
                 
                 // 经过月亮时淡化效果
