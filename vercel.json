@@ -1,12 +1,5 @@
 {
-  "buildCommand": "git submodule update --init --recursive && hugo version && hugo --gc --minify",
+  "buildCommand": "hugo --gc --minify",
   "outputDirectory": "public",
-  "installCommand": "echo '确保使用最新Hugo版本'",
-  "framework": "hugo",
-  "builds": [
-    {
-      "src": "**/*",
-      "use": "@vercel/static-build"
-    }
-  ]
+  "installCommand": "git submodule update --init --recursive"
 }
