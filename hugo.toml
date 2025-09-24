@@ -1,4 +1,4 @@
-baseURL = 'https://vercel.com/wbs-projects-56ae56e3/nnym-madeleines/4NVfjeyHhSoZVJ9dL2c4cJHncSdf'
+baseURL = 'nnym-madeleines.vercel.app'
 languageCode = 'zh-cn'
 title = 'My website'
 theme = 'typo'
