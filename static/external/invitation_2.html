@@ -42,6 +42,15 @@
             text-align: center;
             display: flex;
             flex-direction: column;
+            /* 为邀请卡主体添加此类，禁止文本选择 */
+            -webkit-touch-callout: none; /* 禁止iOS长按菜单 */
+            -webkit-user-select: none; /* 禁止Safari/Chrome选中 */
+            -moz-user-select: none; /* 禁止Firefox选中 */
+            -ms-user-select: none; /* 禁止IE/Edge选中 */
+            user-select: none; /* 标准属性 */
+            /* 确保点击事件正常 */
+            pointer-events: auto;
+
         }
         
         @keyframes fadeIn {
