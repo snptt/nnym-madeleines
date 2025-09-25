@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>中秋团建邀请</title>
     <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=ZCOOL+QingKe+HuangYou&family=ZCOOL+XiaoWei&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -22,6 +23,104 @@
             color: #fff;
             padding: 20px;
             overflow-x: hidden;
+            position: relative;
+        }
+        
+        /* 修复银河背景效果 */
+        .galaxy {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+        
+        .galaxy-band {
+            position: absolute;
+            width: 120%;
+            height: 300px;
+            background: linear-gradient(
+                90deg,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.15) 20%,
+                rgba(255, 255, 255, 0.25) 50%,
+                rgba(255, 255, 255, 0.15) 80%,
+                rgba(255, 255, 255, 0) 100%
+            );
+            border-radius: 50%;
+            filter: blur(20px);
+            opacity: 0.4;
+            transform: rotate(-15deg);
+            animation: galaxyFlow 40s linear infinite;
+            left: -10%;
+        }
+        
+        .galaxy-band:nth-child(2) {
+            width: 140%;
+            height: 200px;
+            opacity: 0.3;
+            animation: galaxyFlow 60s linear infinite;
+            filter: blur(15px);
+            transform: rotate(-10deg);
+            top: 30%;
+        }
+        
+        .galaxy-band:nth-child(3) {
+            width: 160%;
+            height: 150px;
+            opacity: 0.25;
+            animation: galaxyFlow 80s linear infinite;
+            filter: blur(12px);
+            transform: rotate(-5deg);
+            top: 60%;
+        }
+        
+        @keyframes galaxyFlow {
+            0% {
+                transform: rotate(-15deg) translateY(100vh) translateX(-10%);
+            }
+            100% {
+                transform: rotate(-15deg) translateY(-100vh) translateX(10%);
+            }
+        }
+        
+        /* 增强星空粒子效果 */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .particle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            animation: particleFloat 20s infinite linear;
+            box-shadow: 0 0 5px rgba(255, 255, 255, 0.7);
+        }
+        
+        @keyframes particleFloat {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.9;
+            }
+            90% {
+                opacity: 0.9;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
         }
         
         .invitation-card {
@@ -40,6 +139,11 @@
             text-align: center;
             display: flex;
             flex-direction: column;
+            cursor: pointer;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
+            z-index: 2;
         }
         
         @keyframes fadeIn {
@@ -120,7 +224,7 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            min-height: 0; /* 关键：允许内容区域收缩 */
+            min-height: 0;
             overflow: hidden;
         }
         
@@ -253,7 +357,7 @@
             width: 100%;
             height: 100%;
             pointer-events: none;
-            z-index: 0;
+            z-index: 1;
         }
         
         .star {
@@ -289,27 +393,108 @@
             z-index: 3;
         }
         
+        /* 长按提示 */
+        .save-hint {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+            padding: 5px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 0 0 24px 24px;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            z-index: 10;
+            box-sizing: border-box;
+        }
+        
+        .save-hint.visible {
+            opacity: 1;
+        }
+        
+        /* 保存提示动画 */
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translate(-50%, -60%); }
+            20% { opacity: 1; transform: translate(-50%, -50%); }
+            80% { opacity: 1; transform: translate(-50%, -50%); }
+            100% { opacity: 0; transform: translate(-50%, -40%); }
+        }
+        
+        .save-prompt {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: #f0d775;
+            padding: 12px 20px;
+            border-radius: 8px;
+            z-index: 10000;
+            font-family: 'ZCOOL XiaoWei', serif;
+            font-size: 1.2rem;
+            animation: fadeInOut 2s ease-in-out;
+            pointer-events: none;
+        }
+        
+        /* 长按指示器 */
+        .press-indicator {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 3px solid rgba(240, 215, 117, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.5);
+            color: #f0d775;
+            font-size: 0.9rem;
+            text-align: center;
+            padding: 10px;
+        }
+        
+        .press-indicator.active {
+            opacity: 1;
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.5; }
+            50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.8; }
+            100% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.5; }
+        }
+        
         /* 移动端优化 */
         @media (max-width: 600px) {
             body {
                 padding: 10px;
                 display: flex;
-                align-items: flex-start; /* 改为顶部对齐 */
+                align-items: flex-start;
                 min-height: 100vh;
             }
             
             .invitation-card {
                 height: auto;
-                min-height: calc(100vh - 20px); /* 确保卡片占满屏幕 */
+                min-height: calc(100vh - 20px);
                 max-height: none;
             }
             
             .header {
-                padding: 40px 20px 25px; /* 稍微减少内边距 */
+                padding: 40px 20px 25px;
             }
             
             .content {
-                padding: 25px 20px; /* 减少内边距 */
+                padding: 25px 20px;
                 flex: 1;
                 min-height: 0;
                 overflow: hidden;
@@ -335,6 +520,26 @@
             .lantern.left, .lantern.right { 
                 display: none; 
             }
+            
+            .save-hint {
+                font-size: 0.8rem;
+                padding: 8px 5px;
+            }
+            
+            .galaxy-band {
+                height: 200px;
+                filter: blur(15px);
+            }
+            
+            .galaxy-band:nth-child(2) {
+                height: 150px;
+                filter: blur(12px);
+            }
+            
+            .galaxy-band:nth-child(3) {
+                height: 100px;
+                filter: blur(10px);
+            }
         }
         
         /* 超小屏幕优化 */
@@ -359,7 +564,19 @@
     </style>
 </head>
 <body>
-    <div class="invitation-card">
+    <!-- 银河背景 -->
+    <div class="galaxy">
+        <div class="galaxy-band"></div>
+        <div class="galaxy-band"></div>
+        <div class="galaxy-band"></div>
+    </div>
+    
+    <!-- 星空粒子效果 -->
+    <div class="particles" id="particles"></div>
+    
+    <div class="invitation-card" id="invitation-card">
+        <div class="save-hint" id="save-hint">长按保存邀请函</div>
+        
         <div class="stars" id="stars"></div>
         <div class="floating-leaves" id="leaves"></div>
         
@@ -399,6 +616,8 @@
         </div>
     </div>
 
+    <div class="press-indicator" id="press-indicator">长按中...</div>
+
     <script>
         // 祝福语库
         const blessings = [
@@ -437,7 +656,7 @@
         // 创建星星背景
         function createStars() {
             const starsContainer = document.getElementById('stars');
-            const starCount = 40;
+            const starCount = 60; // 增加星星数量
             
             for (let i = 0; i < starCount; i++) {
                 const star = document.createElement('div');
@@ -453,10 +672,35 @@
             }
         }
         
+        // 创建星空粒子效果
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 30;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                // 随机大小
+                const size = Math.random() * 3 + 1;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                
+                // 随机位置
+                particle.style.left = `${Math.random() * 100}%`;
+                
+                // 随机动画延迟和持续时间
+                particle.style.animationDelay = `${Math.random() * 20}s`;
+                particle.style.animationDuration = `${15 + Math.random() * 15}s`;
+                
+                particlesContainer.appendChild(particle);
+            }
+        }
+        
         // 创建背景飘落的叶子
         function createBackgroundLeaves() {
             const leavesContainer = document.getElementById('leaves');
-            const leafCount = 2;
+            const leafCount = 3; // 增加叶子数量
             const leafChars = ['🍂', '🍁'];
             
             for (let i = 0; i < leafCount; i++) {
@@ -610,6 +854,9 @@
                                     setTimeout(() => {
                                         displayBlessing();
                                         
+                                        // 显示保存提示
+                                        document.getElementById('save-hint').classList.add('visible');
+                                        
                                         // 叶子在显示完所有内容后淡出
                                         setTimeout(() => {
                                             triggerLeaf.style.transition = 'opacity 1.5s ease';
@@ -627,15 +874,220 @@
             requestAnimationFrame(animateLeaf);
         }
         
+        // 长按保存功能
+        function initLongPressSave() {
+            const card = document.getElementById('invitation-card');
+            const indicator = document.getElementById('press-indicator');
+            let longPressTimer;
+            const longPressDuration = 1500; // 长按1.5秒触发
+            
+            // 移动端触摸事件
+            card.addEventListener('touchstart', function(e) {
+                longPressTimer = setTimeout(() => {
+                    saveCardAsImage();
+                    indicator.classList.remove('active');
+                }, longPressDuration);
+                
+                indicator.classList.add('active');
+                e.preventDefault();
+            });
+            
+            card.addEventListener('touchend', function() {
+                clearTimeout(longPressTimer);
+                indicator.classList.remove('active');
+            });
+            
+            card.addEventListener('touchmove', function() {
+                clearTimeout(longPressTimer);
+                indicator.classList.remove('active');
+            });
+            
+            // 桌面端鼠标事件
+            card.addEventListener('mousedown', function(e) {
+                longPressTimer = setTimeout(() => {
+                    saveCardAsImage();
+                    indicator.classList.remove('active');
+                }, longPressDuration);
+                
+                indicator.classList.add('active');
+                e.preventDefault();
+            });
+            
+            card.addEventListener('mouseup', function() {
+                clearTimeout(longPressTimer);
+                indicator.classList.remove('active');
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                clearTimeout(longPressTimer);
+                indicator.classList.remove('active');
+            });
+        }
+        
+        // 保存卡片为图片
+        function saveCardAsImage() {
+            const card = document.getElementById('invitation-card');
+            
+            // 显示保存提示
+            showSavePrompt('正在生成图片...');
+            
+            // 创建截图容器
+            const screenshotContainer = document.createElement('div');
+            screenshotContainer.style.position = 'fixed';
+            screenshotContainer.style.top = '0';
+            screenshotContainer.style.left = '0';
+            screenshotContainer.style.width = '100%';
+            screenshotContainer.style.height = '100%';
+            screenshotContainer.style.background = 'linear-gradient(135deg, #1a1a2e, #16213e, #0f3460)';
+            screenshotContainer.style.display = 'flex';
+            screenshotContainer.style.justifyContent = 'center';
+            screenshotContainer.style.alignItems = 'center';
+            screenshotContainer.style.padding = '20px';
+            screenshotContainer.style.zIndex = '9999';
+            
+            // 克隆卡片并添加到截图容器
+            const cardClone = card.cloneNode(true);
+            
+            // 移除不需要的元素
+            const saveHintClone = cardClone.querySelector('.save-hint');
+            if (saveHintClone) {
+                saveHintClone.remove();
+            }
+            
+            // 确保所有动画元素在截图时是可见状态
+            const elementsToShow = cardClone.querySelectorAll('.visible');
+            elementsToShow.forEach(el => {
+                el.style.opacity = '1';
+                el.style.transform = 'none';
+            });
+            
+            // 设置克隆卡片的样式
+            cardClone.style.position = 'relative';
+            cardClone.style.margin = '0';
+            cardClone.style.boxShadow = '0 20px 40px rgba(0, 0, 0, 0.4)';
+            cardClone.style.animation = 'none';
+            
+            screenshotContainer.appendChild(cardClone);
+            document.body.appendChild(screenshotContainer);
+            
+            // 使用html2canvas截图
+            html2canvas(screenshotContainer, {
+                backgroundColor: null,
+                scale: 2,
+                useCORS: true,
+                allowTaint: false,
+                logging: false
+            }).then(canvas => {
+                // 移除截图容器
+                document.body.removeChild(screenshotContainer);
+                
+                // 转换为图片URL
+                const imageURL = canvas.toDataURL('image/png', 1.0);
+                
+                // 移动端保存到相册
+                if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                    saveImageToGallery(imageURL);
+                } else {
+                    // 桌面端下载图片
+                    downloadImage(imageURL);
+                }
+                
+            }).catch(error => {
+                console.error('截图失败:', error);
+                // 移除截图容器
+                if (screenshotContainer.parentNode) {
+                    document.body.removeChild(screenshotContainer);
+                }
+                showSavePrompt('保存失败，请重试');
+            });
+        }
+        
+        // 移动端保存到相册
+        function saveImageToGallery(imageURL) {
+            // 创建临时链接
+            const link = document.createElement('a');
+            link.href = imageURL;
+            link.download = '中秋邀请函.png';
+            
+            // 尝试使用Web Share API（如果支持）
+            if (navigator.share) {
+                fetch(imageURL)
+                    .then(res => res.blob())
+                    .then(blob => {
+                        const file = new File([blob], '中秋邀请函.png', { type: 'image/png' });
+                        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                            navigator.share({
+                                files: [file],
+                                title: '中秋邀请函',
+                                text: '中秋团建邀请函'
+                            }).then(() => {
+                                showSavePrompt('已保存到相册');
+                            }).catch(error => {
+                                console.log('分享失败:', error);
+                                downloadImage(imageURL);
+                            });
+                        } else {
+                            downloadImage(imageURL);
+                        }
+                    })
+                    .catch(() => {
+                        downloadImage(imageURL);
+                    });
+            } else {
+                // 如果不支持Web Share API，则直接下载
+                downloadImage(imageURL);
+            }
+        }
+        
+        // 下载图片
+        function downloadImage(imageURL) {
+            const link = document.createElement('a');
+            link.download = '中秋邀请函.png';
+            link.href = imageURL;
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            showSavePrompt('图片已保存！');
+        }
+        
+        // 显示保存提示
+        function showSavePrompt(message) {
+            // 移除现有提示
+            const existingPrompt = document.querySelector('.save-prompt');
+            if (existingPrompt) {
+                existingPrompt.remove();
+            }
+            
+            // 创建新提示
+            const prompt = document.createElement('div');
+            prompt.className = 'save-prompt';
+            prompt.textContent = message;
+            
+            document.body.appendChild(prompt);
+            
+            // 2秒后自动消失
+            setTimeout(() => {
+                if (prompt.parentNode) {
+                    prompt.parentNode.removeChild(prompt);
+                }
+            }, 2000);
+        }
+        
         // 初始化
         document.addEventListener('DOMContentLoaded', function() {
             createStars();
+            createParticles(); // 创建星空粒子
             createBackgroundLeaves();
             
             // 延迟创建触发叶子，让背景先加载
             setTimeout(() => {
                 createTriggerLeaf();
             }, 1000);
+            
+            // 初始化长按保存功能
+            initLongPressSave();
             
             // 添加点击涟漪效果
             document.body.addEventListener('click', function(e) {
