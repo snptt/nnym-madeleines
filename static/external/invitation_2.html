@@ -297,7 +297,7 @@
         /* 长按提示 */
         .save-hint {
             position: absolute;
-            bottom: 10px;
+            bottom: 0;
             left: 0;
             width: 100%;
             text-align: center;
@@ -309,6 +309,7 @@
             opacity: 0;
             transition: opacity 0.5s ease;
             z-index: 10;
+            box-sizing: border-box;
         }
         
         .save-hint.visible {
@@ -341,7 +342,7 @@
         
         /* 长按指示器 */
         .press-indicator {
-            position: absolute;
+            position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
@@ -355,7 +356,12 @@
             opacity: 0;
             transition: opacity 0.3s ease;
             pointer-events: none;
-            z-index: 5;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.5);
+            color: #f0d775;
+            font-size: 0.9rem;
+            text-align: center;
+            padding: 10px;
         }
         
         .press-indicator.active {
@@ -418,6 +424,7 @@
             
             .save-hint {
                 font-size: 0.8rem;
+                padding: 8px 5px;
             }
         }
         
@@ -445,7 +452,6 @@
 <body>
     <div class="invitation-card" id="invitation-card">
         <div class="save-hint" id="save-hint">长按保存邀请函</div>
-        <div class="press-indicator" id="press-indicator">长按中...</div>
         
         <div class="stars" id="stars"></div>
         <div class="floating-leaves" id="leaves"></div>
@@ -485,6 +491,8 @@
             <p>期待与你共度美好中秋时光</p>
         </div>
     </div>
+
+    <div class="press-indicator" id="press-indicator">长按中...</div>
 
     <script>
         // 祝福语库
@@ -774,34 +782,125 @@
             // 显示保存提示
             showSavePrompt('正在生成图片...');
             
+            // 创建截图容器
+            const screenshotContainer = document.createElement('div');
+            screenshotContainer.style.position = 'fixed';
+            screenshotContainer.style.top = '0';
+            screenshotContainer.style.left = '0';
+            screenshotContainer.style.width = '100%';
+            screenshotContainer.style.height = '100%';
+            screenshotContainer.style.background = 'linear-gradient(135deg, #1a1a2e, #16213e, #0f3460)';
+            screenshotContainer.style.display = 'flex';
+            screenshotContainer.style.justifyContent = 'center';
+            screenshotContainer.style.alignItems = 'center';
+            screenshotContainer.style.padding = '20px';
+            screenshotContainer.style.zIndex = '9999';
+            
+            // 克隆卡片并添加到截图容器
+            const cardClone = card.cloneNode(true);
+            
+            // 移除不需要的元素
+            const saveHintClone = cardClone.querySelector('.save-hint');
+            if (saveHintClone) {
+                saveHintClone.remove();
+            }
+            
+            // 确保所有动画元素在截图时是可见状态
+            const elementsToShow = cardClone.querySelectorAll('.visible');
+            elementsToShow.forEach(el => {
+                el.style.opacity = '1';
+                el.style.transform = 'none';
+            });
+            
+            // 设置克隆卡片的样式
+            cardClone.style.position = 'relative';
+            cardClone.style.margin = '0';
+            cardClone.style.boxShadow = '0 20px 40px rgba(0, 0, 0, 0.4)';
+            cardClone.style.animation = 'none';
+            
+            screenshotContainer.appendChild(cardClone);
+            document.body.appendChild(screenshotContainer);
+            
             // 使用html2canvas截图
-            html2canvas(card, {
+            html2canvas(screenshotContainer, {
                 backgroundColor: null,
                 scale: 2,
                 useCORS: true,
                 allowTaint: false,
                 logging: false
             }).then(canvas => {
+                // 移除截图容器
+                document.body.removeChild(screenshotContainer);
+                
                 // 转换为图片URL
                 const imageURL = canvas.toDataURL('image/png', 1.0);
                 
-                // 创建下载链接
-                const link = document.createElement('a');
-                link.download = '中秋邀请函.png';
-                link.href = imageURL;
-                
-                // 触发下载
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                
-                // 显示成功提示
-                showSavePrompt('图片已保存！');
+                // 移动端保存到相册
+                if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                    saveImageToGallery(imageURL);
+                } else {
+                    // 桌面端下载图片
+                    downloadImage(imageURL);
+                }
                 
             }).catch(error => {
                 console.error('截图失败:', error);
+                // 移除截图容器
+                if (screenshotContainer.parentNode) {
+                    document.body.removeChild(screenshotContainer);
+                }
                 showSavePrompt('保存失败，请重试');
             });
+        }
+        
+        // 移动端保存到相册
+        function saveImageToGallery(imageURL) {
+            // 创建临时链接
+            const link = document.createElement('a');
+            link.href = imageURL;
+            link.download = '中秋邀请函.png';
+            
+            // 尝试使用Web Share API（如果支持）
+            if (navigator.share) {
+                fetch(imageURL)
+                    .then(res => res.blob())
+                    .then(blob => {
+                        const file = new File([blob], '中秋邀请函.png', { type: 'image/png' });
+                        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                            navigator.share({
+                                files: [file],
+                                title: '中秋邀请函',
+                                text: '中秋团建邀请函'
+                            }).then(() => {
+                                showSavePrompt('已保存到相册');
+                            }).catch(error => {
+                                console.log('分享失败:', error);
+                                downloadImage(imageURL);
+                            });
+                        } else {
+                            downloadImage(imageURL);
+                        }
+                    })
+                    .catch(() => {
+                        downloadImage(imageURL);
+                    });
+            } else {
+                // 如果不支持Web Share API，则直接下载
+                downloadImage(imageURL);
+            }
+        }
+        
+        // 下载图片
+        function downloadImage(imageURL) {
+            const link = document.createElement('a');
+            link.download = '中秋邀请函.png';
+            link.href = imageURL;
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            showSavePrompt('图片已保存！');
         }
         
         // 显示保存提示
