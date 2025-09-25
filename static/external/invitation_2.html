@@ -499,7 +499,7 @@
     </div>
     
     <!-- 保存提示 -->
-    <div class="save-hint" id="saveHint">长按任意区域生成图片</div>
+    <div class="save-hint" id="saveHint">长按图片即可保存到相册</div>
 
     <script>
         // 祝福语库
@@ -741,29 +741,65 @@
             // 显示提示
             saveHint.classList.add('show');
             
-            // 使用html2canvas生成图片 - 修复版
-            html2canvas(card, {
+            // 创建一个临时容器来捕获完整的卡片
+            const tempContainer = document.createElement('div');
+            tempContainer.style.position = 'fixed';
+            tempContainer.style.top = '0';
+            tempContainer.style.left = '0';
+            tempContainer.style.width = '100%';
+            tempContainer.style.height = '100%';
+            tempContainer.style.background = 'linear-gradient(135deg, #1a1a2e, #16213e, #0f3460)';
+            tempContainer.style.display = 'flex';
+            tempContainer.style.justifyContent = 'center';
+            tempContainer.style.alignItems = 'center';
+            tempContainer.style.zIndex = '9999';
+            tempContainer.style.opacity = '0';
+            tempContainer.style.pointerEvents = 'none';
+            
+            // 克隆卡片
+            const cardClone = card.cloneNode(true);
+            cardClone.style.position = 'relative';
+            cardClone.style.margin = '20px';
+            cardClone.style.transform = 'none';
+            cardClone.style.animation = 'none';
+            
+            // 确保所有元素都可见
+            const visibleElements = cardClone.querySelectorAll('.visible');
+            visibleElements.forEach(el => {
+                el.style.opacity = '1';
+                el.style.transform = 'none';
+            });
+            
+            // 确保月亮和灯笼可见
+            const moon = cardClone.querySelector('.moon');
+            if (moon) {
+                moon.style.animation = 'none';
+                moon.style.transform = 'translateY(0)';
+            }
+            
+            const lanterns = cardClone.querySelectorAll('.lantern');
+            lanterns.forEach(lantern => {
+                lantern.style.animation = 'none';
+                lantern.style.transform = 'rotate(0deg)';
+            });
+            
+            tempContainer.appendChild(cardClone);
+            document.body.appendChild(tempContainer);
+            
+            // 使用html2canvas生成图片
+            html2canvas(cardClone, {
                 useCORS: true,
-                scale: 2, // 提高图片清晰度
-                backgroundColor: '#0f3460', // 设置背景色与body一致
-                logging: false, // 关闭日志
-                allowTaint: true, // 允许跨域图像
-                removeContainer: false, // 保留容器
-                // 修复背景和渐变显示问题
+                scale: 2,
+                backgroundColor: null,
+                logging: false,
+                allowTaint: true,
+                removeContainer: true,
                 onclone: function(clonedDoc) {
                     // 确保克隆的文档保持所有样式
-                    const clonedCard = clonedDoc.getElementById('invitationCard');
+                    const clonedCard = clonedDoc.querySelector('.invitation-card');
                     if (clonedCard) {
-                        // 确保背景可见
                         clonedCard.style.background = 'rgba(255, 255, 255, 0.08)';
                         clonedCard.style.backdropFilter = 'blur(12px)';
-                        
-                        // 强制显示所有元素
-                        const elements = clonedDoc.querySelectorAll('.visible');
-                        elements.forEach(el => {
-                            el.style.opacity = '1';
-                            el.style.transform = 'translateY(0)';
-                        });
                     }
                 }
             }).then(canvas => {
@@ -773,6 +809,9 @@
                 
                 // 显示保存容器
                 saveContainer.classList.add('active');
+                
+                // 移除临时容器
+                document.body.removeChild(tempContainer);
                 
                 // 隐藏提示
                 setTimeout(() => {
@@ -784,6 +823,9 @@
                 setTimeout(() => {
                     saveHint.classList.remove('show');
                 }, 2000);
+                
+                // 移除临时容器
+                document.body.removeChild(tempContainer);
             });
         }
         
@@ -824,7 +866,6 @@
             const closeBtn = document.getElementById('closeBtn');
             const saveHint = document.getElementById('saveHint');
             let longPressTimer;
-            let isLongPress = false;
             
             // 触摸开始事件
             longPressArea.addEventListener('touchstart', function(e) {
@@ -832,7 +873,6 @@
                 e.preventDefault();
                 
                 longPressTimer = setTimeout(() => {
-                    isLongPress = true;
                     generateSaveImage();
                 }, 800); // 长按800毫秒触发
             });
