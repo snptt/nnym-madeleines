@@ -11,8 +11,10 @@ tag = 'tags'
 description = "A Bio Blog"
 
 # Appearance settings
-colorPalette = 'default'
+colorPalette = 'eink'
 hideHeader = false
+
+theme = 'auto'
 
 # Intro on main page, content is markdown
 homeIntroTitle = 'Coming soon...'
