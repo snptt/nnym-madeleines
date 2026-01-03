@@ -1,0 +1,334 @@
+---
+title: "异种移植中的基因编辑"
+subtitle: "何为‘必要’，何为‘充分’？"
+author: 
+  - name: 王冠博
+    affiliations: 生55 2025030056
+format: clean-revealjs
+# editor: visual
+bibliography: references.bib
+---
+
+## 全球器官短缺危机与解决方案 {data-background-color="#f8f9fa"}
+
+- 终末期器官衰竭——全球性健康危机
+- 器官短缺——大量患者在等待中死亡
+- 异种移植——符合伦理的替代方案
+- 猪——临床异种移植理想的器官来源
+
+---
+
+## 猪作为理想供体的优势 {data-background-color="#e8f4f8"}
+
+> [@petersonPhysiologicalBasisXenotransplantation2024]
+
+### 生理学优势
+- 器官大小、解剖结构和生理功能的高度相似性
+- 成熟繁殖技术、较短世代间隔、一胎多仔
+- 可在无特定病原体条件下大规模饲养
+
+### 社会与伦理优势
+- 社会伦理接受度相对较高
+- 与灵长类动物相比，伦理争议较少
+- 已广泛用于医疗产品（如心脏瓣膜）
+
+---
+
+## 8000万年的进化分歧 → 复杂生物学屏障 {data-background-color="#fff3cd"}
+
+> [@petersonPhysiologicalBasisXenotransplantation2024]
+
+- 固有免疫排斥
+- 凝血功能障碍
+- 细胞免疫排斥
+- 潜在的生理不相容
+
+---
+
+## 现代基因编辑技术：CRISPR-Cas9 {data-background-color="#e2f0e5"}
+
+- 对猪进行多基因位点的靶向编辑成为可能
+- 敲除引发强烈免疫反应的猪基因
+- 引入能够弥补种属间分子功能差异的人源基因
+- 构建"人源化"的基因工程猪
+
+---
+
+## 本文核心问题 {data-background-color="#f4e8ff"}
+
+> 为迈向成功的临床异种移植，对供体猪的基因编辑：
+>
+> 1.  **哪些是"必要"的？**
+> 2.  **怎样的组合可能是"充分"的？**
+
+---
+
+# 异种移植的主要生物学障碍 {data-background-color="#e9ecef"}
+
+---
+
+## 障碍1：超急性排斥（<24小时） {data-background-color="#ffe6e6"}
+
+> [@yuanComplementNetworksGeneedited2024; @petersonPhysiologicalBasisXenotransplantation2024]
+
+- **机制**：预存抗体 + 补体激活 → 细胞溶解
+- **关键抗原**：α-1,3-半乳糖（α-Gal，由GGTA1编码）
+- **其他抗原**：Neu5Gc（CMAH）、Sda（B4GALNT2）
+- **结果**：血管破坏、血栓形成、移植物迅速坏死
+
+---
+
+## 障碍2：延迟性异种移植排斥 {data-background-color="#fff0e6"}
+
+> [@stelcerGeneticallyModifiedPigs2025]
+
+### 急性体液排斥（AHXR）
+- 非α-Gal抗体介导
+- 进程相对缓和
+
+### 细胞免疫排斥
+- T细胞
+    - 直接、间接、半直接途径激活
+    - 依赖共刺激信号
+
+### 先天免疫排斥
+- NK细胞：抑制信号缺失 → 异常激活
+- 巨噬细胞：CD47/SIRPα不相容 → 吞噬攻击
+
+---
+
+## 障碍3：凝血功能障碍与血栓性微血管病 {data-background-color="#e6f2ff"}
+
+> [@petersonPhysiologicalBasisXenotransplantation2024; @aliAdvancesOrganTissue2024a]
+
+- **核心问题**：猪源凝血调节系统与人不相容
+- 猪血栓调节蛋白激活人蛋白C效率极低
+- **结果**：微血管血栓、移植物缺血坏死
+- **特别挑战**：肝脏移植中的致命性凝血病
+
+---
+
+## 障碍4：生理不相容性 {data-background-color="#f0ffe6"}
+
+> [@flowersAnatomicalPhysiologicalConsiderations2025; @petersonPhysiologicalBasisXenotransplantation2024]
+
+- **器官过度生长**：在更高血压环境中病理性肥大
+- **心律问题**：传导系统差异导致心律失常
+- **激素不匹配**：猪EPO与人受体结合效率低 → 贫血
+- **慢性排斥**：血管内膜增生、间质纤维化
+
+---
+
+# 四类基因编辑策略 {data-background-color="#e9ecef"}
+
+---
+
+## 第一类靶点：消除异种抗原编码基因 {data-background-color="#fff8e6"}
+
+### GGTA1敲除：防止超急性排斥的**必要**起点
+> [@aliAdvancesOrganTissue2024a; @petersonPhysiologicalBasisXenotransplantation2024]
+
+- 消除α-Gal抗原
+- 将存活时间从几分钟延长至数天/周
+- **单独使用不足以实现长期存活**
+
+---
+
+## 第一类靶点：消除异种抗原编码基因 {data-background-color="#fff8e6"}
+
+### 三重敲除策略：向"充分"迈进
+> [@aliWhatGeneticModifications2024; @petersonPhysiologicalBasisXenotransplantation2024]
+
+- **GGTA1** + **CMAH** + **B4GALNT2**敲除
+- 最大限度清除已知糖类异种抗原
+- 显著降低抗体结合与补体毒性
+- **成为临床前研究的标准基因组背景**
+
+---
+
+## 第二类靶点：引入人源补体与凝血调节蛋白 {data-background-color="#e6f7ff"}
+
+> [@yuanComplementNetworksGeneedited2024; @petersonPhysiologicalBasisXenotransplantation2024]
+
+### 补体调节蛋白
+
+- hCD46：C3b/C4b辅因子
+- hCD55：加速C3/C5转化酶衰变
+- hCD59：抑制膜攻击复合物形成
+- **协同作用最佳**
+
+---
+
+## 第二类靶点：引入人源补体与凝血调节蛋白 {data-background-color="#e6f7ff"}
+
+### 凝血调节蛋白：针对血栓性微血管病
+> [@petersonPhysiologicalBasisXenotransplantation2024]
+
+- **hTHBD**：高效激活人蛋白C → 强大抗凝作用
+- **hEPCR**：使蛋白C激活效率提高20倍
+- **协同效应**：hTHBD + hEPCR
+- **结果**：心脏移植物存活从数周延长至>1年
+
+---
+
+## 第三类靶点：调控先天与适应性免疫 {data-background-color="#f0f0ff"}
+
+### 先天免疫调控
+> [@aliAdvancesOrganTissue2024a; @petersonPhysiologicalBasisXenotransplantation2024]
+
+- **hCD47**：传递"别吃我"信号 → 抑制巨噬细胞
+- **HLA-E/hβ2M**：提供抑制性配体 → 抑制NK细胞
+
+### 适应性免疫调控
+
+- **CTLA4-Ig**：阻断CD28/CD80/86共刺激通路
+- **hPD-L1**：增强PD-1/PD-L1抑制信号
+
+---
+
+## 第四类靶点：调节生长与稳态 {data-background-color="#f0ffe6"}
+
+### 控制过度生长（如心脏）
+> [@aliWhatGeneticModifications2024; @petersonPhysiologicalBasisXenotransplantation2024]
+
+- **GHR敲除**：消除对生长激素应答
+- **替代方案**：选择自然小型猪种（尤卡坦、奥克兰岛猪）
+
+### 增强内在韧性
+> [@petersonPhysiologicalBasisXenotransplantation2024; @aliAdvancesOrganTissue2024a]
+
+- **hHO-1**：抗氧化、抗炎、抗凋亡
+- **A20**：抑制NF-κB通路，抗炎
+
+---
+
+# 基因编辑组合的演进与"必要且充分"的探讨 {data-background-color="#e9ecef"}
+
+---
+
+## 器官特异性组合：心脏移植 {data-background-color="#ffe6e6"}
+
+> [@aliWhatGeneticModifications2024; @flowersAnatomicalPhysiologicalConsiderations2025]
+
+- **核心成功组合**：`GGTA1-KO / hCD46 / hTHBD`
+  - 异位移植存活>2.5年
+  - 原位移植存活>6个月
+- **进阶组合**：+ GHR敲除 → 控制病理性肥大
+- **临床实例**："10基因编辑猪"存活数月
+
+---
+
+## 器官特异性组合：肾脏移植 {data-background-color="#e6f2ff"}
+
+> [@aliAdvancesOrganTissue2024a; @aliWhatGeneticModifications2024]
+
+- **方案多样性**：
+  - 简洁组合 + 强效免疫抑制 → >1年存活
+  - 复杂多重编辑 → 长期存活
+- **关键要素**：有效的凝血调节至关重要
+- **免疫抑制互补**：强效方案可弥补基因修饰不足
+
+---
+
+## 器官特异性组合：肝脏移植 {data-background-color="#fff0e6"}
+
+> [@sucuLiverXenotransplantationPath2025; @karadagiFuturePigLiver2025]
+
+- **最严峻挑战**：极端凝血紊乱
+- **当前极限**：TKO + 多重修饰 + 强效支持 → 25-29天存活
+- **临床定位**：短期支持或"桥梁"治疗，非终身替代
+
+---
+
+## 器官特异性组合：胰岛移植 {data-background-color="#e6ffe6"}
+
+> [@aliWhatGeneticModifications2024; @eisensonCombinedIsletKidney2024]
+
+- **首要障碍**：即时血液介导炎症反应（IBMIR）
+- **核心策略**：强效补体抑制（hCD55 + hCD59）
+- **独特优势**：治疗并发糖尿病肾病
+
+---
+
+## "必要性"的共识：最小必需修饰 {data-background-color="#fff8e6"}
+
+> [@aliWhatGeneticModifications2024; @luoResearchGeneEditing2025a]
+
+1. **GGTA1敲除** → 防止超急性排斥
+2. **hCD46/hCD55** → 控制补体攻击
+3. **hTHBD** → 防止致死性凝血障碍
+
+> 构成临床"最小必需修饰"的核心候选
+
+---
+
+## "充分性"的相对性 {data-background-color="#f0f0ff"}
+
+### 取决于三大因素：
+1. **目标生存期**：短期支持 vs. 终身替代
+2. **器官类型**：心、肾、肝、胰岛各有侧重
+3. **免疫抑制方案强度**：基因编辑与药物协同
+
+---
+
+## 基因编辑与免疫抑制的协同 {data-background-color="#e6fff7"}
+
+> [@stelcerGeneticallyModifiedPigs2025; @luoResearchGeneEditing2025a]
+
+### 相互补充，而非替代
+- **最强药物方案**：可弥补基因修饰的不足
+- **充分基因编辑**：旨在降低免疫抑制强度与毒性
+- **理想目标**：温和方案下的长期存活
+
+### 示例：相同编辑，不同免疫方案
+> [@petersonPhysiologicalBasisXenotransplantation2024]
+
+- 含抗CD154方案：存活8个月
+- 传统方案：30天内失败
+
+---
+
+# 结论与展望 {data-background-color="#e9ecef"}
+
+---
+
+## 主要结论 {data-background-color="#ffffff"}
+
+### "必要"的基因编辑
+- 克服即刻致死性屏障所不可或缺的最低限度改造
+- 异种移植成功的**入场券**
+
+### "充分"的基因编辑组合
+- 系统应对所有主要障碍的多层次基因工程体系
+- 实现长期高质量存活的必要考量
+
+---
+
+## 编辑逻辑的清晰递进 {data-background-color="#f8f0ff"}
+
+1. 敲除异种抗原基因——消除靶标
+2. 引入补体与凝血调节蛋白——解决补体异常激活与凝血紊乱问题
+3. 表达免疫调控分子——重建免疫稳态
+4. 调节生长与稳态——实现生理整合
+
+> 使异种移植变为可能，显著降低对强效免疫抑制的依赖
+
+---
+
+## 最终愿景 {data-background-color="#e6f7ff"}
+
+通过系统性的基因工程，构建能够：
+
+- **安全**地在人体内长期存活
+- **有效**地替代衰竭器官功能
+- **最小化**对外源性免疫抑制的依赖
+
+> 将异种移植从实验性治疗转变为常规临床疗法，彻底解决器官短缺危机。
+
+---
+
+## 谢谢！ {data-background-color="#293948ff"}
+### **问题与讨论**
+
+参考文献
+
