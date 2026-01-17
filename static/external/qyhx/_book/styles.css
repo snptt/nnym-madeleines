@@ -1,0 +1,8 @@
+p {
+  text-indent: 2em;
+}
+li > p,
+div.cell-output-display p,
+.callout p {
+  text-indent: 0; /* 取消列表项、代码输出块、提示框内段落的缩进 */
+}
