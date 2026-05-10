@@ -1,5 +1,92 @@
 /* style.css — 政府公文 + 极简红黑风格 */
 
+/* ===== 标题页（红头公文风格）不干扰后续页面 ===== */
+.reveal .slides section {
+  text-align: left;
+  height: 100%;
+  box-sizing: border-box;
+  /* 如需要轻微留白，可加：padding: 1.5em 3em; */
+}
+
+.reveal .slides section.quarto-title-block {
+  text-align: left !important;
+  /* 维持之前的 flex 布局即可 */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;   /* 垂直居中保持不变 */
+  padding: 3em 4em 2em 4em;  /* 你原来的 padding 也可以写在这里 */
+}
+
+/* 隐藏作者栏 */
+.reveal .slides section.quarto-title-block .quarto-title-authors {
+  display: none;
+}
+
+/* 主标题 */
+.reveal .slides section.quarto-title-block h1.title {
+  font-family: "黑体", "华文黑体", "SimHei", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif !important;
+  font-weight: 900 !important;
+  font-size: 2.0em !important;
+  color: #111 !important;
+  margin: 0.2em 0 0.5em 0 !important;
+  letter-spacing: -0.02em !important;
+  line-height: 1.2 !important;
+  text-transform: none !important;
+}
+
+/* 副标题 */
+.reveal .slides section.quarto-title-block p.subtitle {
+  font-family: "Times New Roman", "宋体", "仿宋", "华文宋体", "Noto Serif CJK SC", serif !important;
+  font-size: 1em !important;
+  color: #666 !important;
+  margin-bottom: 0.8em !important;
+  font-weight: 400 !important;
+}
+
+/* 日期行（底部红线 + 左右分列日期与地点） */
+.reveal .slides section.quarto-title-block p.date {
+  position: absolute;
+  bottom: 2em;
+  left: 4em;
+  right: 4em;
+  border-top: 1px solid #b71c1c;
+  padding-top: 0.6em;
+  font-size: 0.6em !important;
+  color: #777 !important;
+  display: flex;
+  justify-content: space-between;
+  margin: 0;
+}
+
+/* 地点通过伪元素自动添加到日期右侧 */
+.reveal .slides section.quarto-title-block p.date::after {
+  content: "生物新馆407";
+  white-space: pre;
+}
+
+/* 顶部红点 */
+.reveal .slides section.quarto-title-block::before {
+  content: "";
+  display: block;
+  width: 0.3em;
+  height: 0.3em;
+  background: #b71c1c;
+  border-radius: 50%;
+  margin-bottom: 0.8em;
+}
+
+/* 顶部红线 */
+.reveal .slides section.quarto-title-block::after {
+  content: "";
+  position: absolute;
+  top: 3.1em;
+  left: 4.8em;
+  width: 25%;
+  height: 1px;
+  background: #b71c1c;
+  opacity: 0.8;
+}
+
 /* 全局背景：白底+暖灰渐变+垂直细线纹理 */
 .reveal {
   background-color: #ffffff;
@@ -31,7 +118,7 @@
 .reveal h2 {
   font-family: "黑体", "华文黑体", "SimHei", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
   font-weight: 700;
-  font-size: 1.55em;  /* 由原来的 1.8em 缩小至 1.55em，更克制 */
+  font-size: 1.35em;  /* 由原来的 1.8em 缩小至 1.55em，更克制 */
   color: #111;
   margin-bottom: 0.25em;
   text-transform: none;
