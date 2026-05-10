@@ -1,0 +1,166 @@
+/* style.css — 政府公文 + 极简红黑风格 */
+
+/* 全局背景：白底+暖灰渐变+垂直细线纹理 */
+.reveal {
+  background-color: #ffffff;
+  background-image:
+    /* 极浅的径向暖灰渐变，中心偏亮 */
+    radial-gradient(circle at 50% 50%, rgba(228, 224, 220, 0.2) 0%, #ffffff 80%),
+    /* 垂直细线纹理，线宽约0.2px，透明度3% */
+    repeating-linear-gradient(
+      to right,
+      transparent,
+      transparent 9px,
+      rgba(180, 170, 160, 0.03) 9px,
+      rgba(180, 170, 160, 0.03) 10px
+    );
+  background-blend-mode: normal;
+  color: #1a1a1a;
+  font-family: "Times New Roman", "宋体", "仿宋", "华文宋体", "Noto Serif CJK SC", serif;
+}
+
+/* 幻灯片区域稍加内边距，保持留白 */
+.reveal .slides section {
+  text-align: left;
+  padding: 2em 3em 1em 3em;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+/* 标题字体：使用有力道的无衬线粗体（公文常用标宋或黑体） */
+.reveal h2 {
+  font-family: "黑体", "华文黑体", "SimHei", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+  font-weight: 700;
+  font-size: 1.55em;  /* 由原来的 1.8em 缩小至 1.55em，更克制 */
+  color: #111;
+  margin-bottom: 0.25em;
+  text-transform: none;
+  letter-spacing: 0.02em;
+}
+
+/* 二级标题下方红色细横线（红头文件标志） */
+.reveal h2::after {
+  content: "";
+  display: block;
+  width: 30%;
+  height: 1px;
+  background: #b71c1c;
+  margin-top: 0.35em;
+  opacity: 0.8;
+}
+
+/* 可选：在标题前加小巧的红色圆点（可注释掉，按需启用）
+.reveal h2::before {
+  content: "";
+  display: inline-block;
+  width: 0.3em;
+  height: 0.3em;
+  background: #b71c1c;
+  border-radius: 50%;
+  margin-right: 0.4em;
+  vertical-align: middle;
+}
+*/
+
+/* 正文段落和列表 */
+.reveal p,
+.reveal li {
+  font-size: 0.85em;
+  line-height: 1.8;
+  color: #222;
+}
+
+/* 增量列表的红色方块符号 */
+.reveal ul {
+  list-style: none;
+  padding-left: 0;
+}
+.reveal ul li {
+  position: relative;
+  padding-left: 1.5em;
+  margin-bottom: 0.3em;
+}
+.reveal ul li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.5em;
+  width: 0.5em;
+  height: 0.5em;
+  background: #b71c1c;
+  /* 正方形小块，可改为圆点用 border-radius: 50% */
+}
+
+/* 有序列表样式保持简洁，数字用红色 */
+.reveal ol {
+  list-style: none !important;
+  padding-left: 0;
+  counter-reset: item;
+}
+.reveal .slides section ol {
+  list-style: none !important;
+}
+.reveal ol li {
+  counter-increment: item;
+  position: relative;
+  padding-left: 1.8em;
+  margin-bottom: 0.3em;
+}
+.reveal ol li::before {
+  content: counter(item) ".";
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-weight: 700;
+  color: #b71c1c;
+  width: 1.5em;
+  text-align: right;
+}
+
+/* 强调文字用红色 */
+.reveal strong {
+  color: #b71c1c;
+  font-weight: 700;
+}
+
+/* 幻灯片编号和页脚 */
+.reveal .slide-number {
+  color: #b71c1c;
+  font-size: 0.7em;
+  font-family: "Courier New", monospace;
+}
+
+/* 自定义底部信息（如果使用 footer 或 date） */
+.reveal .footer {
+  position: absolute;
+  bottom: 1.5em;
+  left: 3em;
+  right: 3em;
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.55em;
+  color: #777;
+  border-top: 0.5px solid #b71c1c;
+  padding-top: 0.3em;
+}
+
+/* 引用块变成左侧带红线的样式，适合资料页 */
+.reveal blockquote {
+  border-left: 3px solid #b71c1c;
+  background: #faf9f8;
+  margin: 1em 0;
+  padding: 0.5em 1em;
+  font-style: normal;
+  color: #333;
+}
+
+/* 去除 Reveal 默认的 slide 背景渐变和阴影 */
+.reveal .slides section {
+  background: none;
+  box-shadow: none;
+}
+
+/* 参考资料来源页，列表符号恢复正常（无红色方块）或直接用段落 */
+.ref-list ul li::before {
+  display: none;
+}
