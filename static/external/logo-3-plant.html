@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>清系春城 · 组徽探索 · 方案3 一株药草三段</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif+SC:wght@300;400;500;600;700;900&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --c-purple:#660874; --c-green:#3D7A4F; --c-gold:#B8A578;
+    --c-paper:#FAF8F5;  --c-ink:#1A1A1A;   --c-body:#3F3F3F;
+    --c-line:#E4DED4;   --c-antique:#B8A578;
+    --serif:"Noto Serif SC", serif;
+    --sans:"Noto Sans SC", -apple-system, sans-serif;
+    --latin:"Cormorant Garamond", serif;
+    --maxw:1120px; --gutter:clamp(22px,5vw,80px);
+  }
+  *{ box-sizing:border-box; }
+  html{ -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; }
+  body{
+    margin:0; background:var(--c-paper); color:var(--c-body);
+    font-family:var(--sans); font-weight:300; line-height:1.9;
+    background-image:radial-gradient(rgba(26,26,26,0.012) 1px, transparent 1px);
+    background-size:3px 3px;
+  }
+  .wrap{ max-width:var(--maxw); margin:0 auto; padding:0 var(--gutter); }
+
+  /* —— masthead —— */
+  .masthead{ border-bottom:1px solid var(--c-line); padding:clamp(40px,7vw,84px) 0 clamp(28px,4vw,44px); }
+  .masthead .kicker{ font-family:var(--latin); font-size:13px; letter-spacing:.42em; text-transform:uppercase; color:var(--c-antique); margin:0 0 18px; }
+  .masthead h1{ font-family:var(--serif); font-weight:700; font-size:clamp(32px,6vw,56px); line-height:1.18; color:var(--c-ink); margin:0; letter-spacing:.04em; }
+  .masthead .sub{ font-family:var(--latin); font-style:italic; font-size:clamp(17px,2.4vw,22px); color:var(--c-body); margin:14px 0 0; letter-spacing:.02em; }
+  .masthead .meta{ margin-top:24px; font-size:12.5px; letter-spacing:.16em; color:#8d8576; text-transform:uppercase; font-family:var(--latin); }
+
+  /* —— sections —— */
+  section{ padding:clamp(54px,8vw,104px) 0; border-bottom:1px solid var(--c-line); }
+  .section-label{ display:flex; align-items:baseline; gap:18px; margin:0 0 clamp(30px,5vw,52px); }
+  .section-label .no{ font-family:var(--latin); font-size:15px; letter-spacing:.3em; color:var(--c-antique); font-style:italic; padding-top:2px; }
+  .section-label .zh{ font-family:var(--serif); font-weight:600; font-size:clamp(21px,3.4vw,29px); color:var(--c-ink); letter-spacing:.08em; }
+  .section-label .en{ font-family:var(--latin); font-size:13px; letter-spacing:.32em; text-transform:uppercase; color:#9a917f; margin-left:auto; align-self:center; }
+  .lead{ font-family:var(--serif); font-weight:400; font-size:clamp(16px,2.2vw,19px); color:var(--c-body); line-height:1.9; max-width:760px; margin:0 0 8px; }
+  .lead b{ color:var(--c-purple); font-weight:600; }
+  .lead .g{ color:var(--c-green); font-weight:600; }
+
+  /* —— 概念三段表 —— */
+  .triple{ display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--c-line); border:1px solid var(--c-line); margin-top:34px; }
+  @media(max-width:740px){ .triple{ grid-template-columns:1fr; } }
+  .triple .cell{ background:#fff; padding:26px 24px; }
+  .triple .stage{ font-family:var(--latin); font-size:12px; letter-spacing:.28em; text-transform:uppercase; color:var(--c-antique); }
+  .triple .zh{ font-family:var(--serif); font-weight:600; font-size:22px; color:var(--c-ink); margin:8px 0 4px; letter-spacing:.06em; }
+  .triple .zh .verb{ color:var(--c-purple); }
+  .triple .role{ font-size:14px; color:var(--c-green); font-weight:400; margin-bottom:10px; letter-spacing:.04em; }
+  .triple .desc{ font-size:13.5px; color:#7d756a; line-height:1.75; }
+
+  /* —— 通用药材线描 svg 着色 —— */
+  .herb{ color:var(--c-ink); }
+  .a-purple{ stroke:var(--c-purple); }
+  .a-green { stroke:var(--c-green); }
+  .a-gold  { stroke:var(--c-gold); }
+  .a-purple-f{ fill:var(--c-purple); stroke:none; }
+  .a-green-f { fill:var(--c-green);  stroke:none; }
+  .a-gold-f  { fill:var(--c-gold);   stroke:none; }
+  .a-ink-f   { fill:var(--c-ink);    stroke:none; }
+  .soil{ stroke:var(--c-gold); opacity:.85; }
+
+  /* 深底反白：currentColor→暖白，accent 提亮 */
+  .on-dark{ color:var(--c-paper); }
+  .on-dark .a-purple{ stroke:#d8a6e0; }
+  .on-dark .a-green { stroke:#9fc7ad; }
+  .on-dark .a-gold  { stroke:#e0d0a2; }
+  .on-dark .a-purple-f{ fill:#d8a6e0; }
+  .on-dark .a-green-f { fill:#9fc7ad; }
+  .on-dark .a-gold-f  { fill:#e0d0a2; }
+  .on-dark .a-ink-f   { fill:var(--c-paper); }
+  .on-dark .soil{ stroke:#e0d0a2; }
+
+  /* ============ 合体总 logo ============ */
+  .hero-grid{ display:grid; grid-template-columns:1fr 1fr; gap:clamp(20px,3vw,40px); }
+  @media(max-width:820px){ .hero-grid{ grid-template-columns:1fr; } }
+  .emblem-card{ border:1px solid var(--c-line); background:#fff; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; padding:clamp(30px,4vw,46px) clamp(20px,3vw,34px) clamp(24px,3vw,34px); position:relative; }
+  .emblem-card.dark{ background:var(--c-purple); border-color:var(--c-purple); }
+  .emblem-card .tag{ position:absolute; top:14px; left:16px; font-family:var(--latin); font-size:11px; letter-spacing:.26em; text-transform:uppercase; color:#b7ae9c; }
+  .emblem-card.dark .tag{ color:#c9a9cf; }
+  .hero-svg{ width:clamp(180px,30vw,250px); height:auto; display:block; }
+  .emblem-cap{ font-family:var(--latin); font-size:12px; letter-spacing:.22em; text-transform:uppercase; color:#9a917f; margin-top:22px; text-align:center; }
+  .emblem-card.dark .emblem-cap{ color:#cdb8d2; }
+  .emblem-sub{ font-family:var(--serif); font-size:15px; color:var(--c-body); margin-top:4px; letter-spacing:.06em; }
+  .emblem-card.dark .emblem-sub{ color:#efe6d6; }
+
+  /* ============ 拼合关系示意 ============ */
+  .assembly{ display:flex; align-items:center; justify-content:center; gap:clamp(10px,2vw,26px); flex-wrap:wrap; margin-top:10px; }
+  .asm-piece{ display:flex; flex-direction:column; align-items:center; gap:10px; }
+  .asm-ring{ width:118px; height:118px; }
+  .asm-lab{ font-size:12.5px; color:var(--c-green); letter-spacing:.08em; font-family:var(--serif); }
+  .asm-lab small{ display:block; color:#9a917f; font-size:11px; font-family:var(--latin); letter-spacing:.2em; text-transform:uppercase; }
+  .asm-op{ font-family:var(--serif); font-size:30px; color:var(--c-antique); font-weight:300; padding-bottom:26px; }
+  .asm-result{ display:flex; flex-direction:column; align-items:center; gap:10px; }
+  .asm-result svg{ width:78px; height:auto; }
+  .asm-result .asm-lab{ color:var(--c-purple); }
+
+  /* ============ 三段拆开 ============ */
+  .seg-block{ border:1px solid var(--c-line); background:#fff; margin-top:clamp(22px,3vw,34px); display:grid; grid-template-columns:230px 1fr; }
+  @media(max-width:760px){ .seg-block{ grid-template-columns:1fr; } }
+  .seg-main{ border-right:1px solid var(--c-line); padding:clamp(26px,3vw,40px); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px; position:relative; }
+  @media(max-width:760px){ .seg-main{ border-right:0; border-bottom:1px solid var(--c-line); } }
+  .seg-ring{ width:172px; height:172px; }
+  .seg-id{ text-align:center; }
+  .seg-id .num{ font-family:var(--latin); font-size:12px; letter-spacing:.3em; color:var(--c-antique); font-style:italic; }
+  .seg-id .zh{ font-family:var(--serif); font-weight:600; font-size:21px; color:var(--c-ink); letter-spacing:.1em; margin-top:2px; }
+  .seg-id .verb{ color:var(--c-purple); }
+  .seg-info{ padding:clamp(24px,3vw,38px); }
+  .seg-role{ font-family:var(--serif); font-weight:500; font-size:18px; color:var(--c-green); margin:0 0 6px; letter-spacing:.04em; }
+  .seg-pos{ font-size:13.5px; color:#7d756a; margin:0 0 22px; line-height:1.75; }
+  .seg-pos b{ color:var(--c-purple); font-weight:600; }
+
+  /* 小尺寸测试条 */
+  .size-test{ display:flex; align-items:flex-end; gap:clamp(16px,3vw,30px); flex-wrap:wrap; }
+  .st-item{ display:flex; flex-direction:column; align-items:center; gap:9px; }
+  .st-frame{ border:1px solid var(--c-line); display:flex; align-items:center; justify-content:center; background:#fff; }
+  .st-frame.dark{ background:var(--c-purple); border-color:var(--c-purple); }
+  .st-frame svg{ display:block; }
+  .st-cap{ font-family:var(--latin); font-size:11px; letter-spacing:.16em; color:#9a917f; }
+  .st-200{ width:200px; height:200px; }   .st-200 svg{ width:174px; }
+  .st-120{ width:120px; height:120px; }   .st-120 svg{ width:104px; }
+  .st-64 { width:64px;  height:64px;  }   .st-64  svg{ width:56px; }
+  .test-note{ font-size:13px; color:#7d756a; margin:18px 0 0; line-height:1.7; max-width:680px; }
+  .test-note b{ color:var(--c-green); }
+
+  /* —— 配色 / 线规 —— */
+  .spec-grid{ display:grid; grid-template-columns:repeat(5,1fr); gap:2px; margin-bottom:34px; }
+  @media(max-width:820px){ .spec-grid{ grid-template-columns:repeat(2,1fr); } }
+  .sw .chip{ height:88px; }
+  .sw .name{ font-family:var(--serif); font-weight:500; font-size:15px; color:var(--c-ink); margin-top:12px; letter-spacing:.06em; }
+  .sw .hex{ font-family:var(--latin); font-size:14px; letter-spacing:.16em; color:#8d8576; margin-top:2px; }
+  .footnote{ font-size:13px; color:#9a917f; line-height:1.8; }
+  .footnote b{ color:var(--c-green); }
+</style>
+</head>
+<body>
+
+<!-- ============================================================ -->
+<!-- 隐藏 SVG 定义：三段药材母题 + 合体全株                         -->
+<!-- 全部纯手工矢量，stroke=currentColor，细线 1–1.5px            -->
+<!-- ============================================================ -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+
+    <!-- ===== 一组 · 根段（种植 / 种）：破土幼苗 + 根系 ===== -->
+    <symbol id="seg-root" viewBox="0 0 220 220">
+      <g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+        <!-- 顶端连接节点 -->
+        <circle class="a-ink-f" cx="110" cy="22" r="2.4"/>
+        <path d="M110 24 C104 22 100 21 96 21"/>
+        <path d="M110 24 C116 22 120 21 124 21"/>
+        <!-- 茎柄（破土主轴） -->
+        <path d="M110 22 C110 42 110 62 110 84"/>
+        <!-- 一对子叶（破土幼苗，单独看即完整小苗） -->
+        <path class="a-green" d="M110 54 C98 48 88 40 84 30 C92 40 102 48 110 54"/>
+        <path class="a-green" d="M110 54 C122 48 132 40 136 30 C128 40 118 48 110 54"/>
+        <path class="a-green" stroke-width="1" d="M110 53 C103 47 96 41 90 35"/>
+        <path class="a-green" stroke-width="1" d="M110 53 C117 47 124 41 130 35"/>
+        <!-- 土线（破土的地平） -->
+        <path class="soil" stroke-width="1.3" d="M30 84 C60 82 90 85 110 84 C130 85 160 82 190 84"/>
+        <g class="soil" stroke-width="1">
+          <path d="M44 85 L44 91"/><path d="M64 86 L64 92"/><path d="M86 85 L86 91"/>
+          <path d="M134 85 L134 91"/><path d="M156 86 L156 92"/><path d="M176 85 L176 91"/>
+        </g>
+        <!-- 根系（道地药材的盘结根） -->
+        <path d="M110 84 C110 102 108 122 110 142 C112 160 109 178 105 198"/>
+        <path stroke-width="1.2" d="M110 96 C96 104 82 118 74 136"/>
+        <path stroke-width="1.2" d="M110 110 C124 118 138 132 146 150"/>
+        <path stroke-width="1.2" d="M110 128 C100 142 90 158 86 178"/>
+        <path stroke-width="1.2" d="M110 144 C120 156 130 170 134 188"/>
+        <!-- 须根 -->
+        <g stroke-width="0.9" opacity="0.8">
+          <path d="M74 136 C70 142 66 148 64 154"/>
+          <path d="M74 136 C72 144 70 150 67 157"/>
+          <path d="M146 150 C150 156 153 162 154 168"/>
+          <path d="M105 198 C103 202 102 205 101 208"/>
+          <path d="M86 178 C84 184 83 189 82 194"/>
+          <path d="M134 188 C137 192 139 197 140 201"/>
+        </g>
+        <!-- 根瘤（道地标记） -->
+        <circle class="a-gold-f" cx="110" cy="120" r="2.1"/>
+        <circle class="a-gold-f" cx="118" cy="138" r="1.7"/>
+      </g>
+    </symbol>
+
+    <!-- ===== 二组 · 茎段（加工 / 制）：茎节 + 药碾槽（炮制） ===== -->
+    <symbol id="seg-stem" viewBox="0 0 220 220">
+      <g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+        <!-- 顶端连接节点 -->
+        <circle class="a-ink-f" cx="110" cy="22" r="2.4"/>
+        <path d="M110 24 C104 22 100 21 96 21"/>
+        <path d="M110 24 C116 22 120 21 124 21"/>
+        <!-- 底端连接节点 -->
+        <circle class="a-ink-f" cx="110" cy="198" r="2.4"/>
+        <path d="M110 196 C104 198 100 199 96 199"/>
+        <path d="M110 196 C116 198 120 199 124 199"/>
+        <!-- 茎（上段→药碾→下段） -->
+        <path d="M110 22 C110 40 110 60 110 90"/>
+        <path d="M110 150 C110 168 110 184 110 198"/>
+        <!-- 上节对叶（向上，承接花果段） -->
+        <path d="M110 50 C98 42 88 33 84 23 C92 35 102 44 110 50"/>
+        <path d="M110 50 C122 42 132 33 136 23 C128 35 118 44 110 50"/>
+        <path stroke-width="1" d="M110 49 C103 42 96 36 90 30"/>
+        <path stroke-width="1" d="M110 49 C117 42 124 36 130 30"/>
+        <!-- 下节对叶（向下，承接根段） -->
+        <path d="M110 172 C98 178 88 187 82 197 C92 187 102 179 110 172"/>
+        <path d="M110 172 C122 178 132 187 138 197 C128 187 118 179 110 172"/>
+        <!-- ===== 药碾槽（炮制 / 制）：茎在此被加工 ===== -->
+        <!-- 碾轴：茎垂入碾盘 -->
+        <path class="a-gold" d="M110 90 L110 111"/>
+        <!-- 碾槽（船形舂臼） -->
+        <path class="a-gold" d="M62 120 C64 138 86 150 110 150 C134 150 156 138 158 120"/>
+        <path class="a-gold" d="M62 120 C80 126 96 128 110 128 C124 128 140 126 158 120"/>
+        <!-- 碾盘（圆轮）+ 轴 -->
+        <circle class="a-gold" cx="110" cy="122" r="11"/>
+        <path class="a-gold" d="M97 122 L123 122"/>
+        <!-- 纹样（炮制纹 / 加工痕） -->
+        <path class="a-gold" stroke-width="0.9" d="M104 116 L116 128"/>
+        <path class="a-gold" stroke-width="0.9" d="M116 116 L104 128"/>
+        <!-- 提炼蒸气（制的升华） -->
+        <g class="a-green" stroke-width="1">
+          <path d="M101 86 C99 80 103 76 101 70"/>
+          <path d="M110 84 C112 78 108 74 110 68"/>
+          <path d="M119 86 C121 80 117 76 119 70"/>
+        </g>
+        <circle class="a-green-f" cx="101" cy="67" r="1.7"/>
+        <circle class="a-green-f" cx="110" cy="65" r="1.7"/>
+        <circle class="a-green-f" cx="119" cy="67" r="1.7"/>
+      </g>
+    </symbol>
+
+    <!-- ===== 三组 · 花果段（康养 / 养）：叶轮 + 伞序花 + 果 ===== -->
+    <symbol id="seg-flower" viewBox="0 0 220 220">
+      <g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+        <!-- 底端连接节点（承接茎段） -->
+        <circle class="a-ink-f" cx="110" cy="198" r="2.4"/>
+        <path d="M110 196 C104 198 100 199 96 199"/>
+        <path d="M110 196 C116 198 120 199 124 199"/>
+        <!-- 茎 -->
+        <path d="M110 198 C110 182 110 166 110 152"/>
+        <!-- 叶轮（七叶一枝花式轮生叶） -->
+        <path d="M110 152 C90 154 70 158 52 155 C70 148 92 146 110 152"/>
+        <path d="M110 152 C130 154 150 158 168 155 C150 148 128 146 110 152"/>
+        <path d="M110 152 C98 162 86 174 78 190 C90 176 102 162 110 152"/>
+        <path d="M110 152 C122 162 134 174 142 190 C130 176 118 162 110 152"/>
+        <path stroke-width="1" d="M110 152 C94 153 78 155 62 156"/>
+        <path stroke-width="1" d="M110 152 C126 153 142 155 158 156"/>
+        <!-- 果实（结果 / 康养收获） -->
+        <circle class="a-green-f" cx="99" cy="141" r="2.4"/>
+        <circle class="a-green-f" cx="110" cy="144" r="2.6"/>
+        <circle class="a-green-f" cx="121" cy="141" r="2.4"/>
+        <!-- 花葶 -->
+        <path d="M110 152 C110 136 110 120 110 106"/>
+        <!-- 伞形花序（清华紫主花） -->
+        <g class="a-purple">
+          <path d="M110 106 C101 96 95 85 93 73"/>
+          <path d="M110 106 C107 94 105 82 105 71"/>
+          <path d="M110 106 C110 92 110 78 110 64"/>
+          <path d="M110 106 C113 94 115 82 115 71"/>
+          <path d="M110 106 C119 96 125 85 127 73"/>
+        </g>
+        <g class="a-purple-f">
+          <circle cx="93" cy="71" r="3"/>
+          <circle cx="105" cy="69" r="3"/>
+          <circle cx="110" cy="62" r="3.4"/>
+          <circle cx="115" cy="69" r="3"/>
+          <circle cx="127" cy="71" r="3"/>
+        </g>
+        <circle class="a-gold-f" cx="110" cy="106" r="1.8"/>
+      </g>
+    </symbol>
+
+    <!-- ===== 合体全株：三段沿同一中轴 x=110 拼接（节点对节点） ===== -->
+    <!-- 花果段 y0→ ，茎段 +180，根段 +340，连接节点重合于 y200 / y20 -->
+    <symbol id="plant-full" viewBox="0 0 220 582">
+      <use href="#seg-flower" x="0" y="0"/>
+      <use href="#seg-stem"   x="0" y="180"/>
+      <use href="#seg-root"   x="0" y="360"/>
+    </symbol>
+
+    <!-- 印记环（圆形外框 + 四角古金角标），用于单段封面感 -->
+    <symbol id="ring-round" viewBox="0 0 220 220">
+      <circle cx="110" cy="110" r="100" fill="none" stroke="var(--c-gold)" stroke-width="1.2"/>
+      <circle cx="110" cy="110" r="94"  fill="none" stroke="var(--c-gold)" stroke-width="0.7" opacity="0.6"/>
+    </symbol>
+  </defs>
+</svg>
+
+<!-- ===================== masthead ===================== -->
+<header class="masthead">
+  <div class="wrap">
+    <p class="kicker">Group Emblem System · Concept 3</p>
+    <h1>组徽探索　方案 3：一株药草三段</h1>
+    <p class="sub">One Herb, Three Segments — 种 · 制 · 养 ｜ 根 → 茎 → 花</p>
+    <p class="meta">清系春城 · 清华生命学院乡村振兴实践支队 · THU 2026 · 可拼合组徽草样（供宣传副支队长挑方向）</p>
+  </div>
+</header>
+
+<!-- ===================== 0. 概念 ===================== -->
+<section id="concept">
+  <div class="wrap">
+    <div class="section-label">
+      <span class="no">00</span><span class="zh">概念 · 一株药草的生命旅程</span><span class="en">The Idea</span>
+    </div>
+    <p class="lead">支队总 logo 是<b>一株完整的药用植物</b>：<span class="g">根 → 茎 → 花果</span>，对应一支队探一条药田里的振兴路——<b>种（上游）→ 制（中游）→ 养（下游）</b>。</p>
+    <p class="lead">三个组各取这株药草的一段。<b>关键约束</b>：每一段单独看也是一枚自洽完整的小徽（用作各组次条封面 / banner），三段沿同一中轴又能<b>拼合成整株总徽</b>（用作头条与品牌主标）。两种状态都成立。</p>
+    <div class="triple">
+      <div class="cell">
+        <div class="stage">Upstream · Seed</div>
+        <div class="zh">一组 · <span class="verb">种</span></div>
+        <div class="role">上游 · 中药材种植与农业转型</div>
+        <div class="desc">整株中的<b>根 / 破土幼苗</b>。盘结道地根系 + 子叶破土，单独看是一枚"萌发"小徽。</div>
+      </div>
+      <div class="cell">
+        <div class="stage">Midstream · Craft</div>
+        <div class="zh">二组 · <span class="verb">制</span></div>
+        <div class="role">中游 · 生物医药加工与产业带动</div>
+        <div class="desc">整株中的<b>茎 / 中段</b>。茎节嵌入<b>药碾槽</b>炮制母题，既是茎、又读得出"加工"，单独成立。</div>
+      </div>
+      <div class="cell">
+        <div class="stage">Downstream · Nurture</div>
+        <div class="zh">三组 · <span class="verb">养</span></div>
+        <div class="role">下游 · 健康产品消费与民生改善</div>
+        <div class="desc">整株中的<b>花 / 果 / 顶段</b>。轮生叶 + 伞序花 + 果实，开花结果，单独看是一枚"收获"小徽。</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 1. 合体总 logo ===================== -->
+<section id="total">
+  <div class="wrap">
+    <div class="section-label">
+      <span class="no">01</span><span class="zh">合体总徽 · 完整一株药草</span><span class="en">Master Mark</span>
+    </div>
+    <p class="lead">三段沿同一中轴拼合为一株完整药草——支队总 logo。下方浅底 / 深底各一版。</p>
+    <div class="hero-grid">
+      <div class="emblem-card">
+        <span class="tag">Master · 浅底</span>
+        <svg class="hero-svg herb" viewBox="0 0 220 582"><use href="#plant-full"/></svg>
+        <div class="emblem-cap">Qingxi Chuncheng · THU 2026</div>
+        <div class="emblem-sub">清系春城 · 支队总徽</div>
+      </div>
+      <div class="emblem-card dark on-dark">
+        <span class="tag">Master · 深紫底</span>
+        <svg class="hero-svg herb" viewBox="0 0 220 582"><use href="#plant-full"/></svg>
+        <div class="emblem-cap">Qingxi Chuncheng · THU 2026</div>
+        <div class="emblem-sub">清系春城 · 支队总徽（反白）</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 2. 拼合关系示意 ===================== -->
+<section id="assembly">
+  <div class="wrap">
+    <div class="section-label">
+      <span class="no">02</span><span class="zh">可拼合 · 三段如何合一</span><span class="en">Assembly Logic</span>
+    </div>
+    <p class="lead">三枚组徽连接节点（茎节）对齐重合，自下而上接成整株：<span class="g">根</span> 接 <span class="g">茎</span> 接 <b>花</b>。</p>
+    <div class="assembly">
+      <div class="asm-piece">
+        <svg class="asm-ring herb" viewBox="0 0 220 220"><use href="#ring-round"/><use href="#seg-root"/></svg>
+        <div class="asm-lab">一组 · 根<small>Seed</small></div>
+      </div>
+      <div class="asm-op">＋</div>
+      <div class="asm-piece">
+        <svg class="asm-ring herb" viewBox="0 0 220 220"><use href="#ring-round"/><use href="#seg-stem"/></svg>
+        <div class="asm-lab">二组 · 茎<small>Craft</small></div>
+      </div>
+      <div class="asm-op">＋</div>
+      <div class="asm-piece">
+        <svg class="asm-ring herb" viewBox="0 0 220 220"><use href="#ring-round"/><use href="#seg-flower"/></svg>
+        <div class="asm-lab">三组 · 花<small>Nurture</small></div>
+      </div>
+      <div class="asm-op">＝</div>
+      <div class="asm-result">
+        <svg class="herb" viewBox="0 0 220 582"><use href="#plant-full"/></svg>
+        <div class="asm-lab">支队总徽<small>One Herb</small></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 3. 三段拆开 ===================== -->
+<section id="segments">
+  <div class="wrap">
+    <div class="section-label">
+      <span class="no">03</span><span class="zh">三段拆开 · 各自独立成徽</span><span class="en">Three Standalone Emblems</span>
+    </div>
+    <p class="lead">每段大尺寸圆形印记 + <b>200×200 / 120 / 64 小尺寸测试</b>，浅底 + 深底，重点验证：拆开后每段仍像一枚完整 logo，而非被切断的半截。</p>
+
+    <!-- 一组 根 -->
+    <div class="seg-block">
+      <div class="seg-main">
+        <svg class="seg-ring herb" viewBox="0 0 220 220"><use href="#ring-round"/><use href="#seg-root"/></svg>
+        <div class="seg-id"><div class="num">No.01 · Seed</div><div class="zh">一组 · <span class="verb">种</span></div></div>
+      </div>
+      <div class="seg-info">
+        <p class="seg-role">上游 · 中药材种植与农业转型</p>
+        <p class="seg-pos">在整株中的位置：<b>根 / 破土幼苗</b>。盘结道地根系托起子叶破土，土线点出"种在地里"。单独看是一枚萌发小徽；拼合时顶端节点接入茎段。</p>
+        <div class="size-test">
+          <div class="st-item"><div class="st-frame st-200"><svg class="herb" viewBox="0 0 220 220"><use href="#seg-root"/></svg></div><div class="st-cap">200 × 200 · 浅底</div></div>
+          <div class="st-item"><div class="st-frame st-120"><svg class="herb" viewBox="0 0 220 220"><use href="#seg-root"/></svg></div><div class="st-cap">120</div></div>
+          <div class="st-item"><div class="st-frame st-64"><svg class="herb" viewBox="0 0 220 220"><use href="#seg-root"/></svg></div><div class="st-cap">64</div></div>
+          <div class="st-item"><div class="st-frame st-200 dark on-dark"><svg class="herb" viewBox="0 0 220 220"><use href="#seg-root"/></svg></div><div class="st-cap">200 × 200 · 深底</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 二组 茎 -->
+    <div class="seg-block">
+      <div class="seg-main">
+        <svg class="seg-ring herb" viewBox="0 0 220 220"><use href="#ring-round"/><use href="#seg-stem"/></svg>
+        <div class="seg-id"><div class="num">No.02 · Craft</div><div class="zh">二组 · <span class="verb">制</span></div></div>
+      </div>
+      <div class="seg-info">
+        <p class="seg-role">中游 · 生物医药加工与产业带动</p>
+        <p class="seg-pos">在整株中的位置：<b>茎 / 中段</b>。最难一段——植物中段本是茎，却要读出"加工 / 炮制"：茎节处嵌入<b>药碾槽 + 碾盘</b>炮制母题，配提炼升华蒸气与炮制纹样，既像茎、又是一座"制"的工坊，且上下对叶令其单独成立。</p>
+        <div class="size-test">
+          <div class="st-item"><div class="st-frame st-200"><svg class="herb" viewBox="0 0 220 220"><use href="#seg-stem"/></svg></div><div class="st-cap">200 × 200 · 浅底</div></div>
+          <div class="st-item"><div class="st-frame st-120"><svg class="herb" viewBox="0 0 220 220"><use href="#seg-stem"/></svg></div><div class="st-cap">120</div></div>
+          <div class="st-item"><div class="st-frame st-64"><svg class="herb" viewBox="0 0 220 220"><use href="#seg-stem"/></svg></div><div class="st-cap">64</div></div>
+          <div class="st-item"><div class="st-frame st-200 dark on-dark"><svg class="herb" viewBox="0 0 220 220"><use href="#seg-stem"/></svg></div><div class="st-cap">200 × 200 · 深底</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 三组 花果 -->
+    <div class="seg-block">
+      <div class="seg-main">
+        <svg class="seg-ring herb" viewBox="0 0 220 220"><use href="#ring-round"/><use href="#seg-flower"/></svg>
+        <div class="seg-id"><div class="num">No.03 · Nurture</div><div class="zh">三组 · <span class="verb">养</span></div></div>
+      </div>
+      <div class="seg-info">
+        <p class="seg-role">下游 · 健康产品消费与民生改善</p>
+        <p class="seg-pos">在整株中的位置：<b>花 / 果 / 顶段</b>。轮生叶托起伞形花序（清华紫主花），下缀果实——开花结果即康养收获。花在顶端天然收口，单独看是一枚"成果"小徽；拼合时底端节点接入茎段。</p>
+        <div class="size-test">
+          <div class="st-item"><div class="st-frame st-200"><svg class="herb" viewBox="0 0 220 220"><use href="#seg-flower"/></svg></div><div class="st-cap">200 × 200 · 浅底</div></div>
+          <div class="st-item"><div class="st-frame st-120"><svg class="herb" viewBox="0 0 220 220"><use href="#seg-flower"/></svg></div><div class="st-cap">120</div></div>
+          <div class="st-item"><div class="st-frame st-64"><svg class="herb" viewBox="0 0 220 220"><use href="#seg-flower"/></svg></div><div class="st-cap">64</div></div>
+          <div class="st-item"><div class="st-frame st-200 dark on-dark"><svg class="herb" viewBox="0 0 220 220"><use href="#seg-flower"/></svg></div><div class="st-cap">200 × 200 · 深底</div></div>
+        </div>
+      </div>
+    </div>
+
+    <p class="test-note"><b>验证要点：</b>缩到 64px 时三段是否仍各自可辨——根段读"根 + 苗"，茎段读"茎 + 碾"，花果段读"花 + 果"。若某段在小尺寸糊成一团，需简化该段笔画（这正是本草样要副支队长定夺之处）。</p>
+  </div>
+</section>
+
+<!-- ===================== 4. 配色 / 线规 ===================== -->
+<section id="spec">
+  <div class="wrap">
+    <div class="section-label">
+      <span class="no">04</span><span class="zh">品牌规格 · 配色与线描</span><span class="en">Brand Spec</span>
+    </div>
+    <div class="spec-grid">
+      <div class="sw"><div class="chip" style="background:#660874"></div><div class="name">清华紫</div><div class="hex">#660874</div></div>
+      <div class="sw"><div class="chip" style="background:#3D7A4F"></div><div class="name">乡野绿</div><div class="hex">#3D7A4F</div></div>
+      <div class="sw"><div class="chip" style="background:#B8A578"></div><div class="name">古金</div><div class="hex">#B8A578</div></div>
+      <div class="sw"><div class="chip" style="background:#FAF8F5;border:1px solid #E4DED4"></div><div class="name">暖白纸</div><div class="hex">#FAF8F5</div></div>
+      <div class="sw"><div class="chip" style="background:#1A1A1A"></div><div class="name">墨色</div><div class="hex">#1A1A1A</div></div>
+    </div>
+    <p class="footnote">
+      <b>线描规格：</b>纯手工 SVG 矢量，无位图、无 AI 生图。主线 1.4px，细节 0.9–1.2px，圆头圆角（round cap / join），与《方案A_设计样板.html》本草母题同源。<br/>
+      <b>色彩分工：</b>主线墨色（深底转暖白反白）；根系子叶用乡野绿点田野；药碾炮制用古金点工艺；伞序主花用清华紫点品牌锚点。两套底（暖白 / 清华紫）经 <code>currentColor</code> + accent 类自动反白，离线可用。
+    </p>
+  </div>
+</section>
+
+<footer style="padding:36px 0 60px;">
+  <div class="wrap">
+    <p style="font-family:var(--latin);font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:#b7ae9c;margin:0;">
+      Qingxi Chuncheng · Group Emblem Concept 3 · One Herb Three Segments · prac-quarto · THU 2026
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>

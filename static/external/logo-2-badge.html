@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>清系春城 · 方案2 同构方寨 · 组徽可拼合 logo 系统</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif+SC:wght@300;400;500;600;700;900&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    /* —— 配色系统（严格 5 色） —— */
+    --c-purple:  #660874;  /* 清华紫 · 制（中游·科研） */
+    --c-green:   #3D7A4F;  /* 乡野绿 · 种（上游·种植） */
+    --c-paper:   #FAF8F5;  /* 暖白纸 · 底 */
+    --c-ink:     #1A1A1A;  /* 墨色 · 本草线描 */
+    --c-antique: #B8A578;  /* 古金 · 方寨框 / 养（下游） */
+    /* 衍生（仅深底提亮，不引入新色相） */
+    --c-purple-lt: #C79BD6;
+    --c-green-lt:  #7FB78F;
+    --c-gold-lt:   #DBCBA1;
+
+    --serif: "Noto Serif SC", serif;
+    --sans:  "Noto Sans SC", -apple-system, sans-serif;
+    --latin: "Cormorant Garamond", serif;
+    --maxw: 1080px;
+    --gutter: clamp(22px, 6vw, 88px);
+  }
+
+  *{ box-sizing:border-box; }
+  html{ -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; }
+  body{
+    margin:0; background:var(--c-paper); color:#3F3F3F;
+    font-family:var(--sans); font-weight:300; line-height:1.85;
+    background-image:radial-gradient(rgba(26,26,26,0.012) 1px, transparent 1px);
+    background-size:3px 3px;
+  }
+  .wrap{ max-width:var(--maxw); margin:0 auto; padding:0 var(--gutter); }
+
+  /* —— 页头 —— */
+  .masthead{ border-bottom:1px solid #E4DED4; padding:clamp(40px,7vw,84px) 0 clamp(26px,4vw,40px); }
+  .masthead .kicker{ font-family:var(--latin); font-size:13px; letter-spacing:.42em; text-transform:uppercase; color:var(--c-antique); margin:0 0 16px; }
+  .masthead h1{ font-family:var(--serif); font-weight:600; font-size:clamp(30px,5.2vw,52px); line-height:1.2; color:var(--c-ink); margin:0; letter-spacing:.04em; }
+  .masthead .sub{ font-family:var(--latin); font-style:italic; font-size:clamp(16px,2.3vw,21px); color:#3F3F3F; margin:12px 0 0; }
+  .masthead .meta{ margin-top:22px; font-size:12.5px; letter-spacing:.14em; color:#8d8576; font-family:var(--latin); text-transform:uppercase; }
+
+  /* —— 区块小标 —— */
+  section{ padding:clamp(52px,8vw,96px) 0; border-bottom:1px solid #E4DED4; }
+  .section-label{ display:flex; align-items:baseline; gap:18px; margin:0 0 clamp(30px,5vw,48px); }
+  .section-label .no{ font-family:var(--latin); font-size:15px; letter-spacing:.3em; color:var(--c-antique); font-style:italic; }
+  .section-label .zh{ font-family:var(--serif); font-weight:600; font-size:clamp(21px,3.2vw,28px); color:var(--c-ink); letter-spacing:.08em; }
+  .section-label .en{ font-family:var(--latin); font-size:13px; letter-spacing:.3em; text-transform:uppercase; color:#9a917f; margin-left:auto; align-self:center; }
+  .lede{ font-size:15.5px; color:#4a4a4a; max-width:64ch; margin:-12px 0 clamp(28px,4vw,44px); }
+  .lede b{ font-weight:500; color:var(--c-ink); }
+
+  /* ========== SVG 着色规则（同构方寨核心） ========== */
+  /* 框：方寨墙 + 四角望楼，统一古金；ink 线条用 currentColor；accent 用 --acc */
+  .badge-svg{ display:block; }
+  /* 全局类（不加祖先限定，确保可靠命中 <use> 影子树克隆内容） */
+  .wall{ stroke:var(--frame, var(--c-antique)); fill:none; }
+  .corner{ stroke:var(--frame, var(--c-antique)); fill:none; stroke-linecap:square; stroke-linejoin:miter; }
+  .ink{ stroke:currentColor; fill:none; stroke-linecap:round; stroke-linejoin:round; }
+  .acc{ stroke:var(--acc, var(--c-ink)); fill:none; stroke-linecap:round; stroke-linejoin:round; }
+  .flow{ stroke:var(--frame, var(--c-antique)); fill:none; stroke-linecap:round; }
+
+  /* 浅底：墨线 + 古金框 */
+  .ctx-light{ color:var(--c-ink); --frame:var(--c-antique); }
+  .ctx-light .b-seed{ --acc:var(--c-green); }
+  .ctx-light .b-make{ --acc:var(--c-purple); }
+  .ctx-light .b-care{ --acc:#9C8A5E; }   /* 养：古金略压暗，保证浅底对比 */
+
+  /* 深底：纸线 + 提亮古金框 + 提亮 accent */
+  .ctx-dark{ color:var(--c-paper); --frame:var(--c-gold-lt); }
+  .ctx-dark .b-seed{ --acc:var(--c-green-lt); }
+  .ctx-dark .b-make{ --acc:var(--c-purple-lt); }
+  .ctx-dark .b-care{ --acc:var(--c-gold-lt); }
+
+  /* ========== 合体总 logo ========== */
+  .hero-stage{ background:#fff; border:1px solid #E4DED4; padding:clamp(36px,5vw,64px) clamp(24px,4vw,56px); display:flex; flex-direction:column; align-items:center; gap:clamp(18px,3vw,30px); }
+  .hero-stage.dark{ background:var(--c-ink); border-color:#333; }
+  .combo-svg{ width:min(560px,92%); height:auto; }
+  /* 横版字标 */
+  .wordmark{ display:flex; flex-direction:column; align-items:center; gap:10px; }
+  .wordmark .zi{ font-family:var(--serif); font-weight:700; font-size:clamp(30px,5vw,46px); letter-spacing:.16em; line-height:1; }
+  .wordmark .zi .qx{ color:var(--c-purple); }
+  .wordmark .zi .cc{ color:var(--c-green); }
+  .hero-stage.dark .wordmark .zi .qx{ color:var(--c-purple-lt); }
+  .hero-stage.dark .wordmark .zi .cc{ color:var(--c-green-lt); }
+  .wordmark .en{ font-family:var(--latin); font-size:13px; letter-spacing:.5em; text-transform:uppercase; color:#8d8576; }
+  .hero-stage.dark .wordmark .en{ color:#a99f8c; }
+  .stage-cap{ font-size:12.5px; letter-spacing:.06em; color:#9a917f; margin-top:4px; }
+
+  .two-stage{ display:grid; grid-template-columns:1fr 1fr; gap:clamp(16px,3vw,28px); }
+  @media(max-width:820px){ .two-stage{ grid-template-columns:1fr; } }
+
+  /* ========== 三组徽拆开 ========== */
+  .group-grid{ display:grid; grid-template-columns:1fr; gap:clamp(20px,3vw,30px); }
+  .group-card{ background:#fff; border:1px solid #E4DED4; padding:clamp(26px,3.5vw,40px); display:grid; grid-template-columns:auto auto 1fr; gap:clamp(22px,4vw,48px); align-items:center; }
+  @media(max-width:760px){ .group-card{ grid-template-columns:1fr; justify-items:center; text-align:center; gap:24px; } }
+  .group-card .big{ width:240px; height:240px; }
+  .group-card .mini-wrap{ display:flex; flex-direction:column; align-items:center; gap:10px; }
+  .group-card .mini{ width:200px; height:200px; }   /* 200×200 实尺 · 角标 / 头像测试 */
+  .group-card .mini-tag{ font-family:var(--latin); font-size:10.5px; letter-spacing:.24em; text-transform:uppercase; color:#b7ae9c; }
+  .group-meta .role{ font-family:var(--latin); font-size:12px; letter-spacing:.28em; text-transform:uppercase; color:var(--c-antique); margin:0 0 6px; }
+  .group-meta h3{ font-family:var(--serif); font-weight:600; font-size:clamp(22px,3vw,28px); color:var(--c-ink); margin:0 0 4px; letter-spacing:.06em; }
+  .group-meta h3 .ch{ font-size:1.25em; }
+  .group-meta .flow-pos{ font-size:13px; color:#8d8576; margin:0 0 14px; letter-spacing:.04em; }
+  .group-meta .desc{ font-size:14.5px; color:#4a4a4a; line-height:1.8; margin:0; }
+  .group-meta .desc b{ color:var(--c-ink); font-weight:500; }
+  .pill{ display:inline-block; font-size:12px; padding:2px 11px; border-radius:999px; border:1px solid; margin-top:14px; letter-spacing:.06em; }
+  .pill.seed{ color:var(--c-green); border-color:var(--c-green); }
+  .pill.make{ color:var(--c-purple); border-color:var(--c-purple); }
+  .pill.care{ color:#9C8A5E; border-color:#B8A578; }
+
+  /* 浅深对照行 */
+  .contrast-row{ display:grid; grid-template-columns:1fr 1fr; gap:clamp(16px,3vw,28px); }
+  @media(max-width:680px){ .contrast-row{ grid-template-columns:1fr; } }
+  .ctile{ border:1px solid #E4DED4; padding:34px; display:flex; flex-direction:column; align-items:center; gap:16px; }
+  .ctile.light{ background:#fff; }
+  .ctile.dark{ background:var(--c-ink); border-color:#333; }
+  .ctile .t{ font-size:12px; letter-spacing:.2em; text-transform:uppercase; font-family:var(--latin); }
+  .ctile.light .t{ color:#9a917f; }
+  .ctile.dark .t{ color:#a99f8c; }
+  .ctile svg{ width:150px; height:150px; }
+
+  .note{ font-size:13px; color:#9a917f; margin-top:clamp(24px,4vw,40px); line-height:1.75; border-top:1px solid #E4DED4; padding-top:20px; }
+  .note b{ color:#6a6354; font-weight:500; }
+  footer{ padding:40px 0 64px; font-size:12px; color:#a59c8a; font-family:var(--latin); letter-spacing:.14em; text-align:center; }
+</style>
+</head>
+<body>
+
+<!-- ============ 隐藏 SVG 符号定义（手工矢量，0 0 200 200 网格） ============ -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+
+    <!-- 同构方寨：墙 + 四角望楼（单徽用，自洽密封） -->
+    <symbol id="fort-single" viewBox="0 0 200 200">
+      <!-- 寨墙（细，退后） -->
+      <rect class="wall" x="30" y="30" width="140" height="140" stroke-width="1" opacity="0.55"/>
+      <!-- 四角望楼 L 括线（粗，主特征） -->
+      <g class="corner" stroke-width="1.7">
+        <path d="M20 48 L20 20 L48 20"/>
+        <path d="M152 20 L180 20 L180 48"/>
+        <path d="M180 152 L180 180 L152 180"/>
+        <path d="M48 180 L20 180 L20 152"/>
+      </g>
+    </symbol>
+
+    <!-- 一组 · 种：破土嫩苗 + 种子 + 根系 -->
+    <symbol id="glyph-seed" viewBox="0 0 200 200">
+      <!-- 土线（微波，断续感） -->
+      <path class="ink" stroke-width="1.3" d="M56 128 Q78 123 100 127 T144 127"/>
+      <path class="ink" stroke-width="1.3" d="M64 133 q10 -3 20 -1" opacity="0.6"/>
+      <!-- 根系 -->
+      <g class="ink" stroke-width="1">
+        <path d="M100 142 C97 151 94 158 89 165"/>
+        <path d="M100 142 C100 152 100 159 100 168"/>
+        <path d="M100 142 C103 151 106 158 111 165"/>
+      </g>
+      <!-- 种子（杏仁形，墨线） -->
+      <path class="ink" stroke-width="1.2" d="M100 130 C107 132 107 140 100 142 C93 140 93 132 100 130 Z"/>
+      <!-- 主茎 + 子叶（绿） -->
+      <g class="acc" stroke-width="1.6">
+        <path d="M100 130 C99 114 99 96 100 78"/>
+        <!-- 左子叶 -->
+        <path d="M100 96 C84 94 73 86 69 72 C82 75 94 83 100 96 Z"/>
+        <!-- 右子叶 -->
+        <path d="M100 88 C116 86 127 78 131 64 C118 67 106 75 100 88 Z"/>
+        <!-- 顶芽 -->
+        <path d="M100 78 C99 71 100 65 102 61"/>
+      </g>
+      <!-- 叶脉（绿细） -->
+      <g class="acc" stroke-width="0.9" opacity="0.75">
+        <path d="M100 96 C91 90 82 84 73 76"/>
+        <path d="M100 88 C109 82 118 76 127 68"/>
+      </g>
+    </symbol>
+
+    <!-- 二组 · 制：研钵杵 + 提炼 -->
+    <symbol id="glyph-make" viewBox="0 0 200 200">
+      <!-- 钵（碗）墨线 -->
+      <g class="ink">
+        <path stroke-width="1.4" d="M60 116 Q100 108 140 116"/>
+        <path stroke-width="1.4" d="M60 116 Q100 124 140 116" opacity="0.55"/>
+        <path stroke-width="1.4" d="M64 118 C66 142 80 157 100 157 C120 157 134 142 136 118"/>
+        <path stroke-width="1.2" d="M86 160 Q100 164 114 160"/>
+      </g>
+      <!-- 杵（鼓棒）紫，斜入钵中 -->
+      <line class="acc" stroke-width="3.2" x1="90" y1="128" x2="127" y2="74"/>
+      <circle class="acc" cx="130" cy="69" r="7.5" fill="none" stroke-width="2.4"/>
+      <!-- 提炼颗粒（升腾） -->
+      <g class="acc" stroke-width="1.4">
+        <circle cx="98" cy="100" r="1.6"/>
+        <circle cx="108" cy="93" r="2"/>
+        <circle cx="91" cy="92" r="1.3"/>
+      </g>
+    </symbol>
+
+    <!-- 三组 · 养：捧叶 + 心叶 + 疗愈 -->
+    <symbol id="glyph-care" viewBox="0 0 200 200">
+      <!-- 双手/药碗（捧） 墨线 -->
+      <g class="ink" stroke-width="1.4">
+        <path d="M58 128 C66 153 84 164 100 164 C116 164 134 153 142 128"/>
+        <path d="M58 128 C54 124 52 118 54 113"/>
+        <path d="M142 128 C146 124 148 118 146 113"/>
+      </g>
+      <!-- 心叶（金） -->
+      <path class="acc" stroke-width="1.6" d="M100 122 C84 110 78 92 88 79 C93 72 100 71 100 71 C100 71 107 72 112 79 C122 92 116 110 100 122 Z"/>
+      <!-- 叶脉（金细） -->
+      <g class="acc" stroke-width="0.9" opacity="0.8">
+        <path d="M100 120 L100 76"/>
+        <path d="M100 108 L89 96"/>
+        <path d="M100 108 L111 96"/>
+        <path d="M100 96 L92 88"/>
+        <path d="M100 96 L108 88"/>
+      </g>
+      <!-- 疗愈微光 -->
+      <g class="acc" stroke-width="1.2" opacity="0.85">
+        <path d="M100 64 L100 57"/>
+        <path d="M88 67 L84 61"/>
+        <path d="M112 67 L116 61"/>
+      </g>
+    </symbol>
+
+    <!-- 合体总寨：3 格连墙 + 外角望楼（viewBox 600x200） -->
+    <symbol id="fort-combo" viewBox="0 0 600 200">
+      <!-- 外寨墙 -->
+      <rect class="wall" x="22" y="30" width="556" height="140" stroke-width="1" opacity="0.55"/>
+      <!-- 内墙（两道，分三格） -->
+      <line class="wall" x1="208" y1="34" x2="208" y2="166" stroke-width="1" opacity="0.45"/>
+      <line class="wall" x1="392" y1="34" x2="392" y2="166" stroke-width="1" opacity="0.45"/>
+      <!-- 四外角望楼 -->
+      <g class="corner" stroke-width="1.7">
+        <path d="M12 50 L12 20 L42 20"/>
+        <path d="M558 20 L588 20 L588 50"/>
+        <path d="M588 150 L588 180 L558 180"/>
+        <path d="M42 180 L12 180 L12 150"/>
+      </g>
+      <!-- 种→制→养 流向连接（内墙中点小箭） -->
+      <g class="flow" stroke-width="1.4" opacity="0.8">
+        <path d="M203 95 L210 100 L203 105"/>
+        <path d="M387 95 L394 100 L387 105"/>
+      </g>
+    </symbol>
+  </defs>
+</svg>
+
+<header class="masthead">
+  <div class="wrap">
+    <p class="kicker">Logo System · Proposal 02</p>
+    <h1>同构方寨 · 可拼合组徽系统</h1>
+    <p class="sub">Three seals, one stockade — 种 · 制 · 养</p>
+    <p class="meta">清华大学生命学院 · 清系春城 赴云南昆明晋宁区乡村振兴实践支队</p>
+  </div>
+</header>
+
+<!-- ============ 1. 合体总 logo ============ -->
+<section>
+  <div class="wrap">
+    <div class="section-label">
+      <span class="no">01</span><span class="zh">合体总标</span><span class="en">Unified Mark</span>
+    </div>
+    <p class="lede">三个组徽共享<b>同一套方寨框</b>（细寨墙 + 四角望楼括线，呼应方版 logo 的 corner-bracket）。合体时三格连成一道寨墙，仅外四角立望楼，内墙中点的小箭表达 <b>种 → 制 → 养</b> 的上中下游流向。下缀横版字标，即支队主标。</p>
+
+    <div class="hero-stage ctx-light">
+      <svg class="combo-svg badge-svg" viewBox="0 0 600 200" role="img" aria-label="清系春城合体总标">
+        <use href="#fort-combo"/>
+        <use class="b-seed" href="#glyph-seed" x="4"   y="0" width="200" height="200"/>
+        <use class="b-make" href="#glyph-make" x="200" y="0" width="200" height="200"/>
+        <use class="b-care" href="#glyph-care" x="396" y="0" width="200" height="200"/>
+      </svg>
+      <div class="wordmark">
+        <div class="zi"><span class="qx">清系</span><span class="cc">春城</span></div>
+        <div class="en">Qingxi · Chuncheng</div>
+      </div>
+      <div class="stage-cap">合体总标 · 浅底（头条 / 品牌主标）</div>
+    </div>
+
+    <div style="height:clamp(16px,3vw,28px)"></div>
+
+    <div class="hero-stage dark ctx-dark">
+      <svg class="combo-svg badge-svg" viewBox="0 0 600 200" role="img" aria-label="清系春城合体总标 深底">
+        <use href="#fort-combo"/>
+        <use class="b-seed" href="#glyph-seed" x="4"   y="0" width="200" height="200"/>
+        <use class="b-make" href="#glyph-make" x="200" y="0" width="200" height="200"/>
+        <use class="b-care" href="#glyph-care" x="396" y="0" width="200" height="200"/>
+      </svg>
+      <div class="wordmark">
+        <div class="zi"><span class="qx">清系</span><span class="cc">春城</span></div>
+        <div class="en">Qingxi · Chuncheng</div>
+      </div>
+      <div class="stage-cap" style="color:#a99f8c">合体总标 · 深底（深色封面 / 反白场景）</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 2. 三组徽拆开 ============ -->
+<section>
+  <div class="wrap">
+    <div class="section-label">
+      <span class="no">02</span><span class="zh">三组徽拆开</span><span class="en">Three Seals, Standalone</span>
+    </div>
+    <p class="lede">每个组徽<b>单独看都是一枚完整自洽的印记</b>——同一方寨框各立四角望楼，内置该组独有的本草线描符号。大尺寸用于组次条封面，<b>200×200 矢量在 120px 屏显下仍清晰可辨</b>，可直接作头像 / 角标。</p>
+
+    <div class="group-grid">
+
+      <!-- 一组 -->
+      <div class="group-card ctx-light">
+        <svg class="big badge-svg b-seed" viewBox="0 0 200 200" role="img" aria-label="一组组徽 种">
+          <use href="#fort-single"/><use href="#glyph-seed"/>
+        </svg>
+        <div class="mini-wrap">
+          <svg class="mini badge-svg b-seed" viewBox="0 0 200 200" role="img" aria-label="一组组徽 小尺寸">
+            <use href="#fort-single"/><use href="#glyph-seed"/>
+          </svg>
+          <span class="mini-tag">200 × 200 px</span>
+        </div>
+        <div class="group-meta">
+          <p class="role">Group A · Upstream</p>
+          <h3>一组 · <span class="ch">种</span></h3>
+          <p class="flow-pos">上游 · 中药材种植与农业转型</p>
+          <p class="desc">破土<b>嫩苗</b>顶出两片子叶，下接<b>种子</b>与<b>根系</b>，土线微断如田垄。乡野绿描线——一切产业自这一粒种子、这一畦药田破土而起。</p>
+          <span class="pill seed">乡野绿 #3D7A4F · 种</span>
+        </div>
+      </div>
+
+      <!-- 二组 -->
+      <div class="group-card ctx-light">
+        <svg class="big badge-svg b-make" viewBox="0 0 200 200" role="img" aria-label="二组组徽 制">
+          <use href="#fort-single"/><use href="#glyph-make"/>
+        </svg>
+        <div class="mini-wrap">
+          <svg class="mini badge-svg b-make" viewBox="0 0 200 200" role="img" aria-label="二组组徽 小尺寸">
+            <use href="#fort-single"/><use href="#glyph-make"/>
+          </svg>
+          <span class="mini-tag">200 × 200 px</span>
+        </div>
+        <div class="group-meta">
+          <p class="role">Group B · Midstream</p>
+          <h3>二组 · <span class="ch">制</span></h3>
+          <p class="flow-pos">中游 · 生物医药加工与产业带动</p>
+          <p class="desc"><b>研钵</b>承药，<b>杵</b>斜入其中，三粒颗粒升腾示<b>提炼 · 炮制</b>。清华紫点杵首——本草经科研之手，制成药、成产业。</p>
+          <span class="pill make">清华紫 #660874 · 制</span>
+        </div>
+      </div>
+
+      <!-- 三组 -->
+      <div class="group-card ctx-light">
+        <svg class="big badge-svg b-care" viewBox="0 0 200 200" role="img" aria-label="三组组徽 养">
+          <use href="#fort-single"/><use href="#glyph-care"/>
+        </svg>
+        <div class="mini-wrap">
+          <svg class="mini badge-svg b-care" viewBox="0 0 200 200" role="img" aria-label="三组组徽 小尺寸">
+            <use href="#fort-single"/><use href="#glyph-care"/>
+          </svg>
+          <span class="mini-tag">200 × 200 px</span>
+        </div>
+        <div class="group-meta">
+          <p class="role">Group C · Downstream</p>
+          <h3>三组 · <span class="ch">养</span></h3>
+          <p class="flow-pos">下游 · 健康康养消费与民生改善</p>
+          <p class="desc">双手如<b>药碗</b>，捧起一枚<b>心叶</b>，叶顶三缕微光示<b>疗愈</b>。古金描线——产业终点回到人，落在康养与民生的暖意上。</p>
+          <span class="pill care">古金 #B8A578 · 养</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ 3. 浅底 / 深底对照 ============ -->
+<section style="border-bottom:none;">
+  <div class="wrap">
+    <div class="section-label">
+      <span class="no">03</span><span class="zh">浅底 · 深底</span><span class="en">Light / Dark Test</span>
+    </div>
+    <p class="lede">同一矢量在两种底色下均成立：浅底取墨线 + 古金框，深底转纸线 + 提亮古金框，组色（绿 / 紫 / 金）按底色微调亮度，色相不变。</p>
+
+    <div class="contrast-row">
+      <div class="ctile light ctx-light">
+        <span class="t">Light · 二组 制</span>
+        <svg class="badge-svg b-make" viewBox="0 0 200 200" role="img" aria-label="二组 浅底">
+          <use href="#fort-single"/><use href="#glyph-make"/>
+        </svg>
+      </div>
+      <div class="ctile dark ctx-dark">
+        <span class="t">Dark · 一组 种</span>
+        <svg class="badge-svg b-seed" viewBox="0 0 200 200" role="img" aria-label="一组 深底">
+          <use href="#fort-single"/><use href="#glyph-seed"/>
+        </svg>
+      </div>
+    </div>
+
+    <div style="height:clamp(16px,3vw,28px)"></div>
+
+    <!-- 深底三连，验证整套深色一致性 -->
+    <div class="hero-stage dark ctx-dark">
+      <div style="display:flex; gap:clamp(20px,5vw,56px); flex-wrap:wrap; justify-content:center;">
+        <svg width="140" height="140" class="badge-svg b-seed" viewBox="0 0 200 200" role="img" aria-label="一组深底"><use href="#fort-single"/><use href="#glyph-seed"/></svg>
+        <svg width="140" height="140" class="badge-svg b-make" viewBox="0 0 200 200" role="img" aria-label="二组深底"><use href="#fort-single"/><use href="#glyph-make"/></svg>
+        <svg width="140" height="140" class="badge-svg b-care" viewBox="0 0 200 200" role="img" aria-label="三组深底"><use href="#fort-single"/><use href="#glyph-care"/></svg>
+      </div>
+      <div class="stage-cap" style="color:#a99f8c">深底三连 · 种 / 制 / 养</div>
+    </div>
+
+    <p class="note">
+      <b>双重约束验证.</b> 单看——每枚组徽自带四角望楼，是密封自洽的印记，可独立作组次条封面 / banner / 头像。<br>
+      合体——三格共用同一方寨框，连成一道寨墙，仅外四角立楼、内墙中点以小箭串起 种→制→养，加横版字标即支队主标。<br>
+      <b>同构.</b> 三徽框完全一致（同一 <code>#fort-single</code> 符号），仅内部符号与组色不同，保证体系感与可识别性兼得。<br>
+      <b>技术.</b> 纯手工 SVG 矢量，<code>&lt;symbol&gt;</code> + <code>&lt;use&gt;</code> 复用，无位图、无 AI 生图；任意缩放无损，单文件离线可用。
+    </p>
+  </div>
+</section>
+
+<footer>QINGXI · CHUNCHENG &nbsp;—&nbsp; 形象设计 / 组徽探索 / 方案2 同构方寨</footer>
+
+</body>
+</html>

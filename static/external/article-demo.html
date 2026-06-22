@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>清系春城 · 方案A · 单篇推文 demo（含开篇题图）</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif+SC:wght@300;400;500;600;700;900&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    /* —— 配色系统（严格沿用 方案A_设计样板.html） —— */
+    --c-purple:  #660874;
+    --c-green:   #3D7A4F;
+    --c-gold:    #D4A843;
+    --c-clay:    #C4956A;
+    --c-antique: #B8A578;
+    --c-paper:   #FAF8F5;
+    --c-ink:     #1A1A1A;
+    --c-body:    #3F3F3F;
+    --c-line:    #E4DED4;
+
+    --serif: "Noto Serif SC", serif;
+    --sans:  "Noto Sans SC", -apple-system, sans-serif;
+    --latin: "Cormorant Garamond", serif;
+  }
+
+  *{ box-sizing:border-box; }
+  html{ -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; }
+  body{
+    margin:0;
+    background:#ECE6DC;
+    color:var(--c-body);
+    font-family:var(--sans);
+    font-weight:300;
+    line-height:1.9;
+    background-image:radial-gradient(rgba(26,26,26,0.02) 1px, transparent 1px);
+    background-size:3px 3px;
+    padding:40px 16px 80px;
+  }
+
+  /* —— 演示页页眉（非推文内容，仅供副支队长看） —— */
+  .demo-head{ max-width:560px; margin:0 auto 14px; }
+  .demo-head .k{ font-family:var(--latin); font-size:12px; letter-spacing:.34em; text-transform:uppercase; color:var(--c-antique); margin:0; }
+  .demo-head h1{ font-family:var(--serif); font-weight:600; font-size:22px; color:var(--c-ink); letter-spacing:.06em; margin:8px 0 6px; }
+  .demo-head p{ font-size:13px; color:#8d8576; line-height:1.7; margin:0; }
+
+  /* —— 信息流缩略图（订阅列表里长这样，900×383 大封面） —— */
+  .feed-block{ max-width:480px; margin:30px auto 50px; }
+  .feed-label{ display:flex; align-items:center; gap:10px; margin:0 0 14px; }
+  .feed-label .dot{ width:7px; height:7px; border-radius:50%; background:var(--c-gold); flex-shrink:0; }
+  .feed-label .zh{ font-family:var(--serif); font-weight:600; font-size:15px; color:var(--c-ink); letter-spacing:.06em; }
+  .feed-label .en{ font-family:var(--latin); font-size:11px; letter-spacing:.26em; text-transform:uppercase; color:#9a917f; margin-left:auto; }
+
+  .cover{ position:relative; width:100%; aspect-ratio:900 / 383; overflow:hidden; border:1px solid var(--c-line); background:var(--c-paper); }
+  .cover-inner{ position:absolute; inset:0; padding:22px 26px; display:flex; flex-direction:column; }
+  .cover .eyebrow{ font-family:var(--latin); font-size:11px; letter-spacing:.34em; text-transform:uppercase; color:var(--c-antique); }
+  .cover .ttl{ font-family:var(--serif); font-weight:700; font-size:30px; line-height:1.16; letter-spacing:.04em; color:var(--c-ink); margin:auto 0 4px; max-width:72%; }
+  .cover .ttl .accent{ color:var(--c-purple); }
+  .cover .ssub{ font-family:var(--serif); font-weight:400; font-size:14px; color:var(--c-green); letter-spacing:.05em; margin:0 0 10px; }
+  .cover .date{ font-family:var(--latin); font-size:12px; letter-spacing:.2em; color:#8d8576; }
+  .cover .bot-corner{ position:absolute; top:16px; right:20px; width:86px; height:auto; color:var(--c-ink); opacity:.9; }
+  .feed-cap{ font-size:11.5px; color:#9a917f; letter-spacing:.04em; margin:10px 2px 0; line-height:1.6; }
+
+  /* ===================== 手机框 ===================== */
+  .phone{
+    width:422px; max-width:100%; margin:0 auto;
+    background:#161616; border-radius:48px; padding:13px;
+    box-shadow:0 34px 70px rgba(26,26,26,.30), 0 10px 22px rgba(26,26,26,.18);
+  }
+  .phone-screen{
+    position:relative; background:var(--c-paper);
+    border-radius:36px; overflow:hidden;
+    height:min(816px, 82vh); display:flex; flex-direction:column;
+  }
+  /* iOS 状态栏 */
+  .statusbar{
+    flex-shrink:0; height:42px; padding:0 26px 0 30px;
+    display:flex; align-items:center; justify-content:space-between;
+    background:#fff; font-family:var(--sans); font-size:13px; font-weight:500; color:#1a1a1a;
+  }
+  .statusbar .time{ letter-spacing:.02em; }
+  .statusbar .icons{ display:flex; align-items:center; gap:6px; }
+  .statusbar .icons svg{ display:block; }
+  /* 微信公众号顶栏 */
+  .wxbar{
+    flex-shrink:0; height:46px; padding:0 14px;
+    display:flex; align-items:center; gap:10px;
+    background:#fff; border-bottom:1px solid #ededed;
+  }
+  .wxbar .back{ width:11px; height:18px; color:#181818; flex-shrink:0; }
+  .wxbar .acct{ flex:1; text-align:center; font-family:var(--sans); font-size:15px; font-weight:500; color:#181818; letter-spacing:.04em; }
+  .wxbar .more{ font-size:18px; color:#181818; letter-spacing:.06em; line-height:1; padding-right:2px; }
+  /* 可滚动正文区 */
+  .screen{ flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch; background:#fff; }
+  .screen::-webkit-scrollbar{ width:0; }
+
+  /* ========== ① 开篇题图（扉页 · 重点） ========== */
+  .frontis{
+    position:relative; padding:30px 20px 26px; text-align:center;
+    background:
+      radial-gradient(120% 80% at 50% 0%, #FDFCFA 0%, var(--c-paper) 70%);
+    border-bottom:1px solid var(--c-line);
+  }
+  .frontis .plate{
+    position:relative; margin:0 auto; max-width:300px;
+    border:1px solid var(--c-antique);
+    padding:26px 18px 20px;
+    background:
+      repeating-linear-gradient(0deg, transparent 0 26px, rgba(184,165,120,0.05) 26px 27px);
+  }
+  .frontis .plate::before, .frontis .plate::after{
+    content:""; position:absolute; width:13px; height:13px; border:1px solid var(--c-antique);
+  }
+  .frontis .plate::before{ top:-1px; left:-1px; border-right:0; border-bottom:0; }
+  .frontis .plate::after{ bottom:-1px; right:-1px; border-left:0; border-top:0; }
+  .frontis .corner2{ position:absolute; width:13px; height:13px; border:1px solid var(--c-antique); }
+  .frontis .corner-tr{ top:-1px; right:-1px; border-left:0; border-bottom:0; }
+  .frontis .corner-bl{ bottom:-1px; left:-1px; border-right:0; border-top:0; }
+  .frontis .sanqi{ width:152px; height:auto; color:var(--c-ink); display:block; margin:0 auto; }
+  .frontis .latin{
+    font-family:var(--latin); font-style:italic; font-weight:500; font-size:19px;
+    color:var(--c-clay); letter-spacing:.02em; margin:12px 0 0;
+  }
+  .frontis .rule{
+    width:46px; height:1px; background:var(--c-antique); margin:12px auto 0; opacity:.7;
+  }
+  .frontis .kicker-small{
+    font-family:var(--serif); font-weight:500; font-size:12.5px; color:var(--c-green);
+    letter-spacing:.16em; margin:11px 0 0;
+  }
+  .frontis .replace{
+    display:inline-block; margin:16px auto 0; padding:4px 12px;
+    border:1px dashed var(--c-clay); border-radius:2px;
+    font-family:var(--sans); font-size:10px; color:#b29475; letter-spacing:.06em;
+  }
+  .frontis .art-title{
+    font-family:var(--serif); font-weight:700; font-size:21px; line-height:1.42;
+    color:var(--c-ink); letter-spacing:.03em; margin:24px 6px 2px;
+  }
+  .frontis .art-title .col{ color:var(--c-purple); }
+
+  /* ========== ② 头部 banner ========== */
+  .banner{
+    background:var(--c-purple); color:#fff; padding:18px 22px;
+    display:flex; align-items:center; justify-content:space-between; gap:14px;
+  }
+  .banner .b-zh{ font-family:var(--serif); font-weight:600; font-size:18px; letter-spacing:.12em; }
+  .banner .b-en{ font-family:var(--latin); font-size:10.5px; letter-spacing:.32em; text-transform:uppercase; color:#e0cbe6; margin-top:5px; }
+  .banner .b-sprout{ width:34px; height:50px; color:var(--c-gold); flex-shrink:0; }
+
+  /* ========== ③ 正文 ========== */
+  .body{ padding:26px 22px 8px; }
+  .art-eyebrow{ font-family:var(--latin); font-size:11.5px; letter-spacing:.3em; text-transform:uppercase; color:var(--c-antique); margin:0 0 16px 2px; }
+  .art-p{ font-family:var(--sans); font-weight:300; font-size:15.5px; color:var(--c-body); line-height:2.0; margin:20px 0; }
+  .art-p .lead{ font-family:var(--serif); font-weight:500; color:var(--c-ink); }
+
+  /* 纪实照片占位框 */
+  .placebox{
+    border:1px dashed var(--c-clay); color:var(--c-clay); background:#FBF6EE;
+    padding:30px 18px; text-align:center; margin:26px 0;
+    display:flex; flex-direction:column; align-items:center; gap:9px;
+    border-radius:2px;
+  }
+  .placebox.tall{ padding:54px 18px; }
+  .placebox .pb-leaf{ width:40px; height:40px; opacity:.65; }
+  .placebox .pb-t{ font-family:var(--serif); font-size:13.5px; color:var(--c-clay); letter-spacing:.06em; }
+  .placebox .pb-s{ font-size:11px; color:#b29475; letter-spacing:.03em; line-height:1.6; }
+
+  /* ④ 茎蔓分割线 */
+  .divider{ display:flex; align-items:center; justify-content:center; margin:34px 0; color:var(--c-antique); }
+  .divider svg{ width:75%; height:auto; }
+
+  /* ⑤ 稻金引用区块 */
+  .quote{
+    position:relative; margin:30px 0; padding:6px 0 6px 22px;
+    border-left:2px solid var(--c-gold);
+    font-family:var(--serif); font-weight:400; font-size:18px; line-height:1.72;
+    color:var(--c-green); letter-spacing:.03em;
+  }
+  .quote .leaf{ position:absolute; top:-4px; left:-13px; width:22px; height:22px; color:var(--c-gold); background:#fff; }
+  .quote .src{ display:block; font-family:var(--latin); font-style:italic; font-size:13.5px; color:#9a917f; margin-top:10px; letter-spacing:.04em; }
+
+  /* 一图一语 图说 */
+  .figcap{ font-family:var(--sans); font-size:11.5px; color:#9a917f; text-align:center; letter-spacing:.04em; margin:-14px 0 26px; line-height:1.7; }
+
+  /* ⑦ 尾部签名区 */
+  .signoff{ padding:6px 22px 30px; }
+  .sign{
+    margin-top:18px; padding-top:22px; border-top:1px solid var(--c-line);
+    display:flex; align-items:flex-start; gap:13px;
+  }
+  .sign .s-sprout{ width:30px; height:44px; color:var(--c-green); flex-shrink:0; margin-top:2px; }
+  .sign .s-txt{ font-size:12px; color:#8d8576; line-height:1.85; letter-spacing:.03em; }
+  .sign .s-txt b{ color:var(--c-purple); font-weight:500; font-family:var(--serif); letter-spacing:.08em; font-size:13px; }
+  .sign .s-txt .org{ color:var(--c-ink); font-weight:400; }
+
+  /* 平台引导（关注条） */
+  .follow{
+    margin:22px 0 8px; padding:16px 18px; background:var(--c-paper);
+    border:1px solid var(--c-line); border-radius:3px;
+    display:flex; align-items:center; gap:13px;
+  }
+  .follow .logo{
+    width:46px; height:46px; flex-shrink:0; border:1px solid var(--c-antique);
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px; position:relative;
+  }
+  .follow .logo svg{ width:16px; height:22px; color:var(--c-green); }
+  .follow .logo .lz{ font-family:var(--serif); font-weight:700; font-size:9px; line-height:1.05; text-align:center; }
+  .follow .logo .lz .q{ color:var(--c-purple); } .follow .logo .lz .c{ color:var(--c-green); }
+  .follow .f-txt{ flex:1; }
+  .follow .f-name{ font-family:var(--serif); font-weight:600; font-size:14px; color:var(--c-ink); letter-spacing:.1em; }
+  .follow .f-sub{ font-size:11px; color:#9a917f; margin-top:3px; letter-spacing:.02em; }
+  .follow .f-btn{
+    font-family:var(--sans); font-size:12px; color:#fff; background:var(--c-purple);
+    padding:6px 14px; border-radius:14px; letter-spacing:.08em; white-space:nowrap;
+  }
+  .end-mark{ text-align:center; font-family:var(--latin); font-size:11px; letter-spacing:.34em; text-transform:uppercase; color:#b6a987; margin:4px 0 0; }
+</style>
+</head>
+<body>
+
+<!-- ===== 植物线描母题（手写 SVG，沿用设计样板，currentColor 上色） ===== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <!-- 嫩芽 -->
+    <symbol id="m-sprout" viewBox="0 0 64 100">
+      <g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M32 98 C32 80 30 64 33 46 C34 38 35 33 38 29"/>
+        <path d="M32.5 64 C21 63 13 55 13.5 44 C23 47 30 54 32.5 64"/>
+        <path d="M14.5 46 C21 50 27 56 31 62"/>
+        <path d="M33 52 C45 49 52 40 51 29 C41 33 34 41 33 52"/>
+        <path d="M49.5 31 C43 36 38 43 34 50"/>
+        <path d="M38 29 C39 24 42 22 45 22 C44 26 41 28 38 30"/>
+      </g>
+    </symbol>
+    <!-- 三七 -->
+    <symbol id="m-sanqi" viewBox="0 0 140 200">
+      <g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M70 198 C70 168 69 140 70 112"/>
+        <path d="M70 112 C56 110 40 108 24 100"/>
+        <g>
+          <path d="M24 100 C15 92 11 82 12 72"/>
+          <path d="M24 100 C19 89 17 79 18 68"/>
+          <path d="M24 100 C26 88 28 78 31 69"/>
+          <path d="M24 100 C33 92 41 86 50 83"/>
+          <path d="M24 100 C36 99 47 99 57 96"/>
+        </g>
+        <path d="M70 112 C84 110 100 108 116 100"/>
+        <g>
+          <path d="M116 100 C125 92 129 82 128 72"/>
+          <path d="M116 100 C121 89 123 79 122 68"/>
+          <path d="M116 100 C114 88 112 78 109 69"/>
+          <path d="M116 100 C107 92 99 86 90 83"/>
+          <path d="M116 100 C104 99 93 99 83 96"/>
+        </g>
+        <path d="M70 112 C70 96 70 80 70 62"/>
+        <g stroke-width="1.2">
+          <path d="M70 62 C62 56 55 50 50 42"/>
+          <path d="M70 62 C66 53 62 45 60 36"/>
+          <path d="M70 62 C70 52 70 43 70 33"/>
+          <path d="M70 62 C74 53 78 45 80 36"/>
+          <path d="M70 62 C78 56 85 50 90 42"/>
+        </g>
+        <g fill="currentColor" stroke="none">
+          <circle cx="50" cy="41" r="3"/>
+          <circle cx="60" cy="35" r="3"/>
+          <circle cx="70" cy="32" r="3"/>
+          <circle cx="80" cy="35" r="3"/>
+          <circle cx="90" cy="41" r="3"/>
+        </g>
+      </g>
+    </symbol>
+    <!-- 横向茎蔓分隔线 -->
+    <symbol id="m-divider" viewBox="0 0 360 56">
+      <g fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6 28 C70 28 110 28 150 28"/>
+        <path d="M354 28 C290 28 250 28 210 28"/>
+        <path d="M120 28 C112 20 104 16 96 16 C104 22 112 26 120 28"/>
+        <path d="M120 28 C112 36 104 40 96 40 C104 34 112 30 120 28"/>
+        <path d="M150 28 C144 22 138 19 132 19 C138 23 144 26 150 28"/>
+        <path d="M150 28 C144 34 138 37 132 37 C138 33 144 30 150 28"/>
+        <path d="M240 28 C248 20 256 16 264 16 C256 22 248 26 240 28"/>
+        <path d="M240 28 C248 36 256 40 264 40 C256 34 248 30 240 28"/>
+        <path d="M210 28 C216 22 222 19 228 19 C222 23 216 26 210 28"/>
+        <path d="M210 28 C216 34 222 37 228 37 C222 33 216 30 210 28"/>
+        <g stroke-width="1.1">
+          <path d="M180 28 C174 22 170 16 168 9"/>
+          <path d="M180 28 C179 21 178 14 178 7"/>
+          <path d="M180 28 C181 21 182 14 182 7"/>
+          <path d="M180 28 C186 22 190 16 192 9"/>
+          <path d="M180 28 C180 36 180 44 180 50"/>
+        </g>
+        <g fill="currentColor" stroke="none">
+          <circle cx="168" cy="8" r="2.4"/>
+          <circle cx="178" cy="6" r="2.4"/>
+          <circle cx="182" cy="6" r="2.4"/>
+          <circle cx="192" cy="8" r="2.4"/>
+          <circle cx="180" cy="51" r="2.2"/>
+        </g>
+      </g>
+    </symbol>
+    <!-- 单叶角标 -->
+    <symbol id="m-leaf" viewBox="0 0 64 64">
+      <g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M10 56 C18 36 34 16 56 8 C50 30 38 50 14 60 C12 59 11 58 10 56 Z"/>
+        <path d="M14 58 C26 44 42 26 54 12"/>
+        <path d="M22 46 C28 44 33 41 37 36" stroke-width="1"/>
+        <path d="M28 38 C34 36 39 33 43 28" stroke-width="1"/>
+        <path d="M34 30 C39 28 44 25 48 20" stroke-width="1"/>
+      </g>
+    </symbol>
+  </defs>
+</svg>
+
+<!-- ===== 演示页页眉（非推文内容） ===== -->
+<div class="demo-head">
+  <p class="k">Single Article Demo · Plan A</p>
+  <h1>方案 A · 单篇推文 demo（含开篇题图）</h1>
+  <p>植物志编辑风 · 示例文章「7/13 走进云南白药」（集体单篇，主角草＝三七）。先看订阅列表缩略图，再看手机框内从扉页到结尾的完整阅读效果。所有插图为纯手工 SVG 线描占位，<b>最终题图替换为 AI 生成的精细图版</b>。</p>
+</div>
+
+<!-- ===== 信息流缩略图（订阅列表里长这样） ===== -->
+<div class="feed-block">
+  <div class="feed-label">
+    <span class="dot"></span>
+    <span class="zh">订阅列表里长这样</span>
+    <span class="en">Feed Cover · 900×383</span>
+  </div>
+  <div class="cover">
+    <svg class="bot-corner"><use href="#m-sanqi"/></svg>
+    <div class="cover-inner">
+      <div class="eyebrow">清系春城 · 田野日志　No.07</div>
+      <h2 class="ttl">一株三七的<span class="accent">现代旅程</span></h2>
+      <p class="ssub">走进云南白药 · 从田间到制药车间的一天</p>
+      <div class="date">2026.07.13　|　全队同行 · 中药材产业链</div>
+    </div>
+  </div>
+  <p class="feed-cap">↑ 公众号大封面 2.35:1，三七横版线描叠标题。点开后即进入下方手机框内的文章。</p>
+</div>
+
+<!-- ===== 手机框 ===== -->
+<div class="phone">
+  <div class="phone-screen">
+
+    <!-- iOS 状态栏 -->
+    <div class="statusbar">
+      <span class="time">9:41</span>
+      <span class="icons">
+        <!-- 信号 -->
+        <svg width="17" height="11" viewBox="0 0 17 11" fill="#1a1a1a"><rect x="0" y="7" width="3" height="4" rx="1"/><rect x="4.5" y="5" width="3" height="6" rx="1"/><rect x="9" y="2.5" width="3" height="8.5" rx="1"/><rect x="13.5" y="0" width="3" height="11" rx="1"/></svg>
+        <!-- wifi -->
+        <svg width="16" height="11" viewBox="0 0 16 11" fill="none" stroke="#1a1a1a" stroke-width="1.4" stroke-linecap="round"><path d="M2 4 C5 1.5 11 1.5 14 4"/><path d="M4 6.5 C6 4.8 10 4.8 12 6.5"/><path d="M6 9 C7 8.1 9 8.1 10 9"/></svg>
+        <!-- 电池 -->
+        <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3" stroke="#1a1a1a" opacity="0.4"/><rect x="2" y="2" width="16" height="8" rx="1.6" fill="#1a1a1a"/><rect x="23" y="4" width="2" height="4" rx="1" fill="#1a1a1a" opacity="0.4"/></svg>
+      </span>
+    </div>
+
+    <!-- 微信公众号顶栏 -->
+    <div class="wxbar">
+      <svg class="back" viewBox="0 0 11 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 1 L2 9 L9 17"/></svg>
+      <span class="acct">清系春城</span>
+      <span class="more">···</span>
+    </div>
+
+    <!-- 可滚动正文区 -->
+    <div class="screen">
+
+      <!-- ① 开篇题图 · 扉页（重点） -->
+      <div class="frontis">
+        <div class="plate">
+          <span class="corner2 corner-tr"></span>
+          <span class="corner2 corner-bl"></span>
+          <svg class="sanqi" viewBox="0 0 140 200"><use href="#m-sanqi"/></svg>
+          <p class="latin">Panax notoginseng</p>
+          <div class="rule"></div>
+          <p class="kicker-small">本草手记 · 三七 · 白药的草本起点</p>
+        </div>
+        <span class="replace">此处最终替换为 AI 生成的精细图版</span>
+        <h1 class="art-title">清系春城 · 田野日志 ｜ 走进云南白药：<br/>一株三七的<span class="col">现代旅程</span></h1>
+      </div>
+
+      <!-- ② 头部 banner -->
+      <div class="banner">
+        <div>
+          <div class="b-zh">清系春城 · 田野日志</div>
+          <div class="b-en">Qingxi Chuncheng · Field Notes</div>
+        </div>
+        <svg class="b-sprout"><use href="#m-sprout"/></svg>
+      </div>
+
+      <!-- ③ 正文 -->
+      <div class="body">
+        <p class="art-eyebrow">Field Notes · No.07 · 走进云南白药</p>
+
+        <p class="art-p"><span class="lead">七月的滇中，雨水把空气泡得发软。</span>我们从晋宁的药田一路向北，进了一家以三七为主料的制药企业。从田垄到无菌车间，一株草要走的路，被压缩进了这一整天。临行前我们都以为，这趟看的是「工厂」；走完才明白，看的其实是同一株三七，在不同人手里被一次次重新对待。</p>
+
+        <!-- 纪实照片位 · 大图（一图一语：进厂） -->
+        <div class="placebox tall">
+          <svg class="pb-leaf"><use href="#m-leaf"/></svg>
+          <div class="pb-t">纪实照片位 · 厂区入口 / 原料仓外景</div>
+          <div class="pb-s">横构图，占正文满宽 · 建议晨光斜射、留出标牌细节</div>
+        </div>
+        <p class="figcap">— 清晨的原料仓，药材的清苦味先于人抵达。</p>
+
+        <p class="art-p">上午先看的是原料仓。讲解员推开仓门，一股略带土腥的清苦味扑面而来。成捆的三七根按等级码在货架上，标签写着产地、采收年份与含水率。她说，三七讲究「道地」——同样一味药，种在不同的坡向、不同的海拔，有效成分能差出一截；为此企业把种植规范一直延伸到田间，和农户签了订单，按标准种、按等级收。一句「按等级收」，背后是山那头无数个清晨的弯腰。</p>
+
+        <p class="art-p">我们顺着流程往下走。清洗、分选、低温干燥、超微粉碎，每一道工序前都立着一块看板，写着温度、时间和允许的误差范围。一位技术员指着粉碎机说，三七的有效成分怕热，所以这里用控温工艺，宁可慢一点，也要把活性留住。隔着玻璃看车间里穿白衣的人安静走动，机器的低鸣盖过了说话声——和上午药田里此起彼伏的虫鸣，是两种完全不同的节奏。</p>
+
+        <!-- ④ 茎蔓分割线 -->
+        <div class="divider"><svg><use href="#m-divider"/></svg></div>
+
+        <p class="art-p">让我们停下脚步的，是质检区。一排排棕色样品瓶在灯下列开，检测员用仪器读出每一批的成分图谱，曲线的起伏被换算成一串数字，决定这批药材能不能往下走。带队老师说，正是这条看不见的数据链，把「地里长出来的」和「货架上卖的」接到了一起：农户的一锄一犁，终要在这里被翻译成可以被信任的标准。</p>
+
+        <!-- ⑤ 稻金引用区块 -->
+        <blockquote class="quote">
+          <svg class="leaf"><use href="#m-leaf"/></svg>
+          我们做的事，说到底，是把一株草的好处，稳稳当当地留到瓶子里。
+          <span class="src">—— 白药集团 · 一位工程师</span>
+        </blockquote>
+
+        <!-- ⑥ 配图节奏：大图 → 文字 → 大图 -->
+        <div class="placebox tall">
+          <svg class="pb-leaf"><use href="#m-leaf"/></svg>
+          <div class="pb-t">纪实照片位 · 质检台 / 成分图谱特写</div>
+          <div class="pb-s">竖构图或近景 · 突出仪器读数与样品瓶的秩序感</div>
+        </div>
+        <p class="figcap">— 一条看不见的曲线，连起了田垄与货架。</p>
+
+        <p class="art-p">走出厂区时已近黄昏。回望那片连着药田的厂房，忽然觉得「乡村振兴」这四个字并不抽象：它可能就是田里那株被认真对待的三七，是车间里被控住的几度温差，是质检台上被反复确认的那条曲线。一株草从泥土里长出来，又被现代工艺重新讲述了一遍——这中间的每一步，都连着山那头种药人的日子。</p>
+
+        <div class="placebox tall">
+          <svg class="pb-leaf"><use href="#m-leaf"/></svg>
+          <div class="pb-t">纪实照片位 · 黄昏厂区全景 / 队员背影</div>
+          <div class="pb-s">横构图收尾 · 暖调，呼应开篇晨光，形成一天的闭环</div>
+        </div>
+        <p class="figcap">— 一天结束，三七的旅程仍在继续。</p>
+      </div>
+
+      <!-- ⑦ 尾部签名区 -->
+      <div class="signoff">
+        <div class="sign">
+          <svg class="s-sprout"><use href="#m-sprout"/></svg>
+          <div class="s-txt">
+            <b>清系春城</b> · 田野日志 No.07<br/>
+            撰文 / 摄影 · 田野记录小组　视觉 · 清系春城<br/>
+            <span class="org">清华大学中国农村研究院 2026 年暑期农村调研</span><br/>
+            <span class="org">清华大学学生社会实践</span>
+          </div>
+        </div>
+
+        <!-- 平台引导 -->
+        <div class="follow">
+          <div class="logo">
+            <svg><use href="#m-sprout"/></svg>
+            <div class="lz"><span class="q">清系</span><span class="c">春城</span></div>
+          </div>
+          <div class="f-txt">
+            <div class="f-name">清系春城</div>
+            <div class="f-sub">记录一条从药田到货架的振兴路</div>
+          </div>
+          <div class="f-btn">关注</div>
+        </div>
+        <p class="end-mark">· Qingxi Chuncheng ·</p>
+      </div>
+
+    </div><!-- /.screen -->
+  </div><!-- /.phone-screen -->
+</div><!-- /.phone -->
+
+</body>
+</html>
