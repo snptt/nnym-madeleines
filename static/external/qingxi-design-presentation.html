@@ -1,0 +1,1235 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>清系春城 · 视觉设计展示 · 方案A</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif+SC:wght@300;400;500;600;700;900&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --c-purple:  #660874;
+    --c-green:   #3D7A4F;
+    --c-gold:    #D4A843;
+    --c-clay:    #C4956A;
+    --c-antique: #B8A578;
+    --c-paper:   #FAF8F5;
+    --c-ink:     #1A1A1A;
+    --c-body:    #3F3F3F;
+    --c-line:    #E4DED4;
+    --c-midgray: #8d8576;
+
+    --serif: "Noto Serif SC", serif;
+    --sans:  "Noto Sans SC", -apple-system, sans-serif;
+    --latin: "Cormorant Garamond", serif;
+
+    --maxw: 1080px;
+    --gutter: clamp(24px, 6vw, 96px);
+  }
+
+  *{ box-sizing:border-box; }
+  html{ -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; scroll-behavior:smooth; }
+  body{
+    margin:0;
+    background:var(--c-paper);
+    color:var(--c-body);
+    font-family:var(--sans);
+    font-weight:300;
+    line-height:1.9;
+    background-image: radial-gradient(rgba(26,26,26,0.012) 1px, transparent 1px);
+    background-size:3px 3px;
+  }
+
+  .wrap{ max-width:var(--maxw); margin:0 auto; padding:0 var(--gutter); }
+
+  /* ===== COVER ===== */
+  .cover-section{
+    background:var(--c-purple);
+    min-height:100vh;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding:clamp(60px,10vw,120px) var(--gutter);
+    position:relative; overflow:hidden;
+  }
+  .cover-section::before{
+    content:""; position:absolute; inset:0;
+    background:radial-gradient(ellipse at 50% 30%, rgba(212,168,67,0.12) 0%, transparent 70%);
+  }
+  .cover-section .cover-inner{ position:relative; z-index:1; }
+  .cover-section .eyebrow{
+    font-family:var(--latin); font-size:clamp(12px,1.8vw,15px);
+    letter-spacing:.42em; text-transform:uppercase; color:var(--c-gold);
+    margin:0 0 clamp(20px,3vw,36px);
+  }
+  .cover-section h1{
+    font-family:var(--serif); font-weight:900;
+    font-size:clamp(38px,8vw,80px); line-height:1.14;
+    color:#fff; margin:0; letter-spacing:.06em;
+  }
+  .cover-section .subtitle{
+    font-family:var(--latin); font-style:italic;
+    font-size:clamp(16px,2.4vw,24px); color:#e0cbe6;
+    margin:clamp(16px,3vw,28px) 0 0; letter-spacing:.04em;
+  }
+  .cover-section .meta{
+    margin-top:clamp(32px,5vw,56px);
+    font-family:var(--latin); font-size:clamp(12px,1.6vw,15px);
+    letter-spacing:.18em; text-transform:uppercase; color:#cdb8d2;
+  }
+  .cover-section .scroll-hint{
+    position:absolute; bottom:clamp(28px,5vw,48px); left:50%; transform:translateX(-50%);
+    color:rgba(255,255,255,.35); font-family:var(--latin);
+    font-size:11px; letter-spacing:.28em; text-transform:uppercase;
+    animation:pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse{ 0%,100%{ opacity:.35; } 50%{ opacity:.65; } }
+
+  /* ===== SECTION HEADERS ===== */
+  section{ padding:clamp(56px,9vw,108px) 0; border-bottom:1px solid var(--c-line); }
+  .section-label{
+    display:flex; align-items:baseline; gap:18px; margin:0 0 clamp(34px,5vw,56px);
+  }
+  .section-label .no{
+    font-family:var(--latin); font-size:15px; letter-spacing:.3em;
+    color:var(--c-antique); font-style:italic; padding-top:2px;
+  }
+  .section-label .zh{
+    font-family:var(--serif); font-weight:600; font-size:clamp(22px,3.4vw,30px);
+    color:var(--c-ink); letter-spacing:.08em;
+  }
+  .section-label .en{
+    font-family:var(--latin); font-size:13px; letter-spacing:.32em;
+    text-transform:uppercase; color:#9a917f; margin-left:auto; align-self:center;
+  }
+
+  /* ===== PHILOSOPHY ===== */
+  .philo-text{
+    font-family:var(--serif); font-weight:400;
+    font-size:clamp(18px,2.6vw,26px); line-height:1.68;
+    color:var(--c-body); letter-spacing:.04em;
+    max-width:860px;
+  }
+  .philo-text .highlight{ color:var(--c-purple); font-weight:600; }
+  .philo-text .green{ color:var(--c-green); }
+  .philo-text .gold{ color:var(--c-gold); }
+
+  /* ===== BRAND: LOGO ===== */
+  .logo-grid{
+    display:grid; grid-template-columns: 1.55fr 1fr; gap:clamp(32px,5vw,72px);
+    align-items:stretch;
+  }
+  @media(max-width:760px){ .logo-grid{ grid-template-columns:1fr; } }
+  .logo-card{
+    background:#fff; border:1px solid var(--c-line);
+    padding:clamp(36px,5vw,64px) clamp(28px,4vw,52px);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    min-height:300px; position:relative;
+  }
+  .logo-card .tag{
+    position:absolute; top:16px; left:18px;
+    font-family:var(--latin); font-size:11px; letter-spacing:.28em;
+    text-transform:uppercase; color:#b7ae9c;
+  }
+  .logo-horizontal{ display:flex; align-items:flex-end; gap:6px; }
+  .logo-horizontal .qx{ color:var(--c-purple); }
+  .logo-horizontal .cc{ color:var(--c-green); }
+  .logo-horizontal .zi{
+    font-family:var(--serif); font-weight:700;
+    font-size:clamp(46px,7vw,76px); letter-spacing:.06em; line-height:1;
+  }
+  .logo-sprout{ width:.7em; height:1.05em; align-self:flex-start; margin-left:-2px; color:var(--c-green); }
+  .logo-en{
+    font-family:var(--latin); font-size:13px; letter-spacing:.46em;
+    text-transform:uppercase; color:#8d8576; margin-top:22px; text-align:center;
+  }
+  .logo-square{
+    width:188px; height:188px; border:1px solid var(--c-antique);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:8px; position:relative;
+  }
+  .logo-square .sq-sprout{ width:40px; height:54px; color:var(--c-green); }
+  .logo-square .sq-zi{
+    font-family:var(--serif); font-weight:700; font-size:34px; letter-spacing:.18em;
+    line-height:1.12; text-align:center;
+  }
+  .logo-square .sq-zi .qx{ color:var(--c-purple); }
+  .logo-square .sq-zi .cc{ color:var(--c-green); }
+  .logo-square .sq-en{
+    font-family:var(--latin); font-size:9px; letter-spacing:.3em;
+    text-transform:uppercase; color:#9a917f;
+  }
+  .logo-square::before, .logo-square::after{
+    content:""; position:absolute; width:14px; height:14px;
+    border:1px solid var(--c-antique);
+  }
+  .logo-square::before{ top:-1px; left:-1px; border-right:0; border-bottom:0; }
+  .logo-square::after{ bottom:-1px; right:-1px; border-left:0; border-top:0; }
+
+  /* ===== BRAND: PALETTE ===== */
+  .swatches{ display:grid; grid-template-columns:repeat(4,1fr); gap:2px; }
+  @media(max-width:860px){ .swatches{ grid-template-columns:repeat(2,1fr); } }
+  .sw{ padding:0; }
+  .sw .chip{ height:120px; }
+  .sw .info{ padding:16px 4px 2px; }
+  .sw .name{ font-family:var(--serif); font-weight:500; font-size:16px; color:var(--c-ink); letter-spacing:.06em; }
+  .sw .hex{ font-family:var(--latin); font-size:15px; letter-spacing:.18em; color:#8d8576; margin-top:3px; }
+  .sw .use{ font-size:12px; color:#9a917f; margin-top:8px; line-height:1.6; }
+
+  /* ===== BRAND: TYPOGRAPHY ===== */
+  .type-row{
+    display:grid; grid-template-columns: 150px 1fr; gap:clamp(20px,4vw,56px);
+    padding:clamp(22px,3vw,32px) 0; border-top:1px solid var(--c-line); align-items:baseline;
+  }
+  .type-row:last-child{ border-bottom:1px solid var(--c-line); }
+  @media(max-width:680px){ .type-row{ grid-template-columns:1fr; gap:8px; } }
+  .type-row .spec{ font-family:var(--latin); font-size:12.5px; letter-spacing:.12em; color:#9a917f; line-height:1.7; text-transform:uppercase; }
+  .type-row .spec b{ display:block; color:var(--c-antique); font-weight:600; font-size:13px; letter-spacing:.2em; margin-bottom:4px; }
+  .t-h1{ font-family:var(--serif); font-weight:700; font-size:42px; color:var(--c-ink); line-height:1.25; letter-spacing:.04em; margin:0; }
+  .t-h2{ font-family:var(--serif); font-weight:500; font-size:28px; color:var(--c-purple); line-height:1.35; letter-spacing:.06em; margin:0; }
+  .t-body{ font-family:var(--sans); font-weight:300; font-size:16px; color:var(--c-body); line-height:1.95; margin:0; }
+  .t-quote{ font-family:var(--serif); font-weight:400; font-size:20px; color:var(--c-green); line-height:1.7; margin:0; padding-left:18px; border-left:2px solid var(--c-gold); }
+  .t-note{ font-family:var(--sans); font-weight:400; font-size:13px; color:#9a917f; line-height:1.7; margin:0; letter-spacing:.04em; }
+  .t-latin{ font-family:var(--latin); font-style:italic; font-weight:500; font-size:24px; color:var(--c-clay); margin:0; letter-spacing:.02em; }
+
+  /* ===== THREE MODES SECTION ===== */
+  .modes-intro{
+    font-family:var(--sans); font-weight:300;
+    font-size:clamp(15px,2vw,18px); color:var(--c-body);
+    line-height:1.9; max-width:860px; margin:0 0 clamp(40px,6vw,64px);
+  }
+
+  .mode-block{
+    display:grid; grid-template-columns: 1fr 440px; gap:clamp(28px,5vw,56px);
+    align-items:start; padding:clamp(32px,4vw,48px) 0;
+    border-top:1px solid var(--c-line);
+  }
+  @media(max-width:900px){ .mode-block{ grid-template-columns:1fr; } }
+
+  .mode-info{ }
+  .mode-info .mode-number{
+    font-family:var(--latin); font-style:italic; font-weight:600;
+    font-size:clamp(32px,5vw,48px); color:var(--c-purple); line-height:1;
+    margin:0 0 12px;
+  }
+  .mode-info .mode-name{
+    font-family:var(--serif); font-weight:700;
+    font-size:clamp(22px,3vw,30px); color:var(--c-ink);
+    letter-spacing:.06em; margin:0 0 10px;
+  }
+  .mode-info .mode-use{
+    font-family:var(--latin); font-size:13px; letter-spacing:.22em;
+    text-transform:uppercase; color:var(--c-antique); margin:0 0 16px;
+  }
+  .mode-info .mode-desc{
+    font-family:var(--sans); font-weight:300; font-size:15px;
+    color:var(--c-body); line-height:1.85;
+  }
+
+  .mode-preview{
+    background:#fff; border:1px solid var(--c-line);
+    border-radius:2px; box-shadow:0 2px 16px rgba(26,26,26,.06);
+    width:390px; max-height:800px; overflow-y:auto;
+    margin:0 auto;
+    scrollbar-width:thin; scrollbar-color:var(--c-line) transparent;
+  }
+  .mode-preview::-webkit-scrollbar{ width:4px; }
+  .mode-preview::-webkit-scrollbar-thumb{ background:var(--c-line); border-radius:2px; }
+  @media(max-width:900px){ .mode-preview{ width:100%; max-width:390px; } }
+
+  /* ===== ASSETS SECTION ===== */
+  .asset-block{
+    display:flex; align-items:center; justify-content:center;
+    padding:clamp(24px,4vw,40px) 0;
+  }
+  .asset-block svg{ width:min(320px,70%); height:auto; color:var(--c-antique); }
+
+  /* ===== SIGNATURE SECTION ===== */
+  .signature{
+    display:flex; align-items:center; gap:16px; padding:clamp(20px,3vw,32px) 0;
+    border-top:1px solid var(--c-line);
+  }
+  .signature .s-sprout{ width:34px; height:50px; color:var(--c-green); flex-shrink:0; }
+  .signature .s-txt{ font-size:13px; color:#8d8576; line-height:1.7; letter-spacing:.04em; }
+  .signature .s-txt b{ color:var(--c-purple); font-weight:500; font-family:var(--serif); letter-spacing:.08em; }
+
+  /* ===== CLOSING ===== */
+  .closing-section{
+    padding:clamp(60px,10vw,100px) 0; text-align:center;
+    background:var(--c-purple); color:#fff;
+  }
+  .closing-section .closing-name{
+    font-family:var(--serif); font-weight:700;
+    font-size:clamp(28px,4vw,48px); letter-spacing:.12em;
+    margin:0 0 12px;
+  }
+  .closing-section .closing-sprout{ width:48px; height:68px; color:var(--c-gold); margin:0 auto 12px; }
+  .closing-section .closing-en{
+    font-family:var(--latin); font-size:14px; letter-spacing:.34em;
+    text-transform:uppercase; color:#cdb8d2; margin:0 0 36px;
+  }
+  .closing-section .closing-thanks{
+    font-family:var(--serif); font-weight:500;
+    font-size:clamp(18px,2.6vw,26px); color:rgba(255,255,255,.7);
+    letter-spacing:.08em;
+  }
+
+  /* ===== INLINE ARTICLE CSS (namespaced) ===== */
+    /* 文章容器 */
+  .article{ max-width:390px; margin:0 auto; background:#fff; }
+  /* ===== 开篇题图 · 扉页 ===== */
+  .frontis{
+    position:relative; padding:20px 16px 18px; text-align:center;
+    background:radial-gradient(120% 80% at 50% 0%, #FDFCFA 0%, var(--c-paper) 70%);
+    border-bottom:1px solid var(--c-line);
+  }
+.demo-a .frontis .plate{
+    position:relative; margin:0 auto; max-width:240px;
+    border:1px solid var(--c-antique);
+    padding:18px 14px 14px;
+    background:repeating-linear-gradient(0deg, transparent 0 22px, rgba(184,165,120,0.05) 22px 23px);
+  }
+.demo-a .frontis .plate::before, .demo-a .frontis .plate::after{
+    content:""; position:absolute; width:10px; height:10px; border:1px solid var(--c-antique);
+  }
+.demo-a .frontis .plate::before{ top:-1px; left:-1px; border-right:0; border-bottom:0; }
+.demo-a .frontis .plate::after{ bottom:-1px; right:-1px; border-left:0; border-top:0; }
+.demo-a .frontis .corner2{ position:absolute; width:10px; height:10px; border:1px solid var(--c-antique); }
+.demo-a .frontis .corner-tr{ top:-1px; right:-1px; border-left:0; border-bottom:0; }
+.demo-a .frontis .corner-bl{ bottom:-1px; left:-1px; border-right:0; border-top:0; }
+.demo-a .frontis .sanqi{ width:120px; height:auto; color:var(--c-ink); display:block; margin:0 auto; }
+.demo-a .frontis .latin{
+    font-family:var(--latin); font-style:italic; font-weight:500; font-size:15px;
+    color:var(--c-clay); letter-spacing:.02em; margin:10px 0 0;
+  }
+.demo-a .frontis .rule{ width:36px; height:1px; background:var(--c-antique); margin:10px auto 0; opacity:.7; }
+.demo-a .frontis .kicker-small{
+    font-family:var(--serif); font-weight:500; font-size:11px; color:var(--c-green);
+    letter-spacing:.14em; margin:9px 0 0;
+  }
+.demo-a .frontis .art-title{
+    font-family:var(--serif); font-weight:700; font-size:17px; line-height:1.42;
+    color:var(--c-ink); letter-spacing:.03em; margin:18px 4px 2px;
+  }
+.demo-a .frontis .art-title .col{ color:var(--c-purple); }
+  /* ===== 头部 banner ===== */
+  .banner{
+    background:var(--c-purple); color:#fff; padding:14px 18px;
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+  }
+.demo-a .banner .b-zh{ font-family:var(--serif); font-weight:600; font-size:15px; letter-spacing:.1em; }
+.demo-a .banner .b-en{ font-family:var(--latin); font-size:9px; letter-spacing:.28em; text-transform:uppercase; color:#e0cbe6; margin-top:3px; }
+.demo-a .banner .b-sprout{ width:28px; height:42px; color:var(--c-gold); flex-shrink:0; }
+  /* ===== 正文 ===== */
+  .
+  .art-eyebrow{ font-family:var(--latin); font-size:10px; letter-spacing:.26em; text-transform:uppercase; color:var(--c-antique); margin:0 0 12px 1px; }
+.demo-a .art-p{ font-family:var(--sans); font-weight:300; font-size:14.5px; color:var(--c-body); line-height:2.0; margin:16px 0; }
+  /* 照片占位 */
+  .placebox{
+    border:1px dashed var(--c-clay); color:var(--c-clay); background:#FBF6EE;
+    padding:24px 14px; text-align:center; margin:20px 0;
+    display:flex; flex-direction:column; align-items:center; gap:7px;
+    border-radius:2px;
+  }
+.demo-a .placebox.tall{ padding:44px 14px; }
+.demo-a .placebox .pb-leaf{ width:34px; height:34px; opacity:.65; }
+.demo-a .placebox .pb-t{ font-family:var(--serif); font-size:12px; color:var(--c-clay); letter-spacing:.05em; }
+.demo-a .placebox .pb-s{ font-size:10px; color:#b29475; letter-spacing:.03em; line-height:1.6; }
+  /* 茎蔓分割线 */
+  .divider{ display:flex; align-items:center; justify-content:center; margin:28px 0; color:var(--c-antique); }
+.demo-a .divider svg{ width:75%; height:auto; }
+  /* 稻金引用区块 */
+  .quote{
+    position:relative; margin:24px 0; padding:5px 0 5px 18px;
+    border-left:2px solid var(--c-gold);
+    font-family:var(--serif); font-weight:400; font-size:16px; line-height:1.72;
+    color:var(--c-green); letter-spacing:.03em;
+  }
+.demo-a .quote .leaf{ position:absolute; top:-3px; left:-11px; width:18px; height:18px; color:var(--c-gold); background:#fff; }
+.demo-a .quote .src{ display:block; font-family:var(--latin); font-style:italic; font-size:12px; color:#9a917f; margin-top:8px; letter-spacing:.04em; }
+.demo-a .figcap{ font-family:var(--sans); font-size:10.5px; color:#9a917f; text-align:center; letter-spacing:.04em; margin:-10px 0 20px; line-height:1.7; }
+  /* ===== 尾部签名区 ===== */
+  .signoff{ padding:4px 18px 24px; }
+.demo-a .sign{
+    margin-top:14px; padding-top:18px; border-top:1px solid var(--c-line);
+    display:flex; align-items:flex-start; gap:11px;
+  }
+.demo-a .sign .s-sprout{ width:26px; height:38px; color:var(--c-green); flex-shrink:0; margin-top:2px; }
+.demo-a .sign .s-txt{ font-size:11px; color:#8d8576; line-height:1.85; letter-spacing:.03em; }
+.demo-a .sign .s-txt b{ color:var(--c-purple); font-weight:500; font-family:var(--serif); letter-spacing:.08em; font-size:12px; }
+.demo-a .sign .s-txt .org{ color:var(--c-ink); font-weight:400; }
+.demo-a .follow{
+    margin:18px 0 6px; padding:14px 16px; background:var(--c-paper);
+    border:1px solid var(--c-line); border-radius:3px;
+    display:flex; align-items:center; gap:11px;
+  }
+.demo-a .follow .logo{
+    width:40px; height:40px; flex-shrink:0; border:1px solid var(--c-antique);
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px; position:relative;
+  }
+.demo-a .follow .logo svg{ width:14px; height:20px; color:var(--c-green); }
+.demo-a .follow .logo .lz{ font-family:var(--serif); font-weight:700; font-size:8px; line-height:1.05; text-align:center; }
+.demo-a .follow .logo .lz .q{ color:var(--c-purple); } .follow .logo .lz .c{ color:var(--c-green); }
+.demo-a .follow .f-txt{ flex:1; }
+.demo-a .follow .f-name{ font-family:var(--serif); font-weight:600; font-size:13px; color:var(--c-ink); letter-spacing:.08em; }
+.demo-a .follow .f-sub{ font-size:10px; color:#9a917f; margin-top:2px; letter-spacing:.02em; }
+.demo-a .follow .f-btn{
+    font-family:var(--sans); font-size:11px; color:#fff; background:var(--c-purple);
+    padding:5px 12px; border-radius:14px; letter-spacing:.08em; white-space:nowrap;
+  }
+.demo-a .end-mark{ text-align:center; font-family:var(--latin); font-size:10px; letter-spacing:.3em; text-transform:uppercase; color:#b6a987; margin:2px 0 0; }
+
+  .demo-b .article{ max-width:390px; margin:0 auto; background:#fff; }
+  /* ===== Banner ===== */
+  .banner{
+    background:var(--c-purple); color:#fff; padding:14px 18px;
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+  }
+.demo-b .banner .b-zh{ font-family:var(--serif); font-weight:600; font-size:15px; letter-spacing:.1em; }
+.demo-b .banner .b-en{ font-family:var(--latin); font-size:9px; letter-spacing:.28em; text-transform:uppercase; color:#e0cbe6; margin-top:3px; }
+.demo-b .banner .b-sprout{ width:28px; height:42px; color:var(--c-gold); flex-shrink:0; }
+  /* ===== 照片开篇 · 横版 3:2 ===== */
+  .photo-opening{ padding:20px 16px 18px; text-align:center; background:radial-gradient(120% 80% at 50% 0%, #FDFCFA 0%, var(--c-paper) 70%); border-bottom:1px solid var(--c-line); }
+.demo-b .photo-opening .photo-box{
+    position:relative; overflow:hidden;
+    border:1px solid var(--c-line); background:#fff;
+    display:flex; align-items:center; justify-content:center;
+    aspect-ratio:1080/720;
+    background-image:radial-gradient(rgba(26,26,26,.04) 1px, transparent 1px);
+    background-size:4px 4px;
+  }
+.demo-b .photo-box .ph-inner{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none; }
+.demo-b .photo-box .ph-badge{
+    position:absolute; bottom:8px; left:8px;
+    font-family:var(--latin); font-size:9px; letter-spacing:.16em;
+    text-transform:uppercase; color:var(--c-antique);
+    background:rgba(250,248,245,.85); padding:3px 8px;
+    border:1px solid var(--c-antique);
+  }
+.demo-b .opening-text{ padding:18px 0 0; }
+.demo-b .opening-eyebrow{ font-family:var(--latin); font-size:10px; letter-spacing:.3em; text-transform:uppercase; color:var(--c-antique); margin-bottom:10px; }
+.demo-b .opening-h1{ font-family:var(--serif); font-weight:700; font-size:22px; color:var(--c-ink); line-height:1.22; letter-spacing:.04em; margin-bottom:5px; padding-left:14px; border-left:3px solid var(--c-gold); }
+.demo-b .opening-h2{ font-family:var(--serif); font-weight:500; font-size:14px; color:var(--c-green); line-height:1.4; letter-spacing:.06em; margin-bottom:8px; }
+.demo-b .opening-lead{ font-family:var(--serif); font-weight:500; font-size:14px; color:var(--c-ink); line-height:1.85; letter-spacing:.03em; }
+  /* ===== 正文 ===== */
+  .article-
+  .art-divider{ display:flex; align-items:center; justify-content:center; margin:28px 0; color:var(--c-antique); }
+.demo-b .art-divider svg{ width:min(240px,75%); height:auto; }
+.demo-b .art-p{ font-family:var(--sans); font-weight:300; font-size:14.5px; color:var(--c-body); line-height:2.0; margin:18px 0; letter-spacing:.02em; }
+.demo-b .art-h2{ font-family:var(--serif); font-weight:500; font-size:17px; color:var(--c-green); line-height:1.45; letter-spacing:.06em; margin:28px 0 10px; padding-top:6px; }
+.demo-b .art-latin{ font-family:var(--latin); font-style:italic; font-weight:500; font-size:15px; color:var(--c-clay); letter-spacing:.02em; }
+.demo-b .art-quote{ font-family:var(--serif); font-weight:400; font-size:16px; color:var(--c-green); line-height:1.7; letter-spacing:.04em; margin:24px 0; padding:5px 0 5px 16px; border-left:2px solid var(--c-gold); }
+.demo-b .art-quote .src{ display:block; font-family:var(--latin); font-style:italic; font-size:12px; color:var(--c-midgray); margin-top:8px; letter-spacing:.04em; }
+.demo-b .art-note{ font-family:var(--sans); font-weight:400; font-size:11.5px; color:var(--c-midgray); line-height:1.7; margin:6px 0 14px; letter-spacing:.03em; }
+.demo-b .art-date{ font-family:var(--latin); font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--c-midgray); margin-bottom:6px; }
+.demo-b .art-photo-place{ border:1px dashed var(--c-clay); background:#FBF6EE; margin:22px 0; display:flex; flex-direction:column; align-items:center; justify-content:center; position:relative; }
+.demo-b .art-photo-place.horiz{ aspect-ratio:3/2; }
+.demo-b .art-photo-place.vert{ aspect-ratio:4/5; width:58%; margin:22px auto; }
+.demo-b .art-photo-place .ph-svg{ width:40px; height:40px; color:var(--c-clay); opacity:.6; margin-bottom:6px; }
+.demo-b .art-photo-place .ph-label{ font-size:10px; color:var(--c-clay); letter-spacing:.04em; text-align:center; position:absolute; bottom:8px; left:8px; background:rgba(251,246,238,.85); padding:2px 7px; }
+.demo-b .art-photo-place .ph-tag{ font-size:9px; color:#b29475; letter-spacing:.05em; }
+  /* ===== 尾部署名区 ===== */
+  .art-footer{ margin-top:36px; padding:18px 0 26px; border-top:1px solid var(--c-line); }
+.demo-b .art-footer .footer-top{ display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+.demo-b .art-footer .ft-sprout{ width:28px; height:28px; color:var(--c-green); flex-shrink:0; }
+.demo-b .art-footer .ft-brand{ font-family:var(--serif); font-weight:700; font-size:16px; color:var(--c-purple); letter-spacing:.1em; }
+.demo-b .art-footer .ft-sub{ font-family:var(--latin); font-style:italic; font-size:10px; color:var(--c-midgray); letter-spacing:.06em; }
+.demo-b .art-footer .ft-text{ font-family:var(--sans); font-size:11px; color:var(--c-midgray); line-height:1.8; letter-spacing:.04em; }
+.demo-b .art-footer .ft-text b{ color:var(--c-purple); font-weight:500; font-family:var(--serif); letter-spacing:.08em; }
+
+  .demo-c .article{ max-width:390px; margin:0 auto; background:#fff; }
+  /* ===== Banner 顶栏 ===== */
+  .banner-top{
+    background:var(--c-purple);
+    padding:16px 18px;
+    display:flex; align-items:center; justify-content:space-between; gap:14px;
+  }
+.demo-c .banner-top .b-zh{
+    font-family:var(--serif); font-weight:600;
+    font-size:16px; color:#fff; letter-spacing:.1em; line-height:1.3;
+  }
+.demo-c .banner-top .b-en{
+    font-family:var(--latin);
+    font-size:9px; letter-spacing:.26em; text-transform:uppercase;
+    color:rgba(255,255,255,.55); margin-top:3px;
+  }
+.demo-c .banner-top .b-sprout{ width:36px; height:36px; color:var(--c-gold); flex-shrink:0; }
+  /* ===== 正文区 ===== */
+  .article-
+
+  .art-h1{
+    font-family:var(--serif); font-weight:900;
+    font-size:22px; color:var(--c-ink);
+    line-height:1.22; letter-spacing:.04em;
+    margin:0 0 5px; padding-left:15px; border-left:4px solid var(--c-gold);
+  }
+.demo-c .art-divider{ display:flex; align-items:center; justify-content:center; margin:22px 0; color:var(--c-antique); }
+.demo-c .art-divider svg{ width:min(180px,60%); height:auto; }
+.demo-c .art-lead{
+    font-family:var(--serif); font-weight:500;
+    font-size:14px; color:var(--c-ink);
+    line-height:1.85; letter-spacing:.03em;
+    margin:0 0 14px;
+  }
+.demo-c .art-sec-h1{
+    font-family:var(--serif); font-weight:700;
+    font-size:20px; color:var(--c-ink);
+    line-height:1.3; letter-spacing:.04em;
+    margin:28px 0 6px; padding-left:16px;
+    border-left:4px solid var(--c-gold);
+  }
+.demo-c .art-sec-eyebrow{
+    font-family:var(--latin);
+    font-size:10px; letter-spacing:.26em; text-transform:uppercase;
+    color:var(--c-antique); margin:0 0 10px 20px;
+  }
+.demo-c .art-h2{
+    font-family:var(--serif); font-weight:500;
+    font-size:17px; color:var(--c-green);
+    line-height:1.45; letter-spacing:.06em;
+    margin:22px 0 8px;
+  }
+.demo-c .art-p{ font-family:var(--sans); font-weight:300; font-size:14.5px; color:var(--c-body); line-height:2.0; margin:14px 0; letter-spacing:.02em; }
+.demo-c .art-latin{ font-family:var(--latin); font-style:italic; font-weight:500; font-size:15px; color:var(--c-clay); letter-spacing:.02em; }
+.demo-c .art-quote{
+    font-family:var(--serif); font-weight:400;
+    font-size:16px; color:var(--c-green);
+    line-height:1.7; letter-spacing:.04em;
+    margin:24px 0; padding:5px 0 5px 16px;
+    border-left:2px solid var(--c-gold);
+  }
+.demo-c .art-quote .src{ display:block; font-family:var(--latin); font-style:italic; font-size:12px; color:var(--c-midgray); margin-top:8px; letter-spacing:.04em; }
+.demo-c .art-note{ font-family:var(--sans); font-weight:400; font-size:11.5px; color:var(--c-midgray); line-height:1.7; margin:5px 0 14px; letter-spacing:.03em; }
+.demo-c .art-info-place{
+    border:1px dashed var(--c-clay); background:#FBF6EE;
+    margin:22px 0; padding:24px;
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    position:relative; min-height:120px;
+  }
+.demo-c .art-info-place .ip-icon{ width:34px; height:34px; color:var(--c-clay); opacity:.55; margin-bottom:10px; }
+.demo-c .art-info-place .ip-label{ font-family:var(--serif); font-size:13px; color:var(--c-clay); letter-spacing:.05em; text-align:center; }
+.demo-c .art-info-place .ip-sub{ font-size:10px; color:#b29475; letter-spacing:.04em; margin-top:5px; text-align:center; }
+.demo-c .art-info-place .ip-tag{ position:absolute; top:8px; left:10px; font-family:var(--latin); font-size:8px; letter-spacing:.14em; text-transform:uppercase; color:var(--c-antique); background:rgba(251,246,238,.85); padding:2px 7px; }
+  /* ===== 尾部署名区 ===== */
+  .art-footer{ margin-top:32px; padding:18px 0 26px; border-top:1px solid var(--c-line); }
+.demo-c .art-footer .footer-top{ display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+.demo-c .art-footer .ft-sprout{ width:28px; height:28px; color:var(--c-green); flex-shrink:0; }
+.demo-c .art-footer .ft-brand{ font-family:var(--serif); font-weight:700; font-size:16px; color:var(--c-purple); letter-spacing:.1em; }
+.demo-c .art-footer .ft-sub{ font-family:var(--latin); font-style:italic; font-size:10px; color:var(--c-midgray); letter-spacing:.06em; }
+.demo-c .art-footer .ft-text{ font-family:var(--sans); font-size:11px; color:var(--c-midgray); line-height:1.8; letter-spacing:.04em; }
+.demo-c .art-footer .ft-text b{ color:var(--c-purple); font-weight:500; font-family:var(--serif); letter-spacing:.08em; }
+</style>
+</head>
+<body>
+
+<!-- ===== 植物线描母题（手写 SVG，currentColor 上色，按需 use 复用） ===== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <!-- 嫩芽 / 春之芽：单茎 + 两片初展叶 + 顶端卷芽 -->
+    <symbol id="m-sprout" viewBox="0 0 64 100">
+      <g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M32 98 C32 80 30 64 33 46 C34 38 35 33 38 29"/>
+        <path d="M32.5 64 C21 63 13 55 13.5 44 C23 47 30 54 32.5 64"/>
+        <path d="M14.5 46 C21 50 27 56 31 62"/>
+        <path d="M33 52 C45 49 52 40 51 29 C41 33 34 41 33 52"/>
+        <path d="M49.5 31 C43 36 38 43 34 50"/>
+        <path d="M38 29 C39 24 42 22 45 22 C44 26 41 28 38 30"/>
+      </g>
+    </symbol>
+
+    <!-- 三七 母题：主茎 + 掌状轮生复叶 + 顶生伞形花序（小浆果点） -->
+    <symbol id="m-sanqi" viewBox="0 0 140 200">
+      <g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+        <!-- 主茎 -->
+        <path d="M70 198 C70 168 69 140 70 112"/>
+        <!-- 三枚长柄掌状复叶（自 112 节轮生） -->
+        <!-- 左柄 -->
+        <path d="M70 112 C56 110 40 108 24 100"/>
+        <g>
+          <path d="M24 100 C15 92 11 82 12 72"/>
+          <path d="M24 100 C19 89 17 79 18 68"/>
+          <path d="M24 100 C26 88 28 78 31 69"/>
+          <path d="M24 100 C33 92 41 86 50 83"/>
+          <path d="M24 100 C36 99 47 99 57 96"/>
+        </g>
+        <!-- 右柄 -->
+        <path d="M70 112 C84 110 100 108 116 100"/>
+        <g>
+          <path d="M116 100 C125 92 129 82 128 72"/>
+          <path d="M116 100 C121 89 123 79 122 68"/>
+          <path d="M116 100 C114 88 112 78 109 69"/>
+          <path d="M116 100 C107 92 99 86 90 83"/>
+          <path d="M116 100 C104 99 93 99 83 96"/>
+        </g>
+        <!-- 中央花葶 + 伞形花序 -->
+        <path d="M70 112 C70 96 70 80 70 62"/>
+        <g stroke-width="1.2">
+          <path d="M70 62 C62 56 55 50 50 42"/>
+          <path d="M70 62 C66 53 62 45 60 36"/>
+          <path d="M70 62 C70 52 70 43 70 33"/>
+          <path d="M70 62 C74 53 78 45 80 36"/>
+          <path d="M70 62 C78 56 85 50 90 42"/>
+        </g>
+        <g fill="currentColor" stroke="none">
+          <circle cx="50" cy="41" r="3"/>
+          <circle cx="60" cy="35" r="3"/>
+          <circle cx="70" cy="32" r="3"/>
+          <circle cx="80" cy="35" r="3"/>
+          <circle cx="90" cy="41" r="3"/>
+        </g>
+      </g>
+    </symbol>
+
+    <!-- 重楼 母题：七叶一枝花 —— 单茎 + 轮生叶 + 顶生单花 -->
+    <symbol id="m-chonglou" viewBox="0 0 160 160">
+      <g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+        <!-- 茎 -->
+        <path d="M80 158 C80 132 80 108 80 92"/>
+        <!-- 轮生叶（7 枚披针形，自 92 节放射） -->
+        <g>
+          <path d="M80 92 C58 96 34 100 14 96 C34 86 60 86 80 92"/>
+          <path d="M80 92 C62 104 40 116 22 130 C36 110 58 98 80 92"/>
+          <path d="M80 92 C76 110 70 132 64 154 C70 130 74 110 80 92"/>
+          <path d="M80 92 C84 110 90 132 96 154 C90 130 86 110 80 92"/>
+          <path d="M80 92 C98 104 120 116 138 130 C124 110 102 98 80 92"/>
+          <path d="M80 92 C102 96 126 100 146 96 C126 86 100 86 80 92"/>
+          <path d="M80 92 C88 100 100 110 112 116 C100 102 90 94 80 92"/>
+          <path d="M80 92 C72 100 60 110 48 116 C60 102 70 94 80 92"/>
+        </g>
+        <!-- 中脉示意 -->
+        <g stroke-width="0.9" stroke="currentColor" opacity="0.65">
+          <path d="M80 92 C58 92 36 93 18 94"/>
+          <path d="M80 92 C102 92 124 93 142 94"/>
+          <path d="M80 92 C74 112 70 134 66 152"/>
+          <path d="M80 92 C86 112 90 134 94 152"/>
+        </g>
+        <!-- 单花葶 + 一花 -->
+        <path d="M80 92 C80 76 80 60 80 48"/>
+        <g stroke-width="1.2">
+          <path d="M80 48 C72 40 66 32 64 22"/>
+          <path d="M80 48 C78 38 77 28 78 18"/>
+          <path d="M80 48 C82 38 83 28 82 18"/>
+          <path d="M80 48 C88 40 94 32 96 22"/>
+        </g>
+        <circle cx="80" cy="44" r="3.2" fill="currentColor" stroke="none"/>
+      </g>
+    </symbol>
+
+    <!-- 石斛 母题：节茎 + 互生叶 + 兰科小花 -->
+    <symbol id="m-shihu" viewBox="0 0 110 200">
+      <g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+        <!-- 有节的茎 -->
+        <path d="M48 198 C46 168 50 138 47 108 C45 84 49 60 46 38"/>
+        <!-- 节横线 -->
+        <g stroke-width="1.1">
+          <path d="M41 168 L55 166"/>
+          <path d="M43 138 L57 137"/>
+          <path d="M40 108 L54 107"/>
+          <path d="M43 78 L57 77"/>
+          <path d="M40 50 L54 49"/>
+        </g>
+        <!-- 互生叶 -->
+        <path d="M50 152 C66 148 80 140 88 128 C76 142 62 150 49 153"/>
+        <path d="M44 122 C28 120 14 112 8 100 C20 116 32 122 45 123"/>
+        <path d="M51 92 C67 90 81 82 88 70 C77 84 63 90 50 93"/>
+        <path d="M42 62 C26 62 13 55 7 44 C19 58 31 62 44 63"/>
+        <!-- 顶端兰科花（侧瓣 + 唇瓣示意） -->
+        <path d="M46 38 C40 30 34 24 26 22 C34 28 40 33 45 39"/>
+        <path d="M46 38 C52 30 58 24 66 22 C58 28 52 33 47 39"/>
+        <path d="M46 38 C44 28 43 18 46 10 C49 18 48 28 46 38"/>
+        <path d="M46 30 C42 26 40 20 42 14 C47 18 48 26 47 31"/>
+        <path d="M46 30 C50 26 52 20 50 14 C45 18 44 26 45 31"/>
+        <circle cx="46" cy="28" r="2.6" fill="currentColor" stroke="none"/>
+      </g>
+    </symbol>
+
+    <!-- 横向茎蔓分隔线：中央伞序 + 对生小叶 -->
+    <symbol id="m-divider" viewBox="0 0 360 56">
+      <g fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6 28 C70 28 110 28 150 28"/>
+        <path d="M354 28 C290 28 250 28 210 28"/>
+        <!-- 左侧小叶对 -->
+        <path d="M120 28 C112 20 104 16 96 16 C104 22 112 26 120 28"/>
+        <path d="M120 28 C112 36 104 40 96 40 C104 34 112 30 120 28"/>
+        <path d="M150 28 C144 22 138 19 132 19 C138 23 144 26 150 28"/>
+        <path d="M150 28 C144 34 138 37 132 37 C138 33 144 30 150 28"/>
+        <!-- 右侧小叶对 -->
+        <path d="M240 28 C248 20 256 16 264 16 C256 22 248 26 240 28"/>
+        <path d="M240 28 C248 36 256 40 264 40 C256 34 248 30 240 28"/>
+        <path d="M210 28 C216 22 222 19 228 19 C222 23 216 26 210 28"/>
+        <path d="M210 28 C216 34 222 37 228 37 C222 33 216 30 210 28"/>
+        <!-- 中央伞形花序 -->
+        <g stroke-width="1.1">
+          <path d="M180 28 C174 22 170 16 168 9"/>
+          <path d="M180 28 C179 21 178 14 178 7"/>
+          <path d="M180 28 C181 21 182 14 182 7"/>
+          <path d="M180 28 C186 22 190 16 192 9"/>
+          <path d="M180 28 C180 36 180 44 180 50"/>
+        </g>
+        <g fill="currentColor" stroke="none">
+          <circle cx="168" cy="8" r="2.4"/>
+          <circle cx="178" cy="6" r="2.4"/>
+          <circle cx="182" cy="6" r="2.4"/>
+          <circle cx="192" cy="8" r="2.4"/>
+          <circle cx="180" cy="51" r="2.2"/>
+        </g>
+      </g>
+    </symbol>
+
+    <!-- 单叶角标：一片披针叶 + 中脉侧脉 -->
+    <symbol id="m-leaf" viewBox="0 0 64 64">
+      <g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M10 56 C18 36 34 16 56 8 C50 30 38 50 14 60 C12 59 11 58 10 56 Z"/>
+        <path d="M14 58 C26 44 42 26 54 12"/>
+        <path d="M22 46 C28 44 33 41 37 36" stroke-width="1"/>
+        <path d="M28 38 C34 36 39 33 43 28" stroke-width="1"/>
+        <path d="M34 30 C39 28 44 25 48 20" stroke-width="1"/>
+      </g>
+    </symbol>
+
+    <symbol id="m-photo" viewBox="0 0 48 40">
+      <g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="5" width="42" height="31" rx="3"/>
+        <circle cx="16" cy="16" r="5"/>
+        <path d="M3 30 L16 22 L24 28 L34 20 L45 28"/>
+      </g>
+    </symbol>
+    <symbol id="m-pin" viewBox="0 0 32 40">
+      <g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <ellipse cx="16" cy="14" rx="6" ry="6"/>
+        <path d="M16 20 C6 30 4 40 16 40 C28 40 26 30 16 20Z"/>
+        <circle cx="16" cy="14" r="2" fill="currentColor" stroke="none"/>
+      </g>
+    </symbol>
+    <symbol id="m-chart" viewBox="0 0 40 36">
+      <g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 32 L36 32"/>
+        <path d="M4 4 L4 32"/>
+        <rect x="7" y="18" width="6" height="14" rx="1"/>
+        <rect x="17" y="10" width="6" height="22" rx="1"/>
+        <rect x="27" y="14" width="6" height="18" rx="1"/>
+      </g>
+    </symbol>
+
+  </defs>
+</svg>
+
+<!-- ===== COVER ===== -->
+<div class="cover-section">
+  <div class="cover-inner">
+    <p class="eyebrow">Visual Identity · Presentation Deck</p>
+    <h1>清系春城<br/>视觉设计展示</h1>
+    <p class="subtitle">方案 A：植物志编辑风 · Botanical Editorial</p>
+    <p class="meta">清华大学生命学院 · 赴云南昆明晋宁区乡村振兴实践支队 · 2026 夏</p>
+  </div>
+  <div class="scroll-hint">Scroll ↓</div>
+</div>
+
+<!-- ===== PHILOSOPHY ===== -->
+<section id="philosophy">
+  <div class="wrap">
+    <div class="section-label">
+      <span class="no">00</span>
+      <span class="zh">设计理念</span>
+      <span class="en">Design Philosophy</span>
+    </div>
+    <div class="philo-text">
+      <p><span class="highlight">「学院出发，田野抵达」</span>——学术底蕴 × 田野温度。</p>
+      <p>视觉语言以 <span class="green">本草纲目 × Curtis's Botanical Magazine × Kinfolk 编辑式排版</span> 为三重基底：杂志网格的严谨结构承载清华学术身份，本草植物科学线描为叙事注入田野在地性。</p>
+      <p>核心叙事「从清华园到滇池畔，探一条药田里的振兴路」——三组调研对象（三七·上游 / 重楼·中游 / 石斛·下游）天然构成视觉与内容的<span class="gold">同构系统</span>。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== BRAND: LOGO ===== -->
+<section id="logo">
+  <div class="wrap">
+    <div class="section-label">
+      <span class="no">01</span>
+      <span class="zh">标志概念</span>
+      <span class="en">Logotype</span>
+    </div>
+    <div class="logo-grid">
+      <div class="logo-card">
+        <span class="tag">Horizontal · 横版主标</span>
+        <div class="logo-horizontal">
+          <span class="zi qx">清系</span>
+          <span class="zi cc">春</span>
+          <svg class="logo-sprout"><use href="#m-sprout"/></svg>
+          <span class="zi cc">城</span>
+        </div>
+        <div class="logo-en">Qingxi Chuncheng · THU 2026</div>
+      </div>
+      <div class="logo-card">
+        <span class="tag">Square · 头像 / 印记</span>
+        <div class="logo-square">
+          <svg class="sq-sprout"><use href="#m-sprout"/></svg>
+          <div class="sq-zi"><span class="qx">清系</span><br/><span class="cc">春城</span></div>
+          <div class="sq-en">THU · 2026</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== BRAND: PALETTE ===== -->
+<section id="palette">
+  <div class="wrap">
+    <div class="section-label">
+      <span class="no">02</span>
+      <span class="zh">配色系统</span>
+      <span class="en">Palette</span>
+    </div>
+    <div class="swatches">
+      <div class="sw"><div class="chip" style="background:#660874"></div><div class="info"><div class="name">清华紫</div><div class="hex">#660874</div><div class="use">主色 · 标题 / banner / 强调</div></div></div>
+      <div class="sw"><div class="chip" style="background:#3D7A4F"></div><div class="info"><div class="name">乡野绿</div><div class="hex">#3D7A4F</div><div class="use">辅色 · 副题 / 田野意象</div></div></div>
+      <div class="sw"><div class="chip" style="background:#D4A843"></div><div class="info"><div class="name">稻金色</div><div class="hex">#D4A843</div><div class="use">点缀 · 引用边线 / 角标</div></div></div>
+      <div class="sw"><div class="chip" style="background:#C4956A"></div><div class="info"><div class="name">暖土色</div><div class="hex">#C4956A</div><div class="use">点缀 · 大地意象</div></div></div>
+      <div class="sw"><div class="chip" style="background:#B8A578"></div><div class="info"><div class="name">古金</div><div class="hex">#B8A578</div><div class="use">线描点缀 / 学术档案感</div></div></div>
+      <div class="sw"><div class="chip" style="background:#FAF8F5;border:1px solid #E4DED4"></div><div class="info"><div class="name">暖白纸</div><div class="hex">#FAF8F5</div><div class="use">底色 · 全局纸质底</div></div></div>
+      <div class="sw"><div class="chip" style="background:#1A1A1A"></div><div class="info"><div class="name">墨色</div><div class="hex">#1A1A1A</div><div class="use">线描 / 一级标题</div></div></div>
+      <div class="sw"><div class="chip" style="background:#3F3F3F"></div><div class="info"><div class="name">深灰</div><div class="hex">#3F3F3F</div><div class="use">正文</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== BRAND: TYPOGRAPHY ===== -->
+<section id="typography">
+  <div class="wrap">
+    <div class="section-label">
+      <span class="no">03</span>
+      <span class="zh">字体层级</span>
+      <span class="en">Typography</span>
+    </div>
+    <div class="type-row">
+      <div class="spec"><b>H1 一级标题</b>Noto Serif SC · 700 · 42px</div>
+      <h2 class="t-h1">药材田里的经济学</h2>
+    </div>
+    <div class="type-row">
+      <div class="spec"><b>H2 二级标题</b>Noto Serif SC · 500 · 28px · 清华紫</div>
+      <h3 class="t-h2">从清华园到滇池畔</h3>
+    </div>
+    <div class="type-row">
+      <div class="spec"><b>Body 正文</b>Noto Sans SC · 300 · 16px</div>
+      <p class="t-body">七月的晋宁，三七正抽出新叶。我们沿着一条药材产业链溯流而上，在田垄、车间与货架之间，记录乡村振兴最真实的肌理。</p>
+    </div>
+    <div class="type-row">
+      <div class="spec"><b>Quote 引用</b>Noto Serif SC · 400 · 20px · 乡野绿</div>
+      <blockquote class="t-quote">「一株三七，从清华园的实验室走到滇池畔的药田，走的是一条把科学写进土地的路。」</blockquote>
+    </div>
+    <div class="type-row">
+      <div class="spec"><b>Latin 拉丁题饰</b>Cormorant Garamond · 500 italic · 24px</div>
+      <p class="t-latin">Panax notoginseng — from the field to the future.</p>
+    </div>
+    <div class="type-row">
+      <div class="spec"><b>Note 注释</b>Noto Sans SC · 400 · 13px</div>
+      <p class="t-note">注：道地药材指特定产区、特定栽培加工方式所产、品质与疗效公认优良的中药材。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== THREE OPENING MODES ===== -->
+<section id="modes">
+  <div class="wrap">
+    <div class="section-label">
+      <span class="no">04</span>
+      <span class="zh">三种开篇模式</span>
+      <span class="en">Opening Modes — 核心展示</span>
+    </div>
+    <p class="modes-intro">
+      以下展示方案 A 的三种公众号开篇模式。右侧为实际推送效果（390px 容器，模拟手机阅读体验，可上下滚动浏览全文）。每种模式对应不同类型的推送内容，覆盖支队宣传的全部场景。
+    </p>
+
+    <!-- Mode ①: 本草开篇 -->
+    <div class="mode-block">
+      <div class="mode-info">
+        <div class="mode-number">①</div>
+        <div class="mode-name">本草开篇</div>
+        <div class="mode-use">适用于：行中有植物主角的日子</div>
+        <p class="mode-desc">以本草纲目式的药材科学线描为扉页，手绘植物母题置于装饰性图版框内，搭配拉丁学名，营造「田野日志」的学术笔记质感。适合实地调研、药材专题等有明确植物主角的推送。</p>
+      </div>
+      <div class="demo-a">
+        <div class="mode-preview">
+<div class="article">
+  <!-- ① 开篇题图 · 扉页 -->
+  <div class="frontis">
+    <div class="plate">
+      <span class="corner2 corner-tr"></span>
+      <span class="corner2 corner-bl"></span>
+      <svg class="sanqi" viewBox="0 0 140 200"><use href="#m-sanqi"/></svg>
+      <p class="latin">Panax notoginseng</p>
+      <div class="rule"></div>
+      <p class="kicker-small">本草手记 · 三七 · 白药的草本起点</p>
+    </div>
+    <h1 class="art-title">清系春城 · 田野日志 ｜ 走进云南白药：<br/>一株三七的<span class="col">现代旅程</span></h1>
+  </div>
+
+  <!-- ② 头部 banner -->
+  <div class="banner">
+    <div>
+      <div class="b-zh">清系春城 · 田野日志</div>
+      <div class="b-en">Qingxi Chuncheng · Field Notes</div>
+    </div>
+    <svg class="b-sprout"><use href="#m-sprout"/></svg>
+  </div>
+
+  <!-- ③ 正文 -->
+  <div class="body">
+    <p class="art-eyebrow">Field Notes · No.07 · 走进云南白药</p>
+
+    <p class="art-p"><span style="font-family:var(--serif);font-weight:500;color:var(--c-ink)">七月的滇中，雨水把空气泡得发软。</span>我们从晋宁的药田一路向北，进了一家以三七为主料的制药企业。从田垄到无菌车间，一株草要走的路，被压缩进了这一整天。临行前我们都以为，这趟看的是「工厂」；走完才明白，看的其实是同一株三七，在不同人手里被一次次重新对待。</p>
+
+    <div class="placebox tall">
+      <svg class="pb-leaf"><use href="#m-leaf"/></svg>
+      <div class="pb-t">📷 照片位 · 厂区入口 / 原料仓外景</div>
+      <div class="pb-s">横构图，占正文满宽 · 建议晨光斜射、留出标牌细节</div>
+    </div>
+    <p class="figcap">— 清晨的原料仓，药材的清苦味先于人抵达。</p>
+
+    <p class="art-p">上午先看的是原料仓。讲解员推开仓门，一股略带土腥的清苦味扑面而来。成捆的三七根按等级码在货架上，标签写着产地、采收年份与含水率。她说，三七讲究「道地」——同样一味药，种在不同的坡向、不同的海拔，有效成分能差出一截；为此企业把种植规范一直延伸到田间，和农户签了订单，按标准种、按等级收。一句「按等级收」，背后是山那头无数个清晨的弯腰。</p>
+
+    <p class="art-p">我们顺着流程往下走。清洗、分选、低温干燥、超微粉碎，每一道工序前都立着一块看板，写着温度、时间和允许的误差范围。一位技术员指着粉碎机说，三七的有效成分怕热，所以这里用控温工艺，宁可慢一点，也要把活性留住。隔着玻璃看车间里穿白衣的人安静走动，机器的低鸣盖过了说话声——和上午药田里此起彼伏的虫鸣，是两种完全不同的节奏。</p>
+
+    <div class="divider"><svg><use href="#m-divider"/></svg></div>
+
+    <p class="art-p">让我们停下脚步的，是质检区。一排排棕色样品瓶在灯下列开，检测员用仪器读出每一批的成分图谱，曲线的起伏被换算成一串数字，决定这批药材能不能往下走。带队老师说，正是这条看不见的数据链，把「地里长出来的」和「货架上卖的」接到了一起：农户的一锄一犁，终要在这里被翻译成可以被信任的标准。</p>
+
+    <blockquote class="quote">
+      <svg class="leaf"><use href="#m-leaf"/></svg>
+      我们做的事，说到底，是把一株草的好处，稳稳当当地留到瓶子里。
+      <span class="src">—— 白药集团 · 一位工程师</span>
+    </blockquote>
+
+    <div class="placebox tall">
+      <svg class="pb-leaf"><use href="#m-leaf"/></svg>
+      <div class="pb-t">📷 照片位 · 质检台 / 成分图谱特写</div>
+      <div class="pb-s">竖构图或近景 · 突出仪器读数与样品瓶的秩序感</div>
+    </div>
+    <p class="figcap">— 一条看不见的曲线，连起了田垄与货架。</p>
+
+    <p class="art-p">走出厂区时已近黄昏。回望那片连着药田的厂房，忽然觉得「乡村振兴」这四个字并不抽象：它可能就是田里那株被认真对待的三七，是车间里被控住的几度温差，是质检台上被反复确认的那条曲线。一株草从泥土里长出来，又被现代工艺重新讲述了一遍——这中间的每一步，都连着山那头种药人的日子。</p>
+
+    <div class="placebox tall">
+      <svg class="pb-leaf"><use href="#m-leaf"/></svg>
+      <div class="pb-t">📷 照片位 · 黄昏厂区全景 / 队员背影</div>
+      <div class="pb-s">横构图收尾 · 暖调，呼应开篇晨光，形成一天的闭环</div>
+    </div>
+    <p class="figcap">— 一天结束，三七的旅程仍在继续。</p>
+  </div>
+
+  <!-- ⑦ 尾部签名区 -->
+  <div class="signoff">
+    <div class="sign">
+      <svg class="s-sprout"><use href="#m-sprout"/></svg>
+      <div class="s-txt">
+        <b>清系春城</b> · 田野日志 No.07<br/>
+        撰文 / 摄影 · 田野记录小组　视觉 · 清系春城<br/>
+        <span class="org">清华大学中国农村研究院 2026 年暑期农村调研</span><br/>
+        <span class="org">清华大学学生社会实践</span>
+      </div>
+    </div>
+
+    <div class="follow">
+      <div class="logo">
+        <svg><use href="#m-sprout"/></svg>
+        <div class="lz"><span class="q">清系</span><span class="c">春城</span></div>
+      </div>
+      <div class="f-txt">
+        <div class="f-name">清系春城</div>
+        <div class="f-sub">记录一条从药田到货架的振兴路</div>
+      </div>
+      <div class="f-btn">关注</div>
+    </div>
+    <p class="end-mark">· Qingxi Chuncheng ·</p>
+  </div>
+
+</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mode ②: 照片开篇 -->
+    <div class="mode-block">
+      <div class="mode-info">
+        <div class="mode-number">②</div>
+        <div class="mode-name">照片开篇</div>
+        <div class="mode-use">适用于：有现场纪实照的日子</div>
+        <p class="mode-desc">以高质量纪实照片开篇，横版采用 3:2 比例打底，搭配杂志式标题层级（金色竖线标 + 副标题 + 导语），营造 Kinfolk 式的克制叙事。适合参访、活动等有现场影像素材的推送。</p>
+      </div>
+      <div class="demo-b">
+        <div class="mode-preview">
+<div class="article">
+  <!-- Banner -->
+  <div class="banner">
+    <div>
+      <div class="b-zh">清系春城 · 田野日志</div>
+      <div class="b-en">Qingxi Chuncheng · Field Notes</div>
+    </div>
+    <svg class="b-sprout"><use href="#m-sprout"/></svg>
+  </div>
+
+  <!-- 照片开篇 · 横版（3:2） -->
+  <div class="photo-opening">
+    <div class="photo-box">
+      <div class="ph-inner">
+        <svg width="48" height="40" style="color:var(--c-clay);opacity:.35"><use href="#m-photo"/></svg>
+      </div>
+      <span class="ph-badge">📷 照片位 · 横 3:2</span>
+    </div>
+    <div class="opening-text">
+      <p class="opening-eyebrow">清系春城 · 田野日志　No.03</p>
+      <h1 class="opening-h1">慢下来，也是一种康复</h1>
+      <p class="opening-h2">古滇活力康养园参访手记</p>
+      <p class="opening-lead">七月的滇池泛起碎金。第三组走进晋宁古滇康养园——在这座以"一人一档"慢病管理为核心理念的社区里，观察一种被重新定义的晚年生活。</p>
+    </div>
+  </div>
+
+  <!-- 完整正文 -->
+  <div class="article-body">
+
+    <p class="opening-eyebrow" style="margin-bottom:6px">C 组 · 下游 · 健康消费与民生改善</p>
+
+    <h1 class="opening-h1" style="font-size:20px;margin-bottom:10px">慢下来，也是一种康复</h1>
+
+    <p class="art-date">2026.07.14　|　古滇活力康养园　|　晋宁区</p>
+
+    <p class="art-p"><span style="font-family:var(--serif);font-weight:500;color:var(--c-ink)">七月的滇池泛起碎金。</span>我们第三组走进古滇活力康养园。与想象中"养老院"的样子不同——没有消毒水味，迎面是一座被绿植环绕的中央庭院，几位老人坐在廊下打牌，护工端着切好的水果从他们身边经过。你很难在第一眼判断谁是需要被照料的那一方。</p>
+
+    <div class="art-divider"><svg><use href="#m-divider"/></svg></div>
+
+    <h2 class="art-h2">不是医院，是家</h2>
+
+    <p class="art-p">康养园的核心理念写在入口处——<span class="art-latin">Salus per quietem</span>（以静养，以致远）。园区采用"一人一档"的慢病管理机制，每位入住者从入园第一天起就有专属的健康档案和个性化的活动方案。工作人员介绍说，这里的定位不是"养老机构"，而是健康消费的一个终端场景——从上游的道地药材、中游的提取加工，最终流向这里，送进具体的人手里，融进每一天的作息里。</p>
+
+    <div class="art-photo-place vert">
+      <svg class="ph-svg"><use href="#m-photo"/></svg>
+      <span class="ph-label">📷 照片位 · 竖 4:5</span>
+      <p class="ph-tag">康养园庭院 · 长者日常活动场景</p>
+    </div>
+    <p class="art-note">↑ 正文内竖版照片：大图一语的节奏，竖图占据近六成宽度，留白呼吸</p>
+
+    <h2 class="art-h2">慢病管理的日常肌理</h2>
+
+    <p class="art-p">在健康管理中心，我们看到一张标注着不同颜色磁贴的周计划表——红色代表血压监测、蓝色代表血糖管理、绿色代表康复训练。护工组长递给我们一本手工装订的活动记录册，纸页边缘已经起了毛边。册子里用圆珠笔记录着每一天的数据和备注，夹层里还塞着几张长者手写的感谢便签。</p>
+
+    <div class="art-photo-place horiz">
+      <svg class="ph-svg"><use href="#m-photo"/></svg>
+      <span class="ph-label">📷 照片位 · 横 3:2</span>
+      <p class="ph-tag">健康管理中心 · 周计划表与活动记录册</p>
+    </div>
+
+    <blockquote class="art-quote">
+      药不是终点，它只是帮人重新走进生活的一座桥。
+      <span class="src">— 摘自古滇活力康养园入户手册，2023 版</span>
+    </blockquote>
+
+    <p class="art-p">支队成员们和几位长者一起做了一套八段锦，动作缓慢、呼吸悠长。一位退休教师做完后笑着说："在这里不是等人来照顾，是自己把日子过好。"那一刻大家忽然明白：所谓康养，不是对抗衰老，而是学会和身体的新节奏相处。</p>
+
+    <div class="art-divider"><svg style="width:min(160px,55%)"><use href="#m-divider"/></svg></div>
+
+    <p class="art-note">注：古滇活力康养园位于昆明市晋宁区，是云南省"医养结合"示范项目之一。园区以"慢病管理 + 居家养老 + 健康消费"三位一体为运营模式，服务覆盖周边多个社区。</p>
+
+    <!-- 尾部署名区 -->
+    <div class="art-footer">
+      <div class="footer-top">
+        <svg class="ft-sprout"><use href="#m-sprout"/></svg>
+        <div>
+          <div class="ft-brand">清系春城</div>
+          <div class="ft-sub">Qingxi Chuncheng · THU 2026</div>
+        </div>
+      </div>
+      <div class="ft-text">
+        撰文 · C 组田野小组　|　摄影 · 影像组　|　视觉 · <b>清系春城</b><br/>
+        清华大学生命学院 · 赴云南昆明晋宁区乡村振兴实践支队<br/>
+        农研院联合实践 · 2026 年夏季
+      </div>
+    </div>
+
+  </div>
+
+</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mode ③: 正式开篇 -->
+    <div class="mode-block">
+      <div class="mode-info">
+        <div class="mode-number">③</div>
+        <div class="mode-name">正式开篇</div>
+        <div class="mode-use">适用于：纯文本 / 预调研 / 正式报告</div>
+        <p class="mode-desc">以清华紫顶栏 + 一级标题开篇，无题图干扰，直接进入正文。金色竖线标分节，信息性图形占位（地图、图表），整体气质为「学术报告」而非「社交媒体」。适合预调研、深度分析等纯文本/数据密集型推送。</p>
+      </div>
+      <div class="demo-c">
+        <div class="mode-preview">
+<div class="article">
+  <!-- Banner 顶栏 -->
+  <div class="banner-top">
+    <div>
+      <div class="b-zh">清系春城 · 预调研</div>
+      <div class="b-en">Qingxi Chuncheng · Pre-Trip Research</div>
+    </div>
+    <svg class="b-sprout"><use href="#m-sprout"/></svg>
+  </div>
+
+  <!-- 正文 -->
+  <div class="article-body">
+
+    <h1 class="art-h1">晋宁生物医药产业的上中下游图景</h1>
+
+    <div class="art-divider"><svg><use href="#m-divider"/></svg></div>
+
+    <p class="art-lead">出发前，我们用三周时间梳理了晋宁区生物医药产业的公开资料。这条从药田到货架的产业链，恰好可以被切分为三段——上游的种植、中游的加工、下游的消费。三组的分工，也因此有了天然的锚点。</p>
+
+    <!-- 第一节：上游 -->
+    <p class="art-sec-eyebrow">A 组 · 上游 · 中药材种植与农业转型</p>
+    <h1 class="art-sec-h1">上游：道地药材的田野底色</h1>
+
+    <h2 class="art-h2">种植传统与产业现状</h2>
+
+    <p class="art-p">晋宁地处滇中高原，属低纬度高原季风气候区，年均温在十五度上下，干湿分明、日照充足。当地种植中药材的历史可追溯至明清时期，<span class="art-latin">Panax notoginseng</span>（三七）、<span class="art-latin">Paris polyphylla</span>（重楼）和<span class="art-latin">Dendrobium</span>（石斛）是传统优势品种。在公开的农业规划文件中，中药材被列为高原特色农业的重点方向之一。</p>
+
+    <h2 class="art-h2">连作障碍与转型探索</h2>
+
+    <p class="art-p">三七作为云南白药等知名中成药的核心原料，在晋宁有较长的种植历史。但三七对土壤条件要求较高——喜半阴、忌连作，同一地块种植后通常需要休养较长时间。这一特性使得种植户在收益和风险之间反复权衡。近年来，部分乡镇开始引入规范化种植基地模式，通过轮作制度和技术培训，探索可持续的种植路径。支队 A 组将在调研中重点观察这些转型实践的落地情况。</p>
+
+    <div class="art-info-place">
+      <span class="ip-tag">info-graphic placeholder</span>
+      <svg class="ip-icon"><use href="#m-pin"/></svg>
+      <div class="ip-label">点位地图占位</div>
+      <div class="ip-sub">晋宁区中药材种植分布示意图 · 待实地调研后绘制</div>
+    </div>
+    <p class="art-note">↑ 信息性图形占位：点位地图，标注 A 组调研主要药材产区分布</p>
+
+    <!-- 第二节：中游 -->
+    <p class="art-sec-eyebrow">B 组 · 中游 · 生物医药加工与产业带动</p>
+    <h1 class="art-sec-h1">中游：从田间到车间的转化链</h1>
+
+    <h2 class="art-h2">加工环节的区域定位</h2>
+
+    <p class="art-p">在昆明市的产业布局中，晋宁承担着生物医药加工制造的重要功能。从田间采收的鲜品药材，在产地进行初步的清洗、切片、干燥等加工处理后，一部分作为中药饮片直接进入流通市场，另一部分则运往提取车间，制成浸膏、标准提取物等中间产品。据公开报道，晋宁区已有多家获得药品生产质量管理规范认证的中药饮片和植物提取物生产企业。</p>
+
+    <blockquote class="art-quote">
+      药材从田里到车间，走的不只是地理距离，更是一段价值的跃迁——从论斤卖的农产品，变成按克计价的医药原料。
+      <span class="src">— 清系春城支队 · 行前预调研手记</span>
+    </blockquote>
+
+    <p class="art-p">B 组的调研重点将放在加工环节的实际运转上：车间与种植基地之间的联结方式、企业用工对周边村庄的带动效应、以及中药提取物在产业链中的定价与流通路径。</p>
+
+    <div class="art-info-place">
+      <span class="ip-tag">info-graphic placeholder</span>
+      <svg class="ip-icon"><use href="#m-chart"/></svg>
+      <div class="ip-label">数据图表占位</div>
+      <div class="ip-sub">晋宁区中药材加工产值与品类构成 · 待获取统计数据后绘制</div>
+    </div>
+    <p class="art-note">↑ 信息性图形占位：数据图表，展示中游加工环节的产值与主要品类分布</p>
+
+    <!-- 第三节：下游 -->
+    <p class="art-sec-eyebrow">C 组 · 下游 · 健康产品消费与民生改善</p>
+    <h1 class="art-sec-h1">下游：健康消费的终端图景</h1>
+
+    <h2 class="art-h2">从产品到生活的最后一公里</h2>
+
+    <p class="art-p">产业链的下游，是药材和提取物最终抵达消费者的场景。晋宁的独特之处在于，它不仅输出原料和中间产品，还拥有丰富的终端消费场景——依托古滇文化和滇池生态资源发展起来的康养产业，正在将健康消费从医院延伸到社区、家庭和旅居空间。公开资料显示，晋宁区在规划中将"健康旅居"列为文旅产业的重要板块之一。</p>
+
+    <h2 class="art-h2">民生视角下的产业温度</h2>
+
+    <p class="art-p">与上游的种植和中游的加工不同，下游的调研更关注"人"的维度：一款以本地药材为原料的健康产品，如何进入普通家庭的日常消费？康养社区中长者使用的慢病管理方案里，有没有晋宁道地药材的影子？这些问题，将在 C 组的实地走访中逐步展开。</p>
+
+    <div class="art-info-place">
+      <span class="ip-tag">info-graphic placeholder</span>
+      <svg class="ip-icon"><use href="#m-chart"/></svg>
+      <div class="ip-label">数据图表占位</div>
+      <div class="ip-sub">晋宁区健康消费终端市场规模与品类分布 · 待调研后绘制</div>
+    </div>
+    <p class="art-note">↑ 信息性图形占位：数据图表，展示下游健康消费终端的品类与渠道分布</p>
+
+    <!-- 收束 -->
+    <div class="art-divider"><svg style="width:min(130px,45%)"><use href="#m-divider"/></svg></div>
+
+    <p class="art-p">以上是我们在出发前，基于公开资料所做的前期梳理。真正的产业肌理，还藏在田垄间、车间里和社区中。七月，我们带着这些问题出发。</p>
+
+    <!-- 尾部署名区 -->
+    <div class="art-footer">
+      <div class="footer-top">
+        <svg class="ft-sprout"><use href="#m-sprout"/></svg>
+        <div>
+          <div class="ft-brand">清系春城</div>
+          <div class="ft-sub">Qingxi Chuncheng · THU 2026</div>
+        </div>
+      </div>
+      <div class="ft-text">
+        撰文 · A/B/C 三组合编　|　视觉 · <b>清系春城</b><br/>
+        清华大学生命学院 · 赴云南昆明晋宁区乡村振兴实践支队<br/>
+        农研院联合实践 · 2026 年夏季
+      </div>
+    </div>
+
+  </div>
+
+</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FIXED ASSETS ===== -->
+<section id="assets">
+  <div class="wrap">
+    <div class="section-label">
+      <span class="no">05</span>
+      <span class="zh">固定资产</span>
+      <span class="en">Fixed Assets</span>
+    </div>
+
+    <!-- Banner cover mockup -->
+    <p style="font-family:var(--latin);font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:#9a917f;margin:0 0 12px;">公众号大封面 · 900×383 · 2.35:1（暖白版 + 深紫版）</p>
+    <div style="display:grid;gap:clamp(20px,3vw,36px);margin-bottom:clamp(36px,5vw,56px)">
+      <div style="position:relative;width:100%;aspect-ratio:900/383;overflow:hidden;border:1px solid var(--c-line);background:var(--c-paper)">
+        <div style="position:absolute;inset:0;padding:clamp(20px,4vw,46px) clamp(24px,5vw,60px);display:flex;flex-direction:column">
+          <div style="font-family:var(--latin);font-size:clamp(10px,1.4vw,13px);letter-spacing:.36em;text-transform:uppercase;color:var(--c-antique)">清系春城 · 田野日志 No.01</div>
+          <h2 style="font-family:var(--serif);font-weight:700;font-size:clamp(26px,5.4vw,50px);line-height:1.16;letter-spacing:.04em;margin:auto 0 6px;max-width:74%;color:var(--c-ink)">药材田里的<span style="color:var(--c-purple)">经济学</span></h2>
+          <p style="font-family:var(--serif);font-weight:400;font-size:clamp(14px,2.4vw,22px);letter-spacing:.06em;margin:0 0 14px;color:var(--c-green)">从清华园到滇池畔，探一条药田里的振兴路</p>
+          <div style="font-family:var(--latin);font-size:clamp(11px,1.7vw,15px);letter-spacing:.2em;color:#8d8576">2026.07.11 | A 组 · 上游调研 · 晋宁三七</div>
+        </div>
+        <svg style="position:absolute;top:clamp(16px,3vw,40px);right:clamp(20px,4vw,52px);width:clamp(70px,12vw,124px);height:auto;color:var(--c-ink)"><use href="#m-sanqi"/></svg>
+      </div>
+      <div style="position:relative;width:100%;aspect-ratio:900/383;overflow:hidden;border:1px solid var(--c-line);background:var(--c-purple)">
+        <div style="position:absolute;inset:0;padding:clamp(20px,4vw,46px) clamp(24px,5vw,60px);display:flex;flex-direction:column">
+          <div style="font-family:var(--latin);font-size:clamp(10px,1.4vw,13px);letter-spacing:.36em;text-transform:uppercase;color:var(--c-gold)">清系春城 · 田野日志 No.01</div>
+          <h2 style="font-family:var(--serif);font-weight:700;font-size:clamp(26px,5.4vw,50px);line-height:1.16;letter-spacing:.04em;margin:auto 0 6px;max-width:74%;color:#fff">药材田里的<span style="color:var(--c-gold)">经济学</span></h2>
+          <p style="font-family:var(--serif);font-weight:400;font-size:clamp(14px,2.4vw,22px);letter-spacing:.06em;margin:0 0 14px;color:#e7d8a6">从清华园到滇池畔，探一条药田里的振兴路</p>
+          <div style="font-family:var(--latin);font-size:clamp(11px,1.7vw,15px);letter-spacing:.2em;color:#cdb8d2">2026.07.11 | A 组 · 上游调研 · 晋宁三七</div>
+        </div>
+        <svg style="position:absolute;top:clamp(16px,3vw,40px);right:clamp(20px,4vw,52px);width:clamp(70px,12vw,124px);height:auto;color:var(--c-antique)"><use href="#m-chonglou"/></svg>
+      </div>
+    </div>
+
+    <!-- 茎蔓分隔线 -->
+    <div class="asset-block">
+      <svg><use href="#m-divider"/></svg>
+    </div>
+
+    <!-- 尾部署名区 -->
+    <div class="signature">
+      <svg class="s-sprout"><use href="#m-sprout"/></svg>
+      <div class="s-txt">
+        <b>清系春城</b> · 清华大学生命学院<br/>
+        赴云南昆明晋宁区乡村振兴实践支队 · 2026 夏<br/>
+        清华大学中国农村研究院 2026 年暑期农村调研
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CLOSING ===== -->
+<div class="closing-section">
+  <svg class="closing-sprout"><use href="#m-sprout"/></svg>
+  <div class="closing-name">清系春城</div>
+  <div class="closing-en">Qingxi Chuncheng · THU 2026</div>
+  <div class="closing-thanks">感谢审阅</div>
+</div>
+
+</body>
+</html>
