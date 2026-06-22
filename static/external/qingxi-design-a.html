@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>清系春城 · 方案A 植物志编辑风 · 设计样板</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif+SC:wght@300;400;500;600;700;900&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    /* —— 配色系统（严格） —— */
+    --c-purple:  #660874;  /* 主色 · 清华紫 */
+    --c-green:   #3D7A4F;  /* 辅色 · 乡野绿 */
+    --c-gold:    #D4A843;  /* 点缀 · 稻金色 */
+    --c-clay:    #C4956A;  /* 点缀 · 暖土色 */
+    --c-antique: #B8A578;  /* 古金 · 线描点缀金 */
+    --c-paper:   #FAF8F5;  /* 底色 · 暖白纸 */
+    --c-ink:     #1A1A1A;  /* 墨色 · 线描/标题 */
+    --c-body:    #3F3F3F;  /* 正文 · 深灰 */
+    --c-line:    #E4DED4;  /* 极淡分隔（暖白系） */
+
+    --serif: "Noto Serif SC", serif;
+    --sans:  "Noto Sans SC", -apple-system, sans-serif;
+    --latin: "Cormorant Garamond", serif;
+
+    --maxw: 1080px;
+    --gutter: clamp(24px, 6vw, 96px);
+  }
+
+  *{ box-sizing:border-box; }
+  html{ -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; }
+  body{
+    margin:0;
+    background:var(--c-paper);
+    color:var(--c-body);
+    font-family:var(--sans);
+    font-weight:300;
+    line-height:1.9;
+    /* 极细纸纹：暖白上一层几乎不可见的颗粒，传达纸质感 */
+    background-image:
+      radial-gradient(rgba(26,26,26,0.012) 1px, transparent 1px);
+    background-size:3px 3px;
+  }
+
+  /* 通用容器 */
+  .wrap{ max-width:var(--maxw); margin:0 auto; padding:0 var(--gutter); }
+
+  /* —— 全局页头 masthead —— */
+  .masthead{
+    border-bottom:1px solid var(--c-line);
+    padding:clamp(40px,7vw,84px) 0 clamp(28px,4vw,44px);
+  }
+  .masthead .kicker{
+    font-family:var(--latin);
+    font-size:13px; letter-spacing:.42em; text-transform:uppercase;
+    color:var(--c-antique); margin:0 0 18px;
+  }
+  .masthead h1{
+    font-family:var(--serif); font-weight:600;
+    font-size:clamp(34px,6vw,58px); line-height:1.18;
+    color:var(--c-ink); margin:0; letter-spacing:.04em;
+  }
+  .masthead .sub{
+    font-family:var(--latin); font-style:italic;
+    font-size:clamp(17px,2.4vw,22px); color:var(--c-body);
+    margin:14px 0 0; letter-spacing:.02em;
+  }
+  .masthead .meta{
+    margin-top:26px; font-size:12.5px; letter-spacing:.16em;
+    color:#8d8576; text-transform:uppercase; font-family:var(--latin);
+  }
+
+  /* —— 区块标题（编辑式小标） —— */
+  section{ padding:clamp(56px,9vw,108px) 0; border-bottom:1px solid var(--c-line); }
+  .section-label{
+    display:flex; align-items:baseline; gap:18px; margin:0 0 clamp(34px,5vw,56px);
+  }
+  .section-label .no{
+    font-family:var(--latin); font-size:15px; letter-spacing:.3em;
+    color:var(--c-antique); font-style:italic; padding-top:2px;
+  }
+  .section-label .zh{
+    font-family:var(--serif); font-weight:600; font-size:clamp(22px,3.4vw,30px);
+    color:var(--c-ink); letter-spacing:.08em;
+  }
+  .section-label .en{
+    font-family:var(--latin); font-size:13px; letter-spacing:.32em;
+    text-transform:uppercase; color:#9a917f; margin-left:auto; align-self:center;
+  }
+
+  /* ============ 1. LOGO ============ */
+  .logo-grid{
+    display:grid; grid-template-columns: 1.55fr 1fr; gap:clamp(32px,5vw,72px);
+    align-items:stretch;
+  }
+  @media(max-width:760px){ .logo-grid{ grid-template-columns:1fr; } }
+  .logo-card{
+    background:#fff; border:1px solid var(--c-line);
+    padding:clamp(36px,5vw,64px) clamp(28px,4vw,52px);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    min-height:300px; position:relative;
+  }
+  .logo-card .tag{
+    position:absolute; top:16px; left:18px;
+    font-family:var(--latin); font-size:11px; letter-spacing:.28em;
+    text-transform:uppercase; color:#b7ae9c;
+  }
+  /* 横版 logo */
+  .logo-horizontal{ display:flex; align-items:flex-end; gap:6px; }
+  .logo-horizontal .qx{ color:var(--c-purple); }
+  .logo-horizontal .cc{ color:var(--c-green); }
+  .logo-horizontal .zi{
+    font-family:var(--serif); font-weight:700;
+    font-size:clamp(46px,7vw,76px); letter-spacing:.06em; line-height:1;
+  }
+  .logo-sprout{ width:.7em; height:1.05em; align-self:flex-start; margin-left:-2px; color:var(--c-green); }
+  .logo-en{
+    font-family:var(--latin); font-size:13px; letter-spacing:.46em;
+    text-transform:uppercase; color:#8d8576; margin-top:22px; text-align:center;
+  }
+  /* 方版 logo */
+  .logo-square{
+    width:188px; height:188px; border:1px solid var(--c-antique);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:8px; position:relative;
+  }
+  .logo-square .sq-sprout{ width:40px; height:54px; color:var(--c-green); }
+  .logo-square .sq-zi{
+    font-family:var(--serif); font-weight:700; font-size:34px; letter-spacing:.18em;
+    line-height:1.12; text-align:center;
+  }
+  .logo-square .sq-zi .qx{ color:var(--c-purple); }
+  .logo-square .sq-zi .cc{ color:var(--c-green); }
+  .logo-square .sq-en{
+    font-family:var(--latin); font-size:9px; letter-spacing:.3em;
+    text-transform:uppercase; color:#9a917f;
+  }
+  .logo-square::before, .logo-square::after{
+    content:""; position:absolute; width:14px; height:14px;
+    border:1px solid var(--c-antique);
+  }
+  .logo-square::before{ top:-1px; left:-1px; border-right:0; border-bottom:0; }
+  .logo-square::after{ bottom:-1px; right:-1px; border-left:0; border-top:0; }
+
+  /* ============ 2. 配色 ============ */
+  .swatches{ display:grid; grid-template-columns:repeat(4,1fr); gap:2px; }
+  @media(max-width:860px){ .swatches{ grid-template-columns:repeat(2,1fr); } }
+  .sw{ padding:0; }
+  .sw .chip{ height:120px; }
+  .sw .info{ padding:16px 4px 2px; }
+  .sw .name{ font-family:var(--serif); font-weight:500; font-size:16px; color:var(--c-ink); letter-spacing:.06em; }
+  .sw .hex{ font-family:var(--latin); font-size:15px; letter-spacing:.18em; color:#8d8576; margin-top:3px; }
+  .sw .use{ font-size:12px; color:#9a917f; margin-top:8px; line-height:1.6; }
+
+  /* ============ 3. 字体层级 ============ */
+  .type-row{
+    display:grid; grid-template-columns: 150px 1fr; gap:clamp(20px,4vw,56px);
+    padding:clamp(22px,3vw,32px) 0; border-top:1px solid var(--c-line); align-items:baseline;
+  }
+  .type-row:last-child{ border-bottom:1px solid var(--c-line); }
+  @media(max-width:680px){ .type-row{ grid-template-columns:1fr; gap:8px; } }
+  .type-row .spec{ font-family:var(--latin); font-size:12.5px; letter-spacing:.12em; color:#9a917f; line-height:1.7; text-transform:uppercase; }
+  .type-row .spec b{ display:block; color:var(--c-antique); font-weight:600; font-size:13px; letter-spacing:.2em; margin-bottom:4px; }
+  .t-h1{ font-family:var(--serif); font-weight:700; font-size:42px; color:var(--c-ink); line-height:1.25; letter-spacing:.04em; margin:0; }
+  .t-h2{ font-family:var(--serif); font-weight:500; font-size:28px; color:var(--c-purple); line-height:1.35; letter-spacing:.06em; margin:0; }
+  .t-body{ font-family:var(--sans); font-weight:300; font-size:16px; color:var(--c-body); line-height:1.95; margin:0; }
+  .t-quote{ font-family:var(--serif); font-weight:400; font-style:normal; font-size:20px; color:var(--c-green); line-height:1.7; margin:0; padding-left:18px; border-left:2px solid var(--c-gold); }
+  .t-note{ font-family:var(--sans); font-weight:400; font-size:13px; color:#9a917f; line-height:1.7; margin:0; letter-spacing:.04em; }
+  .t-latin{ font-family:var(--latin); font-style:italic; font-weight:500; font-size:24px; color:var(--c-clay); margin:0; letter-spacing:.02em; }
+
+  /* ============ 4. 封面 mockup ============ */
+  .covers{ display:grid; gap:clamp(28px,4vw,44px); }
+  .cover-wrap .cap{ font-family:var(--latin); font-size:12px; letter-spacing:.22em; text-transform:uppercase; color:#9a917f; margin:0 0 12px; }
+  .cover{
+    position:relative; width:100%; aspect-ratio:900 / 383; overflow:hidden;
+    border:1px solid var(--c-line);
+  }
+  .cover-inner{ position:absolute; inset:0; padding:clamp(20px,4vw,46px) clamp(24px,5vw,60px); display:flex; flex-direction:column; }
+  /* 暖白版 */
+  .cover--paper{ background:var(--c-paper); }
+  .cover--paper .ttl{ color:var(--c-ink); }
+  .cover--paper .ttl .accent{ color:var(--c-purple); }
+  .cover--paper .ssub{ color:var(--c-green); }
+  .cover--paper .date{ color:#8d8576; }
+  .cover--paper .eyebrow{ color:var(--c-antique); }
+  .cover--paper .botanical{ color:var(--c-ink); }
+  /* 深紫版 */
+  .cover--dark{ background:var(--c-purple); }
+  .cover--dark .ttl{ color:#fff; }
+  .cover--dark .ttl .accent{ color:var(--c-gold); }
+  .cover--dark .ssub{ color:#e7d8a6; }
+  .cover--dark .date{ color:#cdb8d2; }
+  .cover--dark .eyebrow{ color:var(--c-gold); }
+  .cover--dark .botanical{ color:var(--c-antique); }
+  .cover--dark .place-box{ border-color:rgba(255,255,255,.4); color:rgba(255,255,255,.7); }
+
+  .cover .eyebrow{ font-family:var(--latin); font-size:clamp(10px,1.4vw,13px); letter-spacing:.36em; text-transform:uppercase; }
+  .cover .ttl{ font-family:var(--serif); font-weight:700; font-size:clamp(26px,5.4vw,50px); line-height:1.16; letter-spacing:.04em; margin:auto 0 6px; max-width:74%; }
+  .cover .ssub{ font-family:var(--serif); font-weight:400; font-size:clamp(14px,2.4vw,22px); letter-spacing:.06em; margin:0 0 14px; }
+  .cover .date{ font-family:var(--latin); font-size:clamp(11px,1.7vw,15px); letter-spacing:.2em; }
+  .cover .botanical{ position:absolute; }
+  .cover .bot-corner{ top:clamp(16px,3vw,40px); right:clamp(20px,4vw,52px); width:clamp(70px,12vw,124px); height:auto; }
+  .cover .place-box{
+    position:absolute; right:clamp(24px,5vw,60px); bottom:clamp(20px,4vw,46px);
+    width:clamp(96px,18vw,180px); aspect-ratio:3/4; border:1px dashed var(--c-clay);
+    display:flex; align-items:center; justify-content:center; text-align:center;
+    font-size:10.5px; line-height:1.6; color:var(--c-clay); letter-spacing:.04em;
+    padding:8px; font-family:var(--sans);
+  }
+
+  /* ============ 5. 正文模版 ============ */
+  .article{ background:#fff; border:1px solid var(--c-line); }
+  .article .banner{
+    background:var(--c-purple); color:#fff; padding:clamp(26px,4vw,44px) clamp(28px,5vw,60px);
+    display:flex; align-items:center; justify-content:space-between; gap:24px;
+  }
+  .article .banner .b-zh{ font-family:var(--serif); font-weight:600; font-size:clamp(20px,3vw,28px); letter-spacing:.1em; }
+  .article .banner .b-en{ font-family:var(--latin); font-size:12px; letter-spacing:.34em; text-transform:uppercase; color:#e0cbe6; margin-top:6px; }
+  .article .banner .b-leaf{ width:64px; height:64px; color:var(--c-gold); flex-shrink:0; }
+  .article .body{ padding:clamp(34px,5vw,64px) clamp(30px,6vw,80px); }
+  .art-h1{
+    font-family:var(--serif); font-weight:700; font-size:clamp(26px,4vw,38px);
+    color:var(--c-ink); line-height:1.3; margin:0 0 8px; padding-left:20px;
+    border-left:4px solid var(--c-gold); letter-spacing:.04em;
+  }
+  .art-eyebrow{ font-family:var(--latin); font-size:13px; letter-spacing:.32em; text-transform:uppercase; color:var(--c-antique); margin:0 0 18px 24px; }
+  .art-p{ font-family:var(--sans); font-weight:300; font-size:16.5px; color:var(--c-body); line-height:2.0; margin:24px 0; }
+  .art-p .lead{ font-family:var(--serif); font-weight:500; color:var(--c-ink); }
+  .art-divider{ display:flex; align-items:center; justify-content:center; margin:40px 0; color:var(--c-antique); }
+  .art-divider svg{ width:min(320px,70%); height:auto; }
+  .art-quote{
+    font-family:var(--serif); font-weight:400; font-size:clamp(19px,2.6vw,24px);
+    color:var(--c-green); line-height:1.7; letter-spacing:.04em;
+    margin:36px 0; padding:8px 0 8px 26px; border-left:2px solid var(--c-gold);
+  }
+  .art-quote .src{ display:block; font-family:var(--latin); font-style:italic; font-size:15px; color:#9a917f; margin-top:12px; letter-spacing:.04em; }
+  .art-placebox{
+    border:1px dashed var(--c-clay); color:var(--c-clay); background:#FBF6EE;
+    padding:clamp(28px,5vw,52px); text-align:center; margin:36px 0;
+    display:flex; flex-direction:column; align-items:center; gap:10px;
+  }
+  .art-placebox .pb-leaf{ width:46px; height:46px; opacity:.7; }
+  .art-placebox .pb-t{ font-family:var(--serif); font-size:15px; color:var(--c-clay); letter-spacing:.06em; }
+  .art-placebox .pb-s{ font-size:12px; color:#b29475; letter-spacing:.04em; }
+  .art-sign{
+    margin-top:48px; padding-top:24px; border-top:1px solid var(--c-line);
+    display:flex; align-items:center; gap:16px;
+  }
+  .art-sign .s-leaf{ width:34px; height:34px; color:var(--c-green); flex-shrink:0; }
+  .art-sign .s-txt{ font-size:13px; color:#8d8576; line-height:1.7; letter-spacing:.04em; }
+  .art-sign .s-txt b{ color:var(--c-purple); font-weight:500; font-family:var(--serif); letter-spacing:.08em; }
+
+  /* ============ 6. 组别标识三连 ============ */
+  .groups{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:1px;
+    background:var(--c-line); border:1px solid var(--c-line);
+  }
+  @media(max-width:820px){ .groups{ grid-template-columns:1fr; } }
+  .group{
+    background:#fff; padding:clamp(32px,4vw,52px) clamp(22px,3vw,36px) clamp(34px,4vw,46px);
+    display:flex; flex-direction:column; align-items:center; text-align:center; position:relative;
+  }
+  .group .g-letter{ font-family:var(--latin); font-style:italic; font-weight:600; font-size:clamp(42px,6vw,60px); color:var(--c-purple); line-height:1; }
+  .group .g-stage{ font-family:var(--serif); font-weight:500; font-size:15px; color:var(--c-green); letter-spacing:.28em; margin-top:10px; }
+  .group .g-svgwrap{
+    width:100%; aspect-ratio:1/1.05; margin:clamp(20px,3vw,30px) 0 clamp(18px,2.5vw,26px);
+    border:1px dashed var(--c-antique); color:var(--c-ink);
+    display:flex; align-items:center; justify-content:center; position:relative;
+  }
+  .group .g-svgwrap svg{ width:58%; height:auto; }
+  .group .g-svgwrap .ph{ position:absolute; bottom:8px; left:0; right:0; font-family:var(--latin); font-size:10px; letter-spacing:.18em; text-transform:uppercase; color:#b6a987; }
+  .group .g-name{ font-family:var(--serif); font-weight:700; font-size:clamp(24px,3vw,30px); color:var(--c-ink); letter-spacing:.14em; }
+  .group .g-latin{ font-family:var(--latin); font-style:italic; font-weight:500; font-size:16px; color:#9a917f; margin-top:6px; }
+  .group .g-tag{ font-size:12.5px; color:#8d8576; line-height:1.7; margin-top:14px; letter-spacing:.03em; max-width:22ch; }
+
+  /* footer */
+  footer{ padding:clamp(40px,6vw,72px) 0 clamp(60px,8vw,96px); text-align:center; }
+  footer .f-zh{ font-family:var(--serif); font-size:16px; color:var(--c-ink); letter-spacing:.16em; }
+  footer .f-en{ font-family:var(--latin); font-size:12px; letter-spacing:.34em; text-transform:uppercase; color:#9a917f; margin-top:10px; }
+</style>
+</head>
+<body>
+
+<!-- ===== 植物线描母题（手写 SVG，currentColor 上色，按需 use 复用） ===== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <!-- 嫩芽 / 春之芽：单茎 + 两片初展叶 + 顶端卷芽 -->
+    <symbol id="m-sprout" viewBox="0 0 64 100">
+      <g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M32 98 C32 80 30 64 33 46 C34 38 35 33 38 29"/>
+        <path d="M32.5 64 C21 63 13 55 13.5 44 C23 47 30 54 32.5 64"/>
+        <path d="M14.5 46 C21 50 27 56 31 62"/>
+        <path d="M33 52 C45 49 52 40 51 29 C41 33 34 41 33 52"/>
+        <path d="M49.5 31 C43 36 38 43 34 50"/>
+        <path d="M38 29 C39 24 42 22 45 22 C44 26 41 28 38 30"/>
+      </g>
+    </symbol>
+
+    <!-- 三七 母题：主茎 + 掌状轮生复叶 + 顶生伞形花序（小浆果点） -->
+    <symbol id="m-sanqi" viewBox="0 0 140 200">
+      <g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+        <!-- 主茎 -->
+        <path d="M70 198 C70 168 69 140 70 112"/>
+        <!-- 三枚长柄掌状复叶（自 112 节轮生） -->
+        <!-- 左柄 -->
+        <path d="M70 112 C56 110 40 108 24 100"/>
+        <g>
+          <path d="M24 100 C15 92 11 82 12 72"/>
+          <path d="M24 100 C19 89 17 79 18 68"/>
+          <path d="M24 100 C26 88 28 78 31 69"/>
+          <path d="M24 100 C33 92 41 86 50 83"/>
+          <path d="M24 100 C36 99 47 99 57 96"/>
+        </g>
+        <!-- 右柄 -->
+        <path d="M70 112 C84 110 100 108 116 100"/>
+        <g>
+          <path d="M116 100 C125 92 129 82 128 72"/>
+          <path d="M116 100 C121 89 123 79 122 68"/>
+          <path d="M116 100 C114 88 112 78 109 69"/>
+          <path d="M116 100 C107 92 99 86 90 83"/>
+          <path d="M116 100 C104 99 93 99 83 96"/>
+        </g>
+        <!-- 中央花葶 + 伞形花序 -->
+        <path d="M70 112 C70 96 70 80 70 62"/>
+        <g stroke-width="1.2">
+          <path d="M70 62 C62 56 55 50 50 42"/>
+          <path d="M70 62 C66 53 62 45 60 36"/>
+          <path d="M70 62 C70 52 70 43 70 33"/>
+          <path d="M70 62 C74 53 78 45 80 36"/>
+          <path d="M70 62 C78 56 85 50 90 42"/>
+        </g>
+        <g fill="currentColor" stroke="none">
+          <circle cx="50" cy="41" r="3"/>
+          <circle cx="60" cy="35" r="3"/>
+          <circle cx="70" cy="32" r="3"/>
+          <circle cx="80" cy="35" r="3"/>
+          <circle cx="90" cy="41" r="3"/>
+        </g>
+      </g>
+    </symbol>
+
+    <!-- 重楼 母题：七叶一枝花 —— 单茎 + 轮生叶 + 顶生单花 -->
+    <symbol id="m-chonglou" viewBox="0 0 160 160">
+      <g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+        <!-- 茎 -->
+        <path d="M80 158 C80 132 80 108 80 92"/>
+        <!-- 轮生叶（7 枚披针形，自 92 节放射） -->
+        <g>
+          <path d="M80 92 C58 96 34 100 14 96 C34 86 60 86 80 92"/>
+          <path d="M80 92 C62 104 40 116 22 130 C36 110 58 98 80 92"/>
+          <path d="M80 92 C76 110 70 132 64 154 C70 130 74 110 80 92"/>
+          <path d="M80 92 C84 110 90 132 96 154 C90 130 86 110 80 92"/>
+          <path d="M80 92 C98 104 120 116 138 130 C124 110 102 98 80 92"/>
+          <path d="M80 92 C102 96 126 100 146 96 C126 86 100 86 80 92"/>
+          <path d="M80 92 C88 100 100 110 112 116 C100 102 90 94 80 92"/>
+          <path d="M80 92 C72 100 60 110 48 116 C60 102 70 94 80 92"/>
+        </g>
+        <!-- 中脉示意 -->
+        <g stroke-width="0.9" stroke="currentColor" opacity="0.65">
+          <path d="M80 92 C58 92 36 93 18 94"/>
+          <path d="M80 92 C102 92 124 93 142 94"/>
+          <path d="M80 92 C74 112 70 134 66 152"/>
+          <path d="M80 92 C86 112 90 134 94 152"/>
+        </g>
+        <!-- 单花葶 + 一花 -->
+        <path d="M80 92 C80 76 80 60 80 48"/>
+        <g stroke-width="1.2">
+          <path d="M80 48 C72 40 66 32 64 22"/>
+          <path d="M80 48 C78 38 77 28 78 18"/>
+          <path d="M80 48 C82 38 83 28 82 18"/>
+          <path d="M80 48 C88 40 94 32 96 22"/>
+        </g>
+        <circle cx="80" cy="44" r="3.2" fill="currentColor" stroke="none"/>
+      </g>
+    </symbol>
+
+    <!-- 石斛 母题：节茎 + 互生叶 + 兰科小花 -->
+    <symbol id="m-shihu" viewBox="0 0 110 200">
+      <g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+        <!-- 有节的茎 -->
+        <path d="M48 198 C46 168 50 138 47 108 C45 84 49 60 46 38"/>
+        <!-- 节横线 -->
+        <g stroke-width="1.1">
+          <path d="M41 168 L55 166"/>
+          <path d="M43 138 L57 137"/>
+          <path d="M40 108 L54 107"/>
+          <path d="M43 78 L57 77"/>
+          <path d="M40 50 L54 49"/>
+        </g>
+        <!-- 互生叶 -->
+        <path d="M50 152 C66 148 80 140 88 128 C76 142 62 150 49 153"/>
+        <path d="M44 122 C28 120 14 112 8 100 C20 116 32 122 45 123"/>
+        <path d="M51 92 C67 90 81 82 88 70 C77 84 63 90 50 93"/>
+        <path d="M42 62 C26 62 13 55 7 44 C19 58 31 62 44 63"/>
+        <!-- 顶端兰科花（侧瓣 + 唇瓣示意） -->
+        <path d="M46 38 C40 30 34 24 26 22 C34 28 40 33 45 39"/>
+        <path d="M46 38 C52 30 58 24 66 22 C58 28 52 33 47 39"/>
+        <path d="M46 38 C44 28 43 18 46 10 C49 18 48 28 46 38"/>
+        <path d="M46 30 C42 26 40 20 42 14 C47 18 48 26 47 31"/>
+        <path d="M46 30 C50 26 52 20 50 14 C45 18 44 26 45 31"/>
+        <circle cx="46" cy="28" r="2.6" fill="currentColor" stroke="none"/>
+      </g>
+    </symbol>
+
+    <!-- 横向茎蔓分隔线：中央伞序 + 对生小叶 -->
+    <symbol id="m-divider" viewBox="0 0 360 56">
+      <g fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6 28 C70 28 110 28 150 28"/>
+        <path d="M354 28 C290 28 250 28 210 28"/>
+        <!-- 左侧小叶对 -->
+        <path d="M120 28 C112 20 104 16 96 16 C104 22 112 26 120 28"/>
+        <path d="M120 28 C112 36 104 40 96 40 C104 34 112 30 120 28"/>
+        <path d="M150 28 C144 22 138 19 132 19 C138 23 144 26 150 28"/>
+        <path d="M150 28 C144 34 138 37 132 37 C138 33 144 30 150 28"/>
+        <!-- 右侧小叶对 -->
+        <path d="M240 28 C248 20 256 16 264 16 C256 22 248 26 240 28"/>
+        <path d="M240 28 C248 36 256 40 264 40 C256 34 248 30 240 28"/>
+        <path d="M210 28 C216 22 222 19 228 19 C222 23 216 26 210 28"/>
+        <path d="M210 28 C216 34 222 37 228 37 C222 33 216 30 210 28"/>
+        <!-- 中央伞形花序 -->
+        <g stroke-width="1.1">
+          <path d="M180 28 C174 22 170 16 168 9"/>
+          <path d="M180 28 C179 21 178 14 178 7"/>
+          <path d="M180 28 C181 21 182 14 182 7"/>
+          <path d="M180 28 C186 22 190 16 192 9"/>
+          <path d="M180 28 C180 36 180 44 180 50"/>
+        </g>
+        <g fill="currentColor" stroke="none">
+          <circle cx="168" cy="8" r="2.4"/>
+          <circle cx="178" cy="6" r="2.4"/>
+          <circle cx="182" cy="6" r="2.4"/>
+          <circle cx="192" cy="8" r="2.4"/>
+          <circle cx="180" cy="51" r="2.2"/>
+        </g>
+      </g>
+    </symbol>
+
+    <!-- 单叶角标：一片披针叶 + 中脉侧脉 -->
+    <symbol id="m-leaf" viewBox="0 0 64 64">
+      <g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M10 56 C18 36 34 16 56 8 C50 30 38 50 14 60 C12 59 11 58 10 56 Z"/>
+        <path d="M14 58 C26 44 42 26 54 12"/>
+        <path d="M22 46 C28 44 33 41 37 36" stroke-width="1"/>
+        <path d="M28 38 C34 36 39 33 43 28" stroke-width="1"/>
+        <path d="M34 30 C39 28 44 25 48 20" stroke-width="1"/>
+      </g>
+    </symbol>
+  </defs>
+</svg>
+
+<!-- ===== 全局页头 ===== -->
+<header class="masthead">
+  <div class="wrap">
+    <p class="kicker">Visual Identity · Concept Board</p>
+    <h1>方案 A　植物志编辑风</h1>
+    <p class="sub">Botanical Editorial — 本草线描 × Curtis's Botanical Magazine × Kinfolk 编辑式排版</p>
+    <p class="meta">清系春城 · 清华生命学院乡村振兴实践支队 · THU 2026 · 设计样板（供副支队长审阅方向）</p>
+  </div>
+</header>
+
+<!-- ===== 1. LOGO ===== -->
+<section id="logo">
+  <div class="wrap">
+    <div class="section-label">
+      <span class="no">01</span>
+      <span class="zh">标志概念</span>
+      <span class="en">Logotype</span>
+    </div>
+
+    <div class="logo-grid">
+      <!-- 横版 -->
+      <div class="logo-card">
+        <span class="tag">Horizontal · 横版主标</span>
+        <div class="logo-horizontal">
+          <span class="zi qx">清系</span>
+          <span class="zi cc">春</span>
+          <svg class="logo-sprout"><use href="#m-sprout"/></svg>
+          <span class="zi cc">城</span>
+        </div>
+        <div class="logo-en">Qingxi Chuncheng · THU 2026</div>
+      </div>
+
+      <!-- 方版 -->
+      <div class="logo-card">
+        <span class="tag">Square · 头像 / 印记</span>
+        <div class="logo-square">
+          <svg class="sq-sprout"><use href="#m-sprout"/></svg>
+          <div class="sq-zi"><span class="qx">清系</span><br/><span class="cc">春城</span></div>
+          <div class="sq-en">THU · 2026</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 2. 配色 ===== -->
+<section id="palette">
+  <div class="wrap">
+    <div class="section-label">
+      <span class="no">02</span>
+      <span class="zh">配色系统</span>
+      <span class="en">Palette</span>
+    </div>
+
+    <div class="swatches">
+      <div class="sw">
+        <div class="chip" style="background:#660874"></div>
+        <div class="info"><div class="name">清华紫</div><div class="hex">#660874</div><div class="use">主色 · 标题 / banner / 强调</div></div>
+      </div>
+      <div class="sw">
+        <div class="chip" style="background:#3D7A4F"></div>
+        <div class="info"><div class="name">乡野绿</div><div class="hex">#3D7A4F</div><div class="use">辅色 · 副题 / 田野意象</div></div>
+      </div>
+      <div class="sw">
+        <div class="chip" style="background:#D4A843"></div>
+        <div class="info"><div class="name">稻金色</div><div class="hex">#D4A843</div><div class="use">点缀 · 引用边线 / 角标</div></div>
+      </div>
+      <div class="sw">
+        <div class="chip" style="background:#C4956A"></div>
+        <div class="info"><div class="name">暖土色</div><div class="hex">#C4956A</div><div class="use">点缀 · 占位 / 大地意象</div></div>
+      </div>
+      <div class="sw">
+        <div class="chip" style="background:#B8A578"></div>
+        <div class="info"><div class="name">古金</div><div class="hex">#B8A578</div><div class="use">线描点缀 / 学术档案感</div></div>
+      </div>
+      <div class="sw">
+        <div class="chip" style="background:#FAF8F5;border:1px solid #E4DED4"></div>
+        <div class="info"><div class="name">暖白纸</div><div class="hex">#FAF8F5</div><div class="use">底色 · 全局纸质底（非纯白）</div></div>
+      </div>
+      <div class="sw">
+        <div class="chip" style="background:#1A1A1A"></div>
+        <div class="info"><div class="name">墨色</div><div class="hex">#1A1A1A</div><div class="use">线描 / 一级标题</div></div>
+      </div>
+      <div class="sw">
+        <div class="chip" style="background:#3F3F3F"></div>
+        <div class="info"><div class="name">深灰</div><div class="hex">#3F3F3F</div><div class="use">正文</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 3. 字体层级 ===== -->
+<section id="type">
+  <div class="wrap">
+    <div class="section-label">
+      <span class="no">03</span>
+      <span class="zh">字体层级</span>
+      <span class="en">Typography</span>
+    </div>
+
+    <div class="type-row">
+      <div class="spec"><b>H1 一级标题</b>Noto Serif SC<br/>700 · 42px · LS .04em</div>
+      <h2 class="t-h1">药材田里的经济学</h2>
+    </div>
+    <div class="type-row">
+      <div class="spec"><b>H2 二级标题</b>Noto Serif SC<br/>500 · 28px · 清华紫</div>
+      <h3 class="t-h2">从清华园到滇池畔</h3>
+    </div>
+    <div class="type-row">
+      <div class="spec"><b>Body 正文</b>Noto Sans SC<br/>300 · 16px · LH 1.95</div>
+      <p class="t-body">七月的晋宁，三七正抽出新叶。我们沿着一条药材产业链溯流而上，在田垄、车间与货架之间，记录乡村振兴最真实的肌理。</p>
+    </div>
+    <div class="type-row">
+      <div class="spec"><b>Quote 引用</b>Noto Serif SC<br/>400 · 20px · 乡野绿</div>
+      <blockquote class="t-quote">「一株三七，从清华园的实验室走到滇池畔的药田，走的是一条把科学写进土地的路。」</blockquote>
+    </div>
+    <div class="type-row">
+      <div class="spec"><b>Latin 拉丁题饰</b>Cormorant Garamond<br/>500 italic · 24px</div>
+      <p class="t-latin">Panax notoginseng — from the field to the future.</p>
+    </div>
+    <div class="type-row">
+      <div class="spec"><b>Note 注释</b>Noto Sans SC<br/>400 · 13px · 浅灰</div>
+      <p class="t-note">注：道地药材指特定产区、特定栽培加工方式所产、品质与疗效公认优良的中药材。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 4. 公众号大封面 ===== -->
+<section id="cover">
+  <div class="wrap">
+    <div class="section-label">
+      <span class="no">04</span>
+      <span class="zh">公众号大封面</span>
+      <span class="en">Cover 900×383 · 2.35:1</span>
+    </div>
+
+    <div class="covers">
+      <!-- 暖白版 -->
+      <div class="cover-wrap">
+        <p class="cap">Version A — 暖白纸底</p>
+        <div class="cover cover--paper">
+          <svg class="botanical bot-corner"><use href="#m-sanqi"/></svg>
+          <div class="cover-inner">
+            <div class="eyebrow">清系春城 · 田野日志　No.01</div>
+            <h2 class="ttl">药材田里的<span class="accent">经济学</span></h2>
+            <p class="ssub">从清华园到滇池畔，探一条药田里的振兴路</p>
+            <div class="date">2026.07.11　|　A 组 · 上游调研 · 晋宁三七</div>
+          </div>
+          <div class="place-box">药材科学线描——三七<br/>（待设计师绘制 / 采购公版）</div>
+        </div>
+      </div>
+
+      <!-- 深紫版 -->
+      <div class="cover-wrap">
+        <p class="cap">Version B — 清华紫深色底</p>
+        <div class="cover cover--dark">
+          <svg class="botanical bot-corner"><use href="#m-chonglou"/></svg>
+          <div class="cover-inner">
+            <div class="eyebrow">清系春城 · 田野日志　No.01</div>
+            <h2 class="ttl">药材田里的<span class="accent">经济学</span></h2>
+            <p class="ssub">从清华园到滇池畔，探一条药田里的振兴路</p>
+            <div class="date">2026.07.11　|　A 组 · 上游调研 · 晋宁三七</div>
+          </div>
+          <div class="place-box">药材科学线描——三七<br/>（待设计师绘制 / 采购公版）</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 5. 正文模版 ===== -->
+<section id="article">
+  <div class="wrap">
+    <div class="section-label">
+      <span class="no">05</span>
+      <span class="zh">正文模版</span>
+      <span class="en">Article Layout</span>
+    </div>
+
+    <article class="article">
+      <div class="banner">
+        <div>
+          <div class="b-zh">清系春城 · 田野日志</div>
+          <div class="b-en">Qingxi Chuncheng · Field Notes</div>
+        </div>
+        <svg class="b-leaf"><use href="#m-leaf"/></svg>
+      </div>
+
+      <div class="body">
+        <p class="art-eyebrow">A 组 · 上游 · 晋宁三七</p>
+        <h1 class="art-h1">药材田里的经济学</h1>
+
+        <p class="art-p"><span class="lead">七月的晋宁，三七正抽出新叶。</span>我们沿着一条道地药材的产业链溯流而上——从 A 组所在的上游药田，到 B 组记录的中游加工车间，再到 C 组观察的下游健康消费终端。这条「从药田到货架」的路，正是我们想读懂的乡村振兴肌理。</p>
+
+        <div class="art-divider"><svg><use href="#m-divider"/></svg></div>
+
+        <p class="art-p">三七喜半阴、忌连作，一块地种过三七后往往要休养多年。这种「苛刻」一度让晋宁的种植户们在收益与风险之间反复权衡。而当科学的种植规范、稳定的收购渠道与品牌化加工被引入，药田里的每一个决策，都开始有了可计算的经济学。</p>
+
+        <blockquote class="art-quote">
+          一株三七，从清华园的实验室走到滇池畔的药田，走的是一条把科学写进土地的路。
+          <span class="src">— 清系春城支队 · 田野手记</span>
+        </blockquote>
+
+        <p class="art-p">在正文中，植物科学线描既是装饰，也是叙事的锚点——上游用三七、中游用重楼、下游用石斛，三种道地药材对应三个分组，让视觉系统自带产业链的逻辑。下方占位框演示了一张全株科学图版在正文中的位置与尺寸：</p>
+
+        <div class="art-placebox">
+          <svg class="pb-leaf"><use href="#m-shihu"/></svg>
+          <div class="pb-t">药材科学线描——石斛（全株图版）</div>
+          <div class="pb-s">待设计师绘制 / 采购本草纲目级公版插图 · 占正文宽度约 60%</div>
+        </div>
+
+        <p class="art-p">排版遵循 Kinfolk 式的克制：大留白、清晰的字体层级、一图一语的节奏。不堆叠信息，不追求热闹——让「深入一条路」的支队气质，从版面里自然透出来。</p>
+
+        <div class="art-sign">
+          <svg class="s-leaf"><use href="#m-leaf"/></svg>
+          <div class="s-txt">
+            撰文 · A 组田野小组　|　摄影 · 影像组　|　视觉 · <b>清系春城</b><br/>
+            清华大学生命学院 · 赴云南昆明晋宁区乡村振兴实践支队 · 2026 夏
+          </div>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- ===== 6. 组别标识三连 ===== -->
+<section id="groups" style="border-bottom:none;">
+  <div class="wrap">
+    <div class="section-label">
+      <span class="no">06</span>
+      <span class="zh">组别标识三连</span>
+      <span class="en">Group Identity · One Herb per Group</span>
+    </div>
+    <div class="groups">
+      <!-- A 组 · 三七 -->
+      <div class="group">
+        <div class="g-letter">A</div>
+        <div class="g-stage">上 游</div>
+        <div class="g-svgwrap"><svg viewBox="0 0 140 200"><use href="#m-sanqi"/></svg><span class="ph">botanical illustration here</span></div>
+        <div class="g-name">三七</div>
+        <div class="g-latin">Panax notoginseng</div>
+        <div class="g-tag">中药材种植与农业转型 · 晋宁 / 文山道地药材，药田意象</div>
+      </div>
+      <!-- B 组 · 重楼 -->
+      <div class="group">
+        <div class="g-letter">B</div>
+        <div class="g-stage">中 游</div>
+        <div class="g-svgwrap"><svg viewBox="0 0 160 160"><use href="#m-chonglou"/></svg><span class="ph">botanical illustration here</span></div>
+        <div class="g-name">重楼</div>
+        <div class="g-latin">Paris polyphylla</div>
+        <div class="g-tag">生物医药加工与产业带动 · 云南白药核心原料，从田到车间</div>
+      </div>
+      <!-- C 组 · 石斛 -->
+      <div class="group">
+        <div class="g-letter">C</div>
+        <div class="g-stage">下 游</div>
+        <div class="g-svgwrap"><svg viewBox="0 0 110 200"><use href="#m-shihu"/></svg><span class="ph">botanical illustration here</span></div>
+        <div class="g-name">石斛</div>
+        <div class="g-latin">Dendrobium</div>
+        <div class="g-tag">健康产品消费与民生改善 · 云南石斛产业，健康消费终端</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== footer ===== -->
+<footer>
+  <div class="wrap">
+    <div class="f-zh">清系春城</div>
+    <div class="f-en">Qingxi Chuncheng · 方案 A 植物志编辑风 · 设计样板 v1</div>
+  </div>
+</footer>
+
+</body>
+</html>
