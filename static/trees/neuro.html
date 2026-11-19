@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>神经科学模拟 · 学习与记忆</title>
+<style>
+:root{--bg:#fbfbfa;--fg:#1a1a1a;--muted:#6b6b6b;--line:#e2e0dc;--card:#fff;
+  --accent:#2f6fb3;--accent-weak:#e8f0f9;--warn:#b3542f;--ok:#2f7d52;--okweak:#e6f2ea;
+  --radius:10px;--shadow:0 1px 2px rgba(0,0,0,.05)}
+@media (prefers-color-scheme: dark){:root{--bg:#141414;--fg:#e8e6e3;--muted:#9a9793;
+  --line:#2e2e2e;--card:#1c1c1c;--accent:#6fa8dc;--accent-weak:#1f2b38;--warn:#e08a63;
+  --ok:#7bc496;--okweak:#1e2c24;--shadow:0 1px 2px rgba(0,0,0,.4)}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--fg);
+  font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue","PingFang SC",sans-serif;
+  font-size:15px;line-height:1.55;-webkit-text-size-adjust:100%}
+header{position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:1px solid var(--line);
+  padding:12px 14px 10px;padding-top:calc(12px + env(safe-area-inset-top))}
+h1{margin:0;font-size:16px;font-weight:650}
+.sub{color:var(--muted);font-size:12.5px;margin-top:3px}
+.bar{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+button{font:inherit;font-size:13px;color:var(--fg);background:var(--card);border:1px solid var(--line);
+  border-radius:999px;padding:9px 14px;min-height:44px;cursor:pointer;display:inline-flex;align-items:center}
+button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+button.rev.on{background:var(--ok);border-color:var(--ok)}
+button.zm{font-size:12px;min-height:36px;padding:6px 12px}
+main{padding:14px 14px 90px;max-width:980px;margin:0 auto}
+.layer{margin-bottom:18px}
+.lh{display:flex;align-items:baseline;gap:8px;margin:0 0 8px;font-size:12px;color:var(--muted)}
+.lh b{color:var(--fg);font-size:13px}
+.grid{display:grid;gap:8px;grid-template-columns:1fr}
+@media(min-width:700px){.grid{grid-template-columns:1fr 1fr}}
+@media(min-width:1000px){.grid{grid-template-columns:1fr 1fr 1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:11px 13px;box-shadow:var(--shadow);cursor:pointer;position:relative}
+.card.sel{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-weak)}
+.card .y{font-size:11.5px;color:var(--muted)}
+.card .nm{font-weight:600;font-size:14.5px;margin:1px 0 2px}
+.card .tx{font-size:12.5px;color:var(--muted);padding-right:54px}
+.card .cnt{position:absolute;right:12px;top:11px;font-size:11px;color:var(--accent);
+  background:var(--accent-weak);border-radius:999px;padding:1px 7px}
+.wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:6px}
+#graph svg{display:block;width:100%;height:auto;max-width:none}
+#graphWrap.zoom #graph svg{width:1500px}
+#graphBar{display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap}
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.32);opacity:0;pointer-events:none;
+  transition:opacity .18s;z-index:40}
+.scrim.on{opacity:1;pointer-events:auto}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:50;background:var(--bg);
+  border-top:1px solid var(--line);border-radius:16px 16px 0 0;max-height:82vh;overflow-y:auto;
+  -webkit-overflow-scrolling:touch;transform:translateY(102%);transition:transform .22s ease;
+  padding:0 16px calc(28px + env(safe-area-inset-bottom))}
+.sheet.on{transform:translateY(0)}
+@media(min-width:820px){
+  .sheet{left:auto;top:0;bottom:0;right:0;width:470px;border-radius:0;border-left:1px solid var(--line);
+    border-top:none;max-height:100vh;transform:translateX(102%);box-shadow:-8px 0 24px rgba(0,0,0,.08)}
+  .sheet.on{transform:translateX(0)}
+  .grab{display:none}
+  body.open header, body.open main{padding-right:486px}
+  header,main{transition:padding-right .22s ease}
+}
+.grab{width:38px;height:4px;border-radius:2px;background:var(--line);margin:9px auto 4px}
+.sh{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;padding:6px 0 12px;
+  border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:2}
+.sh h2{margin:0;font-size:16px;font-weight:650;line-height:1.35}
+.sh .y{display:block;margin-top:2px;font-size:11.5px;color:var(--muted)}
+.close{border:none;background:none;font-size:24px;line-height:1;color:var(--muted);
+  width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:50%;flex:none}
+section{margin-top:14px}
+h3{font-size:12px;color:var(--muted);font-weight:650;margin:0 0 8px;letter-spacing:.04em}
+.fact{font-size:14.5px;line-height:1.6}
+.fact .why{display:block;margin-top:6px;font-size:13px;color:var(--muted)}
+.dir{border:1px solid var(--line);border-radius:9px;padding:10px 12px;margin-bottom:9px;background:var(--card)}
+.dir .h{font-weight:600;font-size:13.5px;margin-bottom:3px}
+.dir .l{font-size:12.5px;color:var(--muted)}
+.dir .res{margin-top:8px;font-size:12.5px;padding:7px 9px;border-radius:7px;display:none}
+body.reveal .dir .res{display:block}
+.dir.ok .res{background:var(--okweak);color:var(--ok);border:1px solid var(--ok)}
+.dir.weak .res{background:transparent;color:var(--fg);border:1px solid var(--line)}
+.dir.dead .res{background:transparent;color:var(--warn);border:1px dashed var(--warn)}
+.dir .go{color:var(--accent);text-decoration:underline;cursor:pointer}
+.legend{font-size:11.5px;color:var(--muted);margin-top:10px;line-height:1.7}
+</style>
+</head>
+<body>
+<header>
+  <h1>神经科学模拟 <span style="color:var(--muted);font-weight:400">学习与记忆</span></h1>
+  <div class="sub" id="stat"></div>
+  <div class="bar">
+    <button id="btnList" class="on">分层列表</button>
+    <button id="btnGraph">关系图</button>
+    <button id="btnReveal" class="rev">揭晓真实结局</button>
+  </div>
+</header>
+<main>
+  <div id="list"></div>
+  <div id="graphWrap" class="wrap" style="display:none">
+    <div id="graphBar"><button id="btnZoom" class="zm">放大看细节</button>
+      <span style="font-size:11.5px;color:var(--muted)">默认一屏看全貌</span></div>
+    <div id="graph"></div>
+  </div>
+  <div class="legend" id="legend"></div>
+</main>
+
+<div class="scrim" id="scrim"></div>
+<div class="sheet" id="sheet">
+  <div class="grab"></div>
+  <div class="sh"><div><h2 id="sTitle"></h2><span class="y" id="sYear"></span></div>
+    <button class="close" id="sClose">×</button></div>
+  <section><h3>已确立的事实</h3><div class="fact" id="sFact"></div></section>
+  <section><h3>当时可以往哪问</h3><div id="sDirs"></div></section>
+</div>
+
+<script>
+const N = {
+// 五个根
+"神经元学说":{y:1890,name:"神经元学说",t:"神经系统由一个个独立的神经元组成，而不是一张连续的原生质网（Cajal）",why:"信息在细胞之间传递，就必须有「连接点」——这为突触概念铺了路。"},
+"突触化学传递":{y:1921,name:"突触化学传递",t:"刺激迷走神经能让离体心脏停跳，且效应可通过液体转移（Loewi）",why:"神经元之间不是电线相接，而是靠化学物质通信——可以被干预、被测量。"},
+"条件反射":{y:1903,name:"条件反射",t:"中性刺激与奖赏反复配对后，单独的中性刺激也能引发反应（巴甫洛夫）",why:"学习可以被实验分解成「刺激—反应—强化」的可测量单元。"},
+"海马与记忆":{y:1957,name:"海马与记忆",t:"切除双侧内侧颞叶后，H.M. 无法形成新的情景记忆，但旧记忆与技能保留",why:"记忆不是均匀分布在整个皮层，而是有专门的结构在负责。"},
+"光遗传学":{y:2005,name:"光遗传学",t:"把光敏感通道表达在特定类型的神经元上，可用光精确开关它们",why:"第一次能对「某一类细胞」而不是「某个脑区」做因果实验。"},
+// L2
+"Hebb律":{y:1949,name:"Hebb 学习律",t:"两个神经元同时兴奋，它们之间的连接会增强",why:"学习可以还原为连接强度的改变——一句话给出了此后七十年的研究纲领。"},
+"LTP":{y:1973,name:"长时程增强",t:"高频刺激海马通路后，突触反应可持续增强数小时以上（Bliss & Lømo）",why:"连接强度真的会变，而且变得持久——Hebb 律有了电生理证据。"},
+"位置细胞":{y:1971,name:"位置细胞",t:"海马中的某些细胞只在动物处于特定位置时放电（O'Keefe）",why:"抽象的记忆结构第一次有了可见的对应物：一张地图。"},
+"递质受体":{y:1972,name:"递质受体分型",t:"同一种递质可以作用于不同受体，产生兴奋或抑制两种相反效果",why:"「化学传递」不是一个开关，而是一套可分辨的接口。"},
+"记忆分子转移":{y:1965,name:"记忆分子转移",t:"把受过训练的涡虫磨碎喂给未训练的涡虫，后者似乎「学会了」（McConnell）",why:"如果记忆能随分子转移，那记忆就是化学物质——这个想法吸引了一代人。"},
+// L3
+"NMDA受体":{y:1983,name:"NMDA 受体",t:"这种受体要同时满足「递质结合」与「膜去极化」才开放，因而能检测同时性",why:"分子层面找到了 Hebb 律的实现方式：只有同时发生才留下痕迹。"},
+"CaMKII":{y:1986,name:"CaMKII",t:"钙内流激活的激酶能自身磷酸化，把短暂信号变成长时程的分子状态",why:"存在一个「分子开关」，能把几秒钟的事件记住几小时。"},
+"恐惧环路":{y:1996,name:"恐惧环路",t:"杏仁核是恐惧学习与表达的必要节点，损伤后条件性恐惧消失",why:"情绪记忆有自己的专用通路，与情景记忆分开。"},
+"网格细胞":{y:2005,name:"网格细胞",t:"内嗅皮层细胞在多个等距位置放电，形成六边形网格（Moser 夫妇）",why:"大脑用坐标系统而非单点标记来表示空间——一套内建的度量。"},
+"LTD":{y:1992,name:"长时程抑制",t:"低频刺激可使突触反应持久减弱",why:"连接既能变强也能变弱，学习才有「擦除」和「修正」的可能。"},
+// L4
+"CREB":{y:1990,name:"CREB 与长时记忆",t:"反复训练激活 CREB，启动基因转录，使短时记忆转为长时记忆",why:"记忆的固化需要造新蛋白——短时与长时是两套机制。"},
+"可塑性理论":{y:2000,name:"突触可塑性理论",t:"记忆存储于突触连接的强度变化中（Kandel）",why:"从分子到行为，整条链被接通：这是神经科学的核心范式。"},
+"再巩固":{y:2007,name:"记忆再巩固",t:"回忆会让记忆暂时变得不稳定，需要重新固化才能保存",why:"记忆不是录像带，每次提取都在重写它。"},
+"空间导航系统":{y:2014,name:"空间导航系统",t:"位置细胞、网格细胞、头方向细胞共同构成内建的定位系统（诺奖）",why:"「认知地图」从假说变成了可测量的神经结构。"},
+"engram":{y:2012,name:"记忆痕迹细胞",t:"用即早期基因标记学习时活跃的细胞，光激活它们可唤起记忆",why:"记忆第一次可以被「点亮」和「关掉」——从相关走到因果。"},
+// L5
+"AD突触假说":{y:2015,name:"AD 突触假说",t:"在斑块与缠结出现之前，突触功能已经受损",why:"记忆疾病可能首先是突触疾病，而不是细胞死亡疾病。"},
+"记忆擦除":{y:2016,name:"记忆擦除",t:"抑制特定 engram 细胞的蛋白合成，可让该记忆消失而其他记忆保留",why:"记忆变得可编辑——同时也带来伦理问题。"},
+"脑机接口":{y:2023,name:"脑机接口",t:"从运动皮层解码意图，让瘫痪者控制光标与机械臂",why:"神经活动的读出可以变成行动，记忆之外的功能也被打开。"},
+"群体编码":{y:2020,name:"群体编码与计算模型",t:"信息并非存于单个细胞，而是存于细胞群体的联合活动模式",why:"「一个记忆一个细胞」的直觉被推翻，分布式表征成为主流。"},
+// 支线
+"原生质网说":{y:1897,name:"原生质网说（支线）",t:"神经细胞彼此融合成连续网络（Golgi）"},
+"Lashley搜索":{y:1950,name:"Lashley 的搜寻（支线）",t:"切除大鼠皮层不同部位，寻找记忆的存放地，结果找不到单一位置"},
+"海兔":{y:1960,name:"海兔模型（支线）",t:"用简单神经系统的无脊椎动物研究学习，可定位到具体突触"},
+"c-fos":{y:1989,name:"即早期基因（支线）",t:"神经活动可诱导 c-fos 等基因表达，成为「活动标记」"},
+"边界细胞":{y:2008,name:"边界细胞（支线）",t:"对环境的边界有反应的细胞，补充了导航系统的组件"},
+"睡眠巩固":{y:2006,name:"睡眠巩固",t:"睡眠中海马重放白天路径，与皮层对话完成记忆固化",why:"记忆在离线状态下被加工——学习不只发生在学习的时候。"},
+"脑图谱":{y:2019,name:"单细胞脑图谱（支线）",t:"逐细胞解析皮层细胞类型与连接"},
+"深部脑刺激":{y:2005,name:"深部脑刺激（支线）",t:"电刺激特定脑区可改善帕金森症状，并意外影响记忆"},
+"淀粉样蛋白":{y:1992,name:"淀粉样级联假说（支线）",t:"Aβ 聚集是 AD 的起始原因"}
+};
+
+const DIRS = {
+"神经元学说":[
+ {d:"去找神经元之间的连接点，证明它们并不融合",h:"如果细胞是独立的，那么接触处应该有可辨认的结构",to:"突触化学传递",kind:"ok",
+  truth:"电镜确认为突触结构。这条路走了六十年，方向是对的。"},
+ {d:"支持相反观点：神经细胞融合成一张网",h:"Golgi 的染色显示纤维彼此接触，看起来像连续网",to:"原生质网说",kind:"weak",
+  truth:"Golgi 至死坚持网状说。它错在结论，但对在提出了「连接」这个真问题。"},
+ {d:"问信息在神经元之间以什么形式传递",h:"如果细胞独立，连接处一定发生了什么",to:"Hebb律",kind:"ok",
+  truth:"从电信号到化学递质，再到「同时激活则强化」，一条线走了下来。"},
+ {d:"认为神经系统是一台固定的机器，学习不改变结构",h:"成年大脑结构看起来稳定",to:null,kind:"dead",
+  truth:"结构确实相对稳定，但连接的强度每天都在变。这个判断错在把「结构稳定」等同于「功能不变」。"}
+],
+"突触化学传递":[
+ {d:"找出到底是哪种化学物质在传递",h:"效应可经液体转移，说明是分子",to:"递质受体",kind:"ok",
+  truth:"陆续找到乙酰胆碱、谷氨酸、GABA 等，并区分出受体亚型。"},
+ {d:"研究反复刺激后突触能否被持久改变",h:"既然传递是化学的，强度也许可以调",to:"LTP",kind:"ok",
+  truth:"1973 LTP 被发现，成为记忆研究的核心模型。"},
+ {d:"认为信号是电直接跳过突触的",h:"有些突触传递极快（<1ms）",to:null,kind:"dead",
+  truth:"电突触确实存在（缝隙连接），但只占少数。作为普适解释错了。"},
+ {d:"用药物模拟或阻断传递来治疗精神疾病",h:"既然靠化学物质，那就能用药调",to:null,kind:"weak",
+  truth:"确实出了药（抗抑郁、抗精神病），但机制远比「补递质」复杂。"}
+],
+"条件反射":[
+ {d:"把「学习」还原到具体的神经环路",h:"如果行为可以被分解，环路也应该可以",to:"恐惧环路",kind:"ok",
+  truth:"杏仁核环路被逐步画出，成为学习与记忆研究的模板。"},
+ {d:"寻找记忆的物理载体（分子）",h:"如果学习有物质基础，也许能分离出来",to:"记忆分子转移",kind:"ok",
+  truth:"这条路后来走偏了（见下），但它提出的问题是对的。"},
+ {d:"认为动物行为足以解释人，不必研究神经机制",h:"行为规律本身就是结论",to:null,kind:"dead",
+  truth:"行为主义统治了半个世纪，直到认知革命把它推翻。它是重要的错。"},
+ {d:"研究强化与消退的规律，做行为治疗",h:"既然能建立，也就能消除",to:null,kind:"weak",
+  truth:"暴露疗法由此而来，确实有效，但不解释机制。"}
+],
+"海马与记忆":[
+ {d:"在动物身上记录海马细胞的活动，看它编码什么",h:"如果海马负责记忆，它的细胞应该对什么有反应",to:"位置细胞",kind:"ok",
+  truth:"1971 发现位置细胞——海马编码的是「在哪里」。"},
+ {d:"找记忆到底存在大脑的哪个位置",h:"如果切掉海马就记不住，那记忆应该存在某处",to:"Lashley搜索",kind:"weak",
+  truth:"Lashley 找了二十年没找到，反而发现记忆是分布式的——这个失败极有价值。"},
+ {d:"认为记忆是整体性的，不存在专门结构",h:"脑损伤后的记忆缺失可能是因为整体功能下降",to:null,kind:"dead",
+  truth:"H.M. 的病例直接否定了它：切除特定结构造成特定缺陷。"},
+ {d:"研究海马损伤后仍保留的学习能力",h:"H.M. 还能学技能，说明存在另一套系统",to:null,kind:"weak",
+  truth:"由此区分出陈述性与程序性记忆两套系统。"}
+],
+"光遗传学":[
+ {d:"用它检验「某类细胞是否是记忆所必需」",h:"既然能开关细胞，就能做因果实验",to:"engram",kind:"ok",
+  truth:"engram 研究正是靠光遗传学从相关走到因果。"},
+ {d:"尝试把它用到人身上做治疗",h:"如果在小鼠能做，人也许能",to:null,kind:"dead",
+  truth:"需要病毒载体加光导纤维，伦理与技术门槛都极高，至今未用于人。"},
+ {d:"用它做细胞类型特异的功能图谱",h:"可以系统地开关每一类细胞",to:null,kind:"weak",
+  truth:"产出了大量细胞类型功能数据，是重要工具红利。"},
+ {d:"认为它能替代电生理记录",h:"能操控就不必记录",to:null,kind:"dead",
+  truth:"操控与读取是两件事，缺一不可。这类「工具万能」的误判很常见。"}
+],
+"Hebb律":[
+ {d:"找它的分子实现",h:"如果同时激活会强化连接，那么细胞里一定有检测同时性的机制",to:"NMDA受体",kind:"ok",
+  truth:"NMDA 受体的双重门控正好实现了「同时」的条件。"},
+ {d:"用人工神经网络实现它",h:"一条学习规则足以造出会学习的系统",to:null,kind:"weak",
+  truth:"感知机与反向传播由此而来，但大脑并不做反向传播——这条线走向了别处。"},
+ {d:"认为只要同时激活就一定增强",h:"规则看起来是无条件的",to:null,kind:"dead",
+  truth:"实际上还有阈值、时序与抑制性调控。真实的突触比公式复杂得多。"},
+ {d:"研究「反 Hebb 学习」是否存在",h:"会不会有连接因同时激活而减弱的情况",to:"LTD",kind:"ok",
+  truth:"确实存在：低频刺激导致 LTD，学习需要双向调节。"}
+],
+"LTP":[
+ {d:"研究 LTP 需要什么受体",h:"增强一定有分子机制",to:"NMDA受体",kind:"ok",
+  truth:"NMDA 受体被确认为触发 LTP 的关键。"},
+ {d:"看 LTP 能维持多久、是否真的与记忆相关",h:"如果它只是离体现象，就没意义",to:null,kind:"weak",
+  truth:"在体 LTP 可持续数天，且学习能占用 LTP 的「容量」——相关性确立，但因果仍有争议。"},
+ {d:"认为 LTP 就是记忆",h:"既然能增强突触，那记忆就是 LTP",to:null,kind:"dead",
+  truth:"最著名的过度简化。阻断 LTP 常也阻断学习，但二者不是同一件事——记忆还涉及结构、抑制与网络层面。"},
+ {d:"研究 LTP 的维持是否需要新蛋白合成",h:"短时与长时可能是两套机制",to:"CREB",kind:"ok",
+  truth:"确认为两阶段：早期不依赖转录，晚期依赖 CREB。"}
+],
+"位置细胞":[
+ {d:"找还有哪些细胞参与定位",h:"如果海马有位置细胞，其他区域也许有别的",to:"网格细胞",kind:"ok",
+  truth:"内嗅皮层有网格细胞、边界细胞、头方向细胞——一套完整系统。"},
+ {d:"证明这些细胞真的在「表示」位置而非被感觉驱动",h:"也许只是视觉线索的反映",to:null,kind:"weak",
+  truth:"在黑暗中、在多个环境中，位置野会重排——它表示的是位置本身。"},
+ {d:"认为位置细胞构成完整的认知地图",h:"如果每个细胞对应一个位置，拼起来就是地图",to:null,kind:"dead",
+  truth:"单个细胞的位置野并不规则，地图是群体编码的。一个细胞一个点的直觉错了。"},
+ {d:"研究位置信号如何被下游用于导航",h:"有了地图，还得有人用",to:"空间导航系统",kind:"ok",
+  truth:"后压皮层与网格-位置系统的互动被逐步画出。"}
+],
+"递质受体":[
+ {d:"找能检测「同时发生」的受体",h:"如果学习依赖同时性，受体层面应该有对应的设计",to:"NMDA受体",kind:"ok",
+  truth:"NMDA 受体需要配体结合加去极化双条件，正好是「与门」。"},
+ {d:"按受体亚型开发药物",h:"既然受体分型，就能选择性作用",to:null,kind:"weak",
+  truth:"确实出了药（如苯二氮䓬类），但选择性远不如预期。"},
+ {d:"认为一种递质对应一种功能",h:"谷氨酸兴奋、GABA 抑制，分工清楚",to:null,kind:"dead",
+  truth:"同一种递质通过不同受体可以产生相反效果，甚至长期改变结构。"},
+ {d:"研究受体在突触外的分布与溢出",h:"递质可能不只作用于突触内",to:null,kind:"weak",
+  truth:"发现容积传递（volume transmission），补充了「点对点」模型。"}
+],
+"记忆分子转移":[
+ {d:"把实验做得更严格，看能否重复",h:"如果记忆真能随分子转移，应该能稳定重复",to:null,kind:"dead",
+  truth:"无法重复。这是二十世纪最著名的可重复性失败之一，直接终结了「记忆分子」的化学路线。"},
+ {d:"继续找「记忆物质」的化学成分",h:"既然喂食有效，就该能分离出活性成分",to:null,kind:"dead",
+  truth:"分离不出。现象本身不成立，后续工作全部落空。"},
+ {d:"改进训练与检测方法，排除应激与嗅觉线索",h:"也许涡虫是被别的因素影响",to:null,kind:"weak",
+  truth:"改进后效应消失——这提示原结果很可能是伪影。这类「阴性结果」其实最有价值。"},
+ {d:"把问题转向「学习时细胞内发生了什么变化」",h:"也许不该找可转移的物质，而该找局部的分子事件",to:"CREB",kind:"ok",
+  truth:"这个转向是对的：记忆不是可传递的液体，而是细胞内的调控状态。"}
+],
+"NMDA受体":[
+ {d:"研究钙内流之后细胞里发生什么",h:"受体开放带来钙，钙一定触发下游",to:"CaMKII",kind:"ok",
+  truth:"CaMKII 被确认为主要下游，并具自磷酸化的「记忆」能力。"},
+ {d:"研究相反方向的调节（减弱）",h:"既然能增强，就该能减弱",to:"LTD",kind:"ok",
+  truth:"低频刺激导致的 LTD 也依赖 NMDA 受体，只是钙信号幅度不同。"},
+ {d:"认为 NMDA 受体是记忆的唯一开关",h:"所有学习可能都靠它",to:null,kind:"dead",
+  truth:"许多形式的学习不依赖 NMDA 受体（如某些小脑学习、习惯形成）。单开关模型是错的。"},
+ {d:"开发 NMDA 受体调节剂治疗精神疾病",h:"既然它是核心，就该能成药",to:null,kind:"weak",
+  truth:"氯胺酮快速抗抑郁证实了这条路，但机制比「阻断 NMDA」复杂。"}
+],
+"CaMKII":[
+ {d:"研究这种「分子记忆」如何维持数十年",h:"蛋白质会更新，分子开关怎么保持",to:null,kind:"weak",
+  truth:"自磷酸化可维持一段时间，但无法解释数十年的记忆——这个问题至今未解。"},
+ {d:"找下游的转录调控",h:"要改变结构，最终要动基因表达",to:null,kind:"weak",
+  truth:"CREB 被确认为长时记忆的关键转录因子——但这部分工作与 LTP 晚期研究重合，单独算一步收益有限。"},
+ {d:"认为 CaMKII 活性足以解释整个记忆",h:"如果开关能保持，记忆就存储在里面",to:null,kind:"dead",
+  truth:"过度简化。记忆还涉及结构改变、抑制性网络与分布式存储。"},
+ {d:"用光或药物调控 CaMKII 来增强记忆",h:"如果能加强开关，也许能增强记忆",to:null,kind:"weak",
+  truth:"在动物上有效，但副作用与选择性是障碍。"}
+],
+"恐惧环路":[
+ {d:"研究记忆为何会被「重新打开」",h:"恐惧记忆常会突然复发，为什么",to:"再巩固",kind:"ok",
+  truth:"回忆使记忆暂时不稳定，需要重新固化——这解释了复发与治疗窗口。"},
+ {d:"找情绪的其它专用环路",h:"恐惧有专用通路，别的情绪呢",to:null,kind:"weak",
+  truth:"奖赏（多巴胺）、厌恶等环路陆续被画出。"},
+ {d:"认为恐惧记忆只存在杏仁核里",h:"损伤杏仁核恐惧就消失，那记忆就在这里",to:null,kind:"dead",
+  truth:"杏仁核是枢纽但不是仓库，记忆分布在海马、皮层等多个区域。"},
+ {d:"用消退训练治疗恐惧障碍",h:"既然能建立，就能消退",to:null,kind:"weak",
+  truth:"暴露疗法有效，但消退是「新建抑制」而非「删除」，所以会复发。"}
+],
+"网格细胞":[
+ {d:"找网格之外的定位相关细胞",h:"网格很规则，但导航还需要边界、方向、速度",to:"边界细胞",kind:"ok",
+  truth:"边界细胞、头方向细胞、速度细胞陆续被发现。"},
+ {d:"研究网格尺度如何被环境调节",h:"网格间距会随环境变化吗",to:null,kind:"weak",
+  truth:"会，且沿背腹轴梯度变化——这提示它编码的是一种「度量」而非具体地图。"},
+ {d:"认为网格细胞就是GPS",h:"六边形网格看起来像坐标系",to:null,kind:"dead",
+  truth:"它是坐标系的一部分，但单个细胞不代表一个点。群体的相位才携带位置信息。"},
+ {d:"把这些细胞整合成一个系统模型",h:"各部分都找到了，能不能拼起来",to:"空间导航系统",kind:"ok",
+  truth:"2014 诺奖认可了这套系统，但整合模型仍在发展中。"}
+],
+"LTD":[
+ {d:"研究增强与减弱如何协同产生学习",h:"只有增强会让网络饱和，必须有减弱",to:null,kind:"weak",
+  truth:"双向可塑性成为学习算法的必要组件——但这属于理论层，本身不再是独立的实验发现。"},
+ {d:"研究 LTD 在遗忘中的作用",h:"减弱是不是遗忘的机制",to:null,kind:"weak",
+  truth:"部分是，但遗忘更多是「取不到」而非「被擦掉」。"},
+ {d:"认为 LTD 就是遗忘",h:"突触弱了，记忆就没了",to:null,kind:"dead",
+  truth:"遗忘的机制比突触减弱复杂得多，涉及竞争、干扰与提取失败。"},
+ {d:"用小脑 LTD 解释运动学习",h:"小脑也有 LTD，可能是运动学习的机制",to:null,kind:"ok",
+  truth:"确实成立，成为运动学习的标准模型之一。"}
+],
+"CREB":[
+ {d:"看长期记忆是否需要新蛋白合成",h:"如果 CREB 启动转录，阻断翻译应该只影响长时记忆",to:"可塑性理论",kind:"ok",
+  truth:"实验证实：阻断蛋白合成不影响短时记忆，但抹掉长时记忆。"},
+ {d:"找 CREB 下游的靶基因",h:"转录之后造了什么",to:null,kind:"weak",
+  truth:"找到一批（BDNF、受体、结构蛋白），但「哪一个是必需的」仍不清楚。"},
+ {d:"认为记忆存储于 CREB 的活性状态",h:"既然它是开关，记忆也许就在开关里",to:null,kind:"dead",
+  truth:"CREB 是「造记忆」的调度员，不是仓库。存储仍在突触与网络层面。"},
+ {d:"用 CREB 调控增强记忆",h:"如果能增强转录，记忆会不会更好",to:null,kind:"weak",
+  truth:"动物上确实增强，但泛化激活带来副作用。"}
+],
+"可塑性理论":[
+ {d:"证明记忆确实是分布式的",h:"如果存储于突触，那应该在很多地方都有痕迹",to:null,kind:"weak",
+  truth:"多脑区同时记录显示记忆是分布式表征——但这属于对范式的验证，本身不再开出新节点。"},
+ {d:"研究疾病中突触如何先受损",h:"如果记忆靠突触，疾病也许从突触开始",to:null,kind:"weak",
+  truth:"AD 最早的改变确实在突触，但这条线索要到空间记忆与影像学结合后才成为独立方向。"},
+ {d:"认为找到了记忆的最终答案",h:"突触可塑性就是记忆，问题解决了",to:null,kind:"dead",
+  truth:"这是当前最主流的范式，但仍有硬问题：分子更新快于记忆寿命，存储与提取的区分未解决。"},
+ {d:"用可塑性原理造人工学习系统",h:"既然大脑这么做，机器也可以",to:null,kind:"weak",
+  truth:"脉冲神经网络与赫布学习确实借鉴了它，但性能仍落后于反向传播。"}
+],
+"再巩固":[
+ {d:"研究能否在再巩固窗口内改写记忆",h:"如果记忆暂时不稳定，就能干预",to:"记忆擦除",kind:"ok",
+  truth:"动物实验可行，人类伦理上受限——这成了神经伦理的核心议题。"},
+ {d:"研究再巩固失败的临床意义",h:"如果固化失败，会不会形成病理记忆",to:null,kind:"weak",
+  truth:"与 PTSD 的机制联系被提出，但临床干预仍谨慎。"},
+ {d:"认为所有记忆每次提取都需要再巩固",h:"如果这是普遍规律",to:null,kind:"dead",
+  truth:"并非所有记忆都如此，强巩固的记忆可以抵抗。普适化是过度推断。"},
+ {d:"用再巩固阻断治疗成瘾与恐惧",h:"如果能在提取时削弱记忆",to:null,kind:"weak",
+  truth:"有初步临床结果，但重复性与伦理争议都很大。"}
+],
+"空间导航系统":[
+ {d:"找导航之外的「地图」用途",h:"如果大脑有地图，它是不是也用于想象与规划",to:"群体编码",kind:"ok",
+  truth:"海马的重放与预演支持「地图用于思考」——认知地图成为一般性概念。"},
+ {d:"研究这些细胞在睡眠中的活动",h:"如果它们表示路径，睡眠时在做什么",to:"睡眠巩固",kind:"ok",
+  truth:"睡眠中海马重放白天路径，参与记忆巩固。"},
+ {d:"研究空间记忆衰退与老年痴呆的关系",h:"海马是最早受累的脑区，迷路也许是最早的症状",to:"AD突触假说",kind:"ok",
+  truth:"空间记忆衰退确实是最早的临床表现之一，AD 突触假说由此与导航系统接上。"},
+ {d:"把位置解码用于控制外部设备",h:"既然能读出「想往哪走」，就能直接驱动装置",to:"脑机接口",kind:"ok",
+  truth:"运动皮层的解码已实现光标与机械臂控制，导航信号是下一步。"}
+],
+"engram":[
+ {d:"检验 engram 细胞是否真的必要",h:"标记只是相关，抑制它们记忆会不会消失",to:null,kind:"ok",
+  truth:"抑制 engram 细胞使记忆无法提取，激活则唤起——因果关系确立。"},
+ {d:"研究 engram 在多个脑区的分布",h:"一个记忆可能不只在海马",to:null,kind:"ok",
+  truth:"皮层、杏仁核多个区域各有 engram，形成分布式网络。"},
+ {d:"认为一个记忆对应一组固定细胞",h:"标记出来就是记忆的物理实体",to:null,kind:"dead",
+  truth:"engram 细胞会随时间和环境变化，过度重叠的标记会混淆不同记忆。静态实体的直觉错了。"},
+ {d:"用 engram 做记忆移植",h:"如果能激活特定组合，能不能植入记忆",to:null,kind:"weak",
+  truth:"动物上有初步尝试，距离「移植」极远。"}
+],
+"AD突触假说":[
+ {d:"研究能否在突触层面逆转早期损伤",h:"如果先损的是突触，也许能救回来",to:null,kind:"ok",
+  truth:"在动物模型上部分可逆，但人类试验屡屡失败。"},
+ {d:"检验淀粉样蛋白到底是不是起因",h:"如果斑块不是原因，那针对它的药为什么都失败",to:"淀粉样蛋白",kind:"weak",
+  truth:"淀粉样级联假说统治三十年，抗 Aβ 药物几乎全军覆没。假说仍在争议中。"},
+ {d:"认为 AD 只是正常衰老的加速",h:"突触本来就会随年龄减少",to:null,kind:"dead",
+  truth:"AD 有明确的病理蛋白与选择性易损脑区，不同于普通衰老。"},
+ {d:"找最早的生物标志物做早期干预",h:"如果突触先坏，那就该先查突触",to:null,kind:"weak",
+  truth:"突触标志物（如神经颗粒素）在研，尚未进入常规。"}
+],
+"记忆擦除":[
+ {d:"研究能否只擦除特定记忆",h:"如果手段够精确，就不必牺牲其他记忆",to:null,kind:"ok",
+  truth:"动物上可以做到选择性擦除，人类仍不可行。"},
+ {d:"讨论这种技术的伦理边界",h:"如果可以删记忆，该不该删",to:null,kind:"weak",
+  truth:"神经伦理成为独立领域，尚无共识。"},
+ {d:"认为擦除等于治愈创伤",h:"如果记忆没了，痛苦也就没了",to:null,kind:"dead",
+  truth:"创伤反应常已嵌入其他系统（身体反应、回避行为），删记忆未必消除症状。"},
+ {d:"把方法推广到成瘾记忆",h:"成瘾也是一种病理性记忆",to:null,kind:"weak",
+  truth:"动物模型有效，临床仍遥远。"}
+],
+"脑机接口":[
+ {d:"提高解码速度与精度",h:"实用化的瓶颈在信号与算法",to:null,kind:"ok",
+  truth:"从光标控制到打字、语音合成，速度已显著提升。"},
+ {d:"做非侵入式方案",h:"开颅风险太大",to:null,kind:"weak",
+  truth:"头皮脑电的信息量有限，非侵入方案精度远不及植入式。"},
+ {d:"认为它能读心或写入记忆",h:"既然能解码意图",to:null,kind:"dead",
+  truth:"解码的是运动意图这类低维信号，离「读心」极远。科幻式的期待是误判。"},
+ {d:"用它研究记忆的编码",h:"如果能在人脑记录，就能看记忆怎么形成",to:null,kind:"weak",
+  truth:"癫痫患者电极研究确实提供了罕见的人类单细胞数据。"}
+],
+"群体编码":[
+ {d:"研究记忆如何在群体中保持稳定",h:"细胞会换，编码怎么维持",to:null,kind:"weak",
+  truth:"发现「表征漂移」——同一记忆的群体编码每天都在变，但信息保持。"},
+ {d:"用群体模型解释记忆提取",h:"如果存储是分布式的，提取就是模式完成",to:null,kind:"ok",
+  truth:"吸引子网络模型能解释部分现象，但仍不能预测个体行为。"},
+ {d:"认为单个细胞毫无意义",h:"既然是群体的，单细胞研究就没必要",to:null,kind:"dead",
+  truth:"单细胞层面的因果实验（如 engram）恰恰是群体理论的基础。二者不互斥。"},
+ {d:"据此改进机器学习模型",h:"大脑的分布式表征也许更鲁棒",to:null,kind:"weak",
+  truth:"确实影响了一些架构设计，但优势有限。"}
+],
+"原生质网说":[{d:"用更高分辨率的显微镜看接触处",h:"如果融合，应该没有缝隙",to:null,kind:"dead",truth:"电镜显示缝隙（突触间隙），网状说被否定。"}],
+"Lashley搜索":[{d:"改用更精细的损伤方法重新寻找",h:"也许刀太大，伤到了别处",to:null,kind:"weak",truth:"结论被重申：记忆是分布式的，不存在单一存放点。"}],
+"海兔":[{d:"把学习定位到具体突触",h:"如果神经系统简单，就能找到对应的连接",to:"CREB",kind:"ok",truth:"Kandel 在海兔上把短期与长期记忆对应到突触与转录层面。"}],
+"c-fos":[{d:"用它标记学习时活跃的细胞",h:"活动标记能指出哪些细胞参与",to:"engram",kind:"ok",truth:"engram 研究的基础工具。"}],
+"边界细胞":[{d:"找更多定位相关细胞类型",h:"组件还没找全",to:null,kind:"weak",truth:"速度细胞、物体向量细胞等陆续被发现。"}],
+"睡眠巩固":[{d:"研究睡眠中重放的因果作用",h:"相关不等于必需",to:null,kind:"weak",truth:"干扰重放可损害记忆，因果证据在增强。"}],
+"脑图谱":[{d:"把细胞类型与连接组结合",h:"知道类型还得知道连线",to:null,kind:"weak",truth:"连接组学仍在推进。"}],
+"深部脑刺激":[{d:"研究它对记忆的意外影响",h:"刺激穹窿能改善记忆吗",to:null,kind:"weak",truth:"部分患者记忆改善，部分恶化——方向依赖。"}],
+"淀粉样蛋白":[{d:"找清除 Aβ 的有效方法",h:"如果是病因，清除它就该有效",to:null,kind:"weak",truth:"抗体药物近年才有小幅获益，与「清除即治愈」的预期相去甚远。"}]
+};
+
+
+// 只画非死路的边
+const EDGE = [];
+for(const k in DIRS) DIRS[k].forEach(d=>{ if(d.to && d.kind!=="dead") EDGE.push([k,d.to,d.kind]); });
+const INDEG={}; EDGE.forEach(([a,b])=>{INDEG[b]=(INDEG[b]||0)+1});
+
+let cur=null, reveal=false, zoom=false;
+function lineage(k){
+  const up=new Set(), down=new Set();
+  (function u(x){ EDGE.filter(e=>e[1]===x).forEach(e=>{ if(!up.has(e[0])){up.add(e[0]);u(e[0])} }) })(k);
+  (function d(x){ EDGE.filter(e=>e[0]===x).forEach(e=>{ if(!down.has(e[1])){down.add(e[1]);d(e[1])} }) })(k);
+  return {up,down};
+}
+
+function depthOf(){
+  const L={};
+  function g(k,seen){
+    if(L[k]!==undefined) return L[k];
+    if(seen.has(k)){L[k]=0;return 0}
+    seen.add(k);
+    const ups=EDGE.filter(e=>e[1]===k).map(e=>e[0]);
+    L[k]=ups.length?1+Math.max(...ups.map(u=>g(u,new Set(seen)))):0;
+    return L[k];
+  }
+  Object.keys(N).forEach(k=>g(k,new Set()));
+  return L;
+}
+const DEPTH = depthOf();
+
+function render(){
+  const byLayer={};
+  Object.keys(N).forEach(k=>{ const L=DEPTH[k]; (byLayer[L]=byLayer[L]||[]).push(k) });
+  const maxL=Math.max(...Object.keys(byLayer).map(Number));
+  let html="";
+  for(let i=0;i<=maxL;i++){
+    const ks=(byLayer[i]||[]).sort((a,b)=>{
+      const am=N[a].name.includes("支线")?1:0, bm=N[b].name.includes("支线")?1:0;
+      return am-bm || N[a].y-N[b].y;
+    });
+    const mainCnt=ks.filter(k=>!N[k].name.includes("支线")).length;
+    html+=`<div class="layer"><div class="lh"><b>第 ${i+1} 层</b><span>${mainCnt} 个主线 · ${ks.length-mainCnt} 个支线</span></div><div class="grid">`;
+    ks.forEach(k=>{
+      const n=N[k], c=(DIRS[k]||[]).length;
+      html+=`<div class="card${cur===k?' sel':''}" data-k="${k}">
+        <div class="y">${n.y}</div><div class="nm">${n.name}</div><div class="tx">${n.t}</div>
+        ${c?`<span class="cnt">${c} 条</span>`:''}</div>`;
+    });
+    html+=`</div></div>`;
+  }
+  document.getElementById('list').innerHTML=html;
+  document.querySelectorAll('.card').forEach(el=>el.onclick=()=>open(el.dataset.k));
+}
+
+function open(k){
+  cur=k; const n=N[k];
+  document.getElementById('sTitle').textContent=n.name;
+  document.getElementById('sYear').textContent=`${n.y} · 第 ${DEPTH[k]+1} 层`;
+  document.getElementById('sFact').innerHTML=n.t+(n.why?`<span class="why">这意味着：${n.why}</span>`:'');
+  const ds=DIRS[k]||[];
+  document.getElementById('sDirs').innerHTML=ds.length?ds.map((d,i)=>`
+    <div class="dir ${d.kind}">
+      <div class="h">${i+1}. ${d.d}</div>
+      <div class="l">线索：${d.h}</div>
+      <div class="res">${d.kind==='ok'
+        ? `✓ 开新路${d.to?` → <span class="go" data-go="${d.to}">${N[d.to].name}</span>`:''}　${d.truth}`
+        : d.kind==='weak' ? `～ 收益有限${d.to?` → <span class="go" data-go="${d.to}">${N[d.to].name}</span>`:''}　${d.truth}`
+        : `✗ 走不通　${d.truth}`}</div>
+    </div>`).join('')
+    :'<div class="l" style="font-size:13px">这一层是终点，做完可以换一条分支继续。</div>';
+  document.querySelectorAll('[data-go]').forEach(el=>el.onclick=e=>{e.stopPropagation();open(el.dataset.go)});
+  document.querySelectorAll('.card').forEach(el=>el.classList.toggle('sel',el.dataset.k===k));
+  document.getElementById('sheet').classList.add('on');
+  document.body.classList.add('open');
+  document.getElementById('scrim').classList.add('on');
+  document.getElementById('sheet').scrollTop=0;
+  // 关系图视图下重绘，触发高亮
+  if(document.getElementById('graphWrap').style.display!=='none') drawGraph();
+}
+function close(){document.getElementById('sheet').classList.remove('on');
+  document.body.classList.remove('open');document.getElementById('scrim').classList.remove('on')}
+
+function drawGraph(){
+  const maxL=Math.max(...Object.values(DEPTH));
+  const rows={};
+  Object.keys(N).forEach(k=>{ (rows[DEPTH[k]]=rows[DEPTH[k]]||[]).push(k) });
+  const maxRow=Math.max(...Object.values(rows).map(r=>r.length));
+  const NW=124, GAP=14, rowH=108, padT=44, padL=20;
+  const W=Math.max(820, maxRow*(NW+GAP)+40);
+  const H=(maxL+1)*rowH+padT+30;
+  const pos={};
+  Object.keys(rows).forEach(L=>{
+    const arr=rows[L].sort((a,b)=>N[a].y-N[b].y);
+    const usable=W-padL*2-NW, n=arr.length;
+    arr.forEach((k,i)=>{
+      pos[k]={x:padL+NW/2+(n===1?usable/2:usable*i/(n-1)), y:padT+(+L)*rowH};
+    });
+  });
+  let s=`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}"><defs>
+    <marker id="a1" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7.5" markerHeight="7.5" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="var(--fg)"/></marker>
+    <marker id="a2" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs>`;
+  for(let i=0;i<=maxL;i++){
+    const y=padT+i*rowH;
+    s+=`<line x1="0" y1="${y}" x2="${W}" y2="${y}" stroke="var(--line)" stroke-width=".5" stroke-dasharray="2 8" opacity=".6"/>
+        <text x="4" y="${y-8}" font-size="9.5" fill="var(--muted)">L${i+1}</text>`;
+  }
+  const ln = cur ? lineage(cur) : null;
+  EDGE.forEach(([a,b,kind])=>{
+    if(!pos[a]||!pos[b]) return;
+    const hot = ln && (ln.up.has(a)&&(ln.up.has(b)||b===cur)) || (ln && (ln.down.has(b)&&(ln.down.has(a)||a===cur)));
+    const A=pos[a], B=pos[b], my=(A.y+B.y)/2;
+    const ok=kind==="ok";
+    s+=`<path d="M${A.x},${A.y+11} C${A.x},${my} ${B.x},${my} ${B.x},${B.y-11}"
+      fill="none" stroke="${hot?'var(--accent)':(ok?'var(--fg)':'var(--muted)')}" stroke-width="${hot?3:(ok?1.5:1.1)}"
+      ${ok?'':'stroke-dasharray="4 4"'} opacity="${hot?1:(ln?0.13:(ok?0.8:0.5))}" marker-end="url(#${ok?'a1':'a2'})"/>`;
+  });
+  Object.keys(N).forEach(k=>{
+    const n=N[k], q=pos[k]; if(!q) return;
+    const side=n.name.includes("支线");
+    const label=n.name.replace("（支线）","");
+    const txt=(label.length>8?label.slice(0,8)+"…":label);
+    const hub = (INDEG[k]||0)>=2;
+    const dim = ln && !(k===cur || ln.up.has(k) || ln.down.has(k));
+    if(hub) s+=`<rect x="${q.x-NW/2-4}" y="${q.y-15}" width="${NW+8}" height="30" rx="15"
+      fill="none" stroke="var(--warn)" stroke-width="2" opacity="${dim?0.12:0.95}"/>`;
+    s+=`<g data-k="${k}" style="cursor:pointer" opacity="${dim?0.2:1}">
+      <rect x="${q.x-NW/2}" y="${q.y-11}" width="${NW}" height="22" rx="11"
+        fill="${side?'var(--bg)':'var(--card)'}"
+        stroke="${side?'var(--muted)':'var(--accent)'}" stroke-width="${side?1:1.4}"
+        ${side?'stroke-dasharray="3 3"':''}/>
+      <text x="${q.x}" y="${q.y+4}" text-anchor="middle" font-size="10"
+        fill="${side?'var(--muted)':'var(--fg)'}">${n.y} ${txt}</text></g>`;
+  });
+  s+=`</svg>`;
+  document.getElementById('graph').innerHTML=
+    `<div style="font-size:11.5px;color:var(--muted);margin-bottom:8px;line-height:1.7">
+      实线箭头 = 开新路　虚线 = 收益有限（通到支线）　死路不画<br>
+      从上到下是依赖层数，不是年代。同一层可并行申报。<b style="color:var(--warn)">带橙环的节点是多条线汇合处</b>——那是交集。点任意节点会高亮它整条来路与去路。</div>`+s;
+  document.querySelectorAll('#graph [data-k]').forEach(el=>el.onclick=()=>open(el.dataset.k));
+}
+
+document.getElementById('sClose').onclick=close;
+document.getElementById('scrim').onclick=close;
+document.getElementById('btnReveal').onclick=e=>{
+  reveal=!reveal; document.body.classList.toggle('reveal',reveal);
+  e.target.classList.toggle('on',reveal);
+  e.target.textContent=reveal?'已揭晓（点此隐藏）':'揭晓真实结局';
+};
+document.getElementById('btnList').onclick=e=>{
+  document.getElementById('list').style.display='block';
+  document.getElementById('graphWrap').style.display='none';
+  e.target.classList.add('on'); document.getElementById('btnGraph').classList.remove('on');
+};
+document.getElementById('btnGraph').onclick=e=>{
+  document.getElementById('list').style.display='none';
+  document.getElementById('graphWrap').style.display='block';
+  e.target.classList.add('on'); document.getElementById('btnList').classList.remove('on');
+  drawGraph();
+};
+document.getElementById('btnZoom').onclick=e=>{
+  const g=document.getElementById('graphWrap');
+  zoom=!zoom; g.classList.toggle('zoom',zoom);
+  e.target.textContent=zoom?'缩回全貌':'放大看细节';
+};
+
+{
+  const ds=Object.values(DIRS).flat();
+  const c={ok:0,weak:0,dead:0}; ds.forEach(d=>c[d.kind]++);
+  document.getElementById('stat').textContent=
+    `${Object.keys(N).filter(k=>!N[k].name.includes("支线")).length} 个主线节点 · ${Object.keys(N).filter(k=>N[k].name.includes("支线")).length} 个支线 · ${Object.keys(DIRS).length} 个节点有方向 · ${ds.length} 条方向（${c.ok} 开新路 / ${c.weak} 收益有限 / ${c.dead} 不通）`;
+  document.getElementById('legend').innerHTML=
+    `默认不显示每条方向的结局，主持人结算时点「揭晓」才公布。<br>
+     <b style="color:var(--ok)">✓ 开新路</b>：通往下一层节点　<b>～ 收益有限</b>：通到支线或原地　
+     <b style="color:var(--warn)">✗ 不通</b>：结论被证伪<br>
+     <b>「不通」指结论被证伪，不指研究没有价值</b>：p53 被当成癌基因的那十年，正是这次误判催生了抑癌基因这个概念。`;
+}
+render();
+</script>
+</body>
+</html>

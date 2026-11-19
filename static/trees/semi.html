@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>半导体与计算 · 一棵树</title>
+<style>
+:root{--bg:#fbfbfa;--fg:#1a1a1a;--muted:#6b6b6b;--line:#e2e0dc;--card:#fff;
+  --accent:#2f6fb3;--accent-weak:#e8f0f9;--warn:#b3542f;--ok:#2f7d52;--okweak:#e6f2ea;
+  --radius:10px;--shadow:0 1px 2px rgba(0,0,0,.05)}
+@media (prefers-color-scheme: dark){:root{--bg:#141414;--fg:#e8e6e3;--muted:#9a9793;
+  --line:#2e2e2e;--card:#1c1c1c;--accent:#6fa8dc;--accent-weak:#1f2b38;--warn:#e08a63;
+  --ok:#7bc496;--okweak:#1e2c24;--shadow:0 1px 2px rgba(0,0,0,.4)}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--fg);
+  font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue","PingFang SC",sans-serif;
+  font-size:15px;line-height:1.55;-webkit-text-size-adjust:100%}
+header{position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:1px solid var(--line);
+  padding:12px 14px 10px;padding-top:calc(12px + env(safe-area-inset-top))}
+h1{margin:0;font-size:16px;font-weight:650}
+.sub{color:var(--muted);font-size:12.5px;margin-top:3px}
+.bar{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+button{font:inherit;font-size:13px;color:var(--fg);background:var(--card);border:1px solid var(--line);
+  border-radius:999px;padding:9px 14px;min-height:44px;cursor:pointer;display:inline-flex;align-items:center}
+button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+button.rev.on{background:var(--ok);border-color:var(--ok)}
+button.zm{font-size:12px;min-height:36px;padding:6px 12px}
+main{padding:14px 14px 90px;max-width:980px;margin:0 auto}
+.layer{margin-bottom:18px}
+.lh{display:flex;align-items:baseline;gap:8px;margin:0 0 8px;font-size:12px;color:var(--muted)}
+.lh b{color:var(--fg);font-size:13px}
+.grid{display:grid;gap:8px;grid-template-columns:1fr}
+@media(min-width:700px){.grid{grid-template-columns:1fr 1fr}}
+@media(min-width:1000px){.grid{grid-template-columns:1fr 1fr 1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:11px 13px;box-shadow:var(--shadow);cursor:pointer;position:relative}
+.card.sel{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-weak)}
+.card .y{font-size:11.5px;color:var(--muted)}
+.card .nm{font-weight:600;font-size:14.5px;margin:1px 0 2px}
+.card .tx{font-size:12.5px;color:var(--muted);padding-right:54px}
+.card .cnt{position:absolute;right:12px;top:11px;font-size:11px;color:var(--accent);
+  background:var(--accent-weak);border-radius:999px;padding:1px 7px}
+.wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:6px}
+#graph svg{display:block;width:100%;height:auto;max-width:none}
+#graphWrap.zoom #graph svg{width:1500px}
+#graphBar{display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap}
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.32);opacity:0;pointer-events:none;
+  transition:opacity .18s;z-index:40}
+.scrim.on{opacity:1;pointer-events:auto}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:50;background:var(--bg);
+  border-top:1px solid var(--line);border-radius:16px 16px 0 0;max-height:82vh;overflow-y:auto;
+  -webkit-overflow-scrolling:touch;transform:translateY(102%);transition:transform .22s ease;
+  padding:0 16px calc(28px + env(safe-area-inset-bottom))}
+.sheet.on{transform:translateY(0)}
+@media(min-width:820px){
+  .sheet{left:auto;top:0;bottom:0;right:0;width:470px;border-radius:0;border-left:1px solid var(--line);
+    border-top:none;max-height:100vh;transform:translateX(102%);box-shadow:-8px 0 24px rgba(0,0,0,.08)}
+  .sheet.on{transform:translateX(0)}
+  .grab{display:none}
+  body.open header, body.open main{padding-right:486px}
+  header,main{transition:padding-right .22s ease}
+}
+.grab{width:38px;height:4px;border-radius:2px;background:var(--line);margin:9px auto 4px}
+.sh{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;padding:6px 0 12px;
+  border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:2}
+.sh h2{margin:0;font-size:16px;font-weight:650;line-height:1.35}
+.sh .y{display:block;margin-top:2px;font-size:11.5px;color:var(--muted)}
+.close{border:none;background:none;font-size:24px;line-height:1;color:var(--muted);
+  width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:50%;flex:none}
+section{margin-top:14px}
+h3{font-size:12px;color:var(--muted);font-weight:650;margin:0 0 8px;letter-spacing:.04em}
+.fact{font-size:14.5px;line-height:1.6}
+.fact .why{display:block;margin-top:6px;font-size:13px;color:var(--muted)}
+.dir{border:1px solid var(--line);border-radius:9px;padding:10px 12px;margin-bottom:9px;background:var(--card)}
+.dir .h{font-weight:600;font-size:13.5px;margin-bottom:3px}
+.dir .l{font-size:12.5px;color:var(--muted)}
+.dir .res{margin-top:8px;font-size:12.5px;padding:7px 9px;border-radius:7px;display:none}
+body.reveal .dir .res{display:block}
+.dir.ok .res{background:var(--okweak);color:var(--ok);border:1px solid var(--ok)}
+.dir.weak .res{background:transparent;color:var(--fg);border:1px solid var(--line)}
+.dir.dead .res{background:transparent;color:var(--warn);border:1px dashed var(--warn)}
+.dir .go{color:var(--accent);text-decoration:underline;cursor:pointer}
+.legend{font-size:11.5px;color:var(--muted);margin-top:10px;line-height:1.7}
+</style>
+</head>
+<body>
+<header>
+  <h1>半导体与计算 <span style="color:var(--muted);font-weight:400">一棵树</span></h1>
+  <div class="sub" id="stat"></div>
+  <div class="bar">
+    <button id="btnList" class="on">分层列表</button>
+    <button id="btnGraph">关系图</button>
+    <button id="btnReveal" class="rev">揭晓真实结局</button>
+  </div>
+</header>
+<main>
+  <div id="list"></div>
+  <div id="graphWrap" class="wrap" style="display:none">
+    <div id="graphBar"><button id="btnZoom" class="zm">放大看细节</button>
+      <span style="font-size:11.5px;color:var(--muted)">默认一屏看全貌</span></div>
+    <div id="graph"></div>
+  </div>
+  <div class="legend" id="legend"></div>
+</main>
+
+<div class="scrim" id="scrim"></div>
+<div class="sheet" id="sheet">
+  <div class="grab"></div>
+  <div class="sh"><div><h2 id="sTitle"></h2><span class="y" id="sYear"></span></div>
+    <button class="close" id="sClose">×</button></div>
+  <section><h3>已确立的事实</h3><div class="fact" id="sFact"></div></section>
+  <section><h3>当时可以往哪问</h3><div id="sDirs"></div></section>
+</div>
+
+<script>
+const N = {
+// 五个根
+"布尔代数":{y:1854,name:"布尔代数",t:"把逻辑推理写成 0 与 1 的代数运算（Boole）",why:"「思考」第一次有了可以用机械执行的等价物。"},
+"真空三极管":{y:1906,name:"真空三极管",t:"在真空管里加一个栅极，可以用小电压控制大电流（De Forest）",why:"信号可以被放大，也可以被开关——电子学的起点。"},
+"量子力学":{y:1925,name:"量子力学",t:"电子在固体中的行为必须用量子力学描述",why:"没有量子力学，就说不清为什么有的材料导电、有的不导电。"},
+"能带理论":{y:1931,name:"能带理论",t:"固体中的电子占据分立的能带，带隙决定它是导体、半导体还是绝缘体（Wilson）",why:"半导体的行为第一次可以被「解释」，而不只是被发现。"},
+"信息论":{y:1948,name:"信息论",t:"信息可以被量化为比特，噪声下的传输有理论上限（Shannon）",why:"「处理信息」变成了一门可以计算代价的学问。"},
+// L2
+"开关电路":{y:1937,name:"开关电路",t:"布尔运算可以用继电器电路实现（Shannon 的硕士论文）",why:"逻辑与电路一一对应——这是数字电路的全部基础。"},
+"点接触晶体管":{y:1947,name:"点接触晶体管",t:"在锗晶体上两个金属触点，可放大信号（Bardeen & Brattain）",why:"固态器件第一次取代了真空管。"},
+"pn结":{y:1949,name:"pn 结理论",t:"两种掺杂半导体的界面具有单向导电性（Shockley）",why:"晶体管不再是「调出来的」，而是可以被设计。"},
+"磁芯存储":{y:1953,name:"磁芯存储",t:"用磁环的两种磁化方向存储 0 和 1",why:"第一次有了可随机访问、断电不丢的存储器。"},
+"存储程序":{y:1948,name:"存储程序",t:"指令与数据存在同一存储器里，程序可被修改（von Neumann）",why:"机器不必为每个任务重新接线，通用计算机成立。"},
+// L3
+"结型晶体管":{y:1951,name:"结型晶体管",t:"用三层掺杂半导体做出稳定的结型晶体管",why:"晶体管从实验室器件变成可量产的元件。"},
+"MOS晶体管":{y:1960,name:"MOS 晶体管",t:"用氧化层隔离栅极，靠电场控制沟道（Kahng & Atalla）",why:"结构简单、可微缩——此后所有集成电路的主力元件。"},
+"集成电路":{y:1958,name:"集成电路",t:"把多个元件做在同一块半导体上（Kilby & Noyce）",why:"元件之间不必再焊接，可靠性与成本同时改善。"},
+"光刻":{y:1959,name:"光刻",t:"用光把电路图形投影到硅片上",why:"图形可以「印」出来，而不是一个个做出来。"},
+// L4
+"微处理器":{y:1971,name:"微处理器",t:"把一个完整 CPU 做在一颗芯片上（Intel 4004）",why:"计算机的核心变成了一件可以批量生产的零件。"},
+"DRAM":{y:1966,name:"DRAM",t:"用电容存储电荷表示 1 位，需定期刷新",why:"存储密度大幅提高，成本大幅下降。"},
+"CMOS":{y:1963,name:"CMOS",t:"NMOS 与 PMOS 互补配对，静态时几乎不耗电（Wanlass & Sah）",why:"功耗问题被结构性解决——低功耗芯片成为可能。"},
+"摩尔定律":{y:1965,name:"摩尔定律",t:"单芯片上的元件数约每两年翻一番",why:"把行业预期变成了自我实现的路线图。"},
+"RISC":{y:1980,name:"RISC",t:"用少量简单指令配合流水线，取代复杂指令集",why:"「让硬件简单、让编译器聪明」——一次架构路线之争。"},
+// L5
+"闪存":{y:1984,name:"闪存",t:"浮栅可长期保存电荷，断电不丢（Masuoka）",why:"存储从磁盘走向固态，移动设备才成为可能。"},
+"深紫外光刻":{y:1990,name:"深紫外光刻",t:"用 193 nm 波长光源继续缩小线宽",why:"摩尔定律靠光源波长的缩短续命了二十年。"},
+"SoC":{y:2005,name:"系统级芯片",t:"把 CPU、GPU、基带、存储控制器集成到一颗芯片",why:"手机取代 PC 成为主要计算设备，靠的是集成。"},
+"3D NAND":{y:2013,name:"3D NAND",t:"把存储单元垂直堆叠，突破平面微缩极限",why:"存储密度不再依赖「更小的线宽」，而靠「更高的层数」。"},
+// L6
+"EUV":{y:2018,name:"极紫外光刻",t:"用 13.5 nm 波长、全反射光学系统实现量产",why:"走到这一步花了三十年，是摩尔定律最后的物理凭据。"},
+"AI加速器":{y:2016,name:"AI 加速器",t:"针对矩阵运算做专用电路，放弃通用性换取能效",why:"通用 CPU 的频率已到顶，算力增长改由「专用化」提供。"},
+"Chiplet":{y:2020,name:"Chiplet 芯粒",t:"把大芯片拆成小芯粒，用先进封装拼起来",why:"良率与成本倒逼架构改变——「一颗大芯片」的时代结束。"},
+// 支线（含失败路线）
+"砷化镓":{y:1980,name:"砷化镓（支线）",t:"电子迁移率远高于硅，理论上更快"},
+"单电子晶体管":{y:1987,name:"单电子晶体管（支线）",t:"用单个电子的隧穿实现开关，理论功耗极低"},
+"硅光":{y:1990,name:"硅光子（支线）",t:"用光而不是电子在芯片内传输信号"},
+"磁泡存储":{y:1967,name:"磁泡存储（支线）",t:"用磁畴「泡」存储数据，无机械部件"},
+"FinFET":{y:2011,name:"FinFET（支线）",t:"把沟道做成鳍状三面栅控，抑制短沟道效应"},
+"量子计算":{y:2019,name:"量子计算（支线）",t:"用量子叠加与纠缠求解特定问题"},
+"半导体激光":{y:1962,name:"半导体激光",t:"直接带隙半导体的 pn 结通电即可发光（Hall/Nathan/Quist）"},
+"SRAM":{y:1963,name:"SRAM（支线）",t:"六个晶体管锁存一位，速度最快但占面积"},
+"高NA-EUV":{y:2023,name:"高 NA EUV",t:"把数值孔径从 0.33 提到 0.55，继续缩小单次曝光线宽"}
+};
+
+const DIRS = {
+"布尔代数":[
+ {d:"把布尔运算真的用电路做出来",h:"如果逻辑就是代数，那它该能被机械执行",to:"开关电路",kind:"ok",
+  truth:"Shannon 的硕士论文证明继电器电路与布尔代数同构——数字电路由此诞生。"},
+ {d:"用它形式化数学推理",h:"把所有推理写成符号运算，数学就严密了",to:null,kind:"weak",
+  truth:"弗雷格与罗素走得更远，但哥德尔不完备定理终结了「全部数学可形式化」的梦想。"},
+ {d:"认为逻辑与物理实现无关，纯粹是符号游戏",h:"数学不必对应现实",to:null,kind:"dead",
+  truth:"这句话在纯数学里成立，但恰恰是「符号可以对应电路」这个反例，造出了计算机。"},
+ {d:"用它做信息检索与电话交换的简化",h:"电话交换机的继电器逻辑极其复杂",to:null,kind:"weak",
+  truth:"确实简化了交换设计，但那只是应用之一。"}
+],
+"真空三极管":[
+ {d:"把放大器做小、做省电，用固态材料取代真空",h:"真空管发热、易碎、寿命短",to:"点接触晶体管",kind:"ok",
+  truth:"1947 点接触晶体管成功。这条路走了四十年。"},
+ {d:"继续改进真空管本身（小型化、长寿命）",h:"既然能用，就把它做得更好",to:null,kind:"dead",
+  truth:"真空管小型化的努力最终全部落空——固态器件在功耗与可靠性上不可能被追上。"},
+ {d:"用它做最早的电子计算机",h:"用大量电子管可以造出通用计算机",to:"存储程序",kind:"ok",
+  truth:"ENIAC 用了一万八千只电子管。它证明了通用计算的可行性，也暴露了可靠性灾难。"},
+ {d:"研究放大背后的电子发射物理",h:"热电子发射是什么机制",to:null,kind:"weak",
+  truth:"为真空电子学打下理论基础，但没有直接通向半导体。"}
+],
+"量子力学":[
+ {d:"用它解释固体为什么导电或不导电",h:"金属、绝缘体、半导体的差别该有统一解释",to:"能带理论",kind:"ok",
+  truth:"能带理论 1931 年提出，把导体/半导体/绝缘体统一在一个框架里。"},
+ {d:"认为经典物理足以描述器件",h:"电子管时代的经验公式够用了",to:null,kind:"dead",
+  truth:"一旦器件做到微米以下，隧穿与量子限制效应无法回避——经典描述失效。"},
+ {d:"让半导体反过来发光",h:"既然光能产生载流子，载流子复合也许能发光",to:"半导体激光",kind:"ok",
+  truth:"通向太阳能电池与光电探测器，是另一条重要支线。"},
+ {d:"用它预言新器件（隧道二极管等）",h:"量子效应也许能做器件",to:null,kind:"weak",
+  truth:"隧道二极管等确实做出来了，但多数因工艺或用途受限而未成主流。"}
+],
+"能带理论":[
+ {d:"用掺杂改变半导体的导电类型",h:"如果能带可调，导电性也该可调",to:"pn结",kind:"ok",
+  truth:"p 型与 n 型掺杂，进而做出 pn 结——所有半导体器件的基石。"},
+ {d:"找带隙更合适的新材料",h:"硅的带隙不一定是最好",to:"砷化镓",kind:"weak",
+  truth:"砷化镓性能更优，但成本与工艺使其未能取代硅，只在射频与光电器件中立足。"},
+ {d:"认为能带理论能预言所有材料性质",h:"有了理论就能设计材料",to:null,kind:"dead",
+  truth:"能带理论是单电子近似，强关联体系（高温超导等）至今无法解释。"},
+ {d:"用绝缘层加电场控制表面导电性",h:"如果能带可被电场弯曲，就能造一个不靠电流的开关",to:"MOS晶体管",kind:"ok",
+  truth:"载流子热激发，构成半导体器件的温度模型。"}
+],
+"信息论":[
+ {d:"把信息处理做成机器",h:"如果信息可以量化，处理它就可以自动化",to:"存储程序",kind:"ok",
+  truth:"冯·诺依曼体系把「信息即指令」制度化。"},
+ {d:"研究噪声下怎样可靠传输",h:"信道有上限，怎么逼近它",to:null,kind:"ok",
+  truth:"纠错编码成为通信与存储的核心，后来也救了闪存与硬盘。"},
+ {d:"认为信息量等于数据量",h:"文件越大信息越多",to:null,kind:"dead",
+  truth:"信息是「不确定性的减少」，与字节数不等。这个误判在压缩与加密里都有实际后果。"},
+ {d:"把它直接套到生物信息上",h:"DNA 也是信息",to:null,kind:"weak",
+  truth:"生物信息学借用了它的工具，但生物序列的统计结构远比通信信源复杂。"}
+],
+"开关电路":[
+ {d:"用晶体管而不是继电器实现开关",h:"继电器太慢、太吵、会磨损",to:"结型晶体管",kind:"ok",
+  truth:"晶体管开关速度高几个数量级，且无机械磨损。"},
+ {d:"把大量开关集成到一块材料上",h:"分立元件之间的连线是瓶颈",to:"集成电路",kind:"ok",
+  truth:"1958 集成电路把连线也做进了芯片里。"},
+ {d:"认为电路越复杂越该用模拟方式处理",h:"数字会丢失信息",to:null,kind:"dead",
+  truth:"模拟计算在精度与抗噪上全面落败，除少数场景外被数字取代。"},
+ {d:"研究开关网络的化简方法",h:"布尔函数可以化简，电路就能更省",to:null,kind:"weak",
+  truth:"卡诺图等方法成为数字设计的标准工具。"}
+],
+"点接触晶体管":[
+ {d:"把结构做成可预测、可量产的形态",h:"点接触靠两根金属针，太脆弱、不可控",to:"结型晶体管",kind:"ok",
+  truth:"Shockley 的结型晶体管结构稳定、参数可计算，成为产业标准。"},
+ {d:"研究半导体表面态对器件的影响",h:"为什么性能如此不稳定",to:null,kind:"weak",
+  truth:"表面态问题困扰了十年，直到氧化层钝化技术出现。"},
+ {d:"认为它只是实验室玩具，无法实用",h:"太脆弱、一致性太差",to:null,kind:"dead",
+  truth:"这个判断在 1947 年看似合理，但十年内晶体管就取代了真空管。"},
+ {d:"用它做助听器与电话放大器",h:"先找能立刻用的场景",to:null,kind:"weak",
+  truth:"助听器确实是最早的商业应用之一。"}
+],
+"pn结":[
+ {d:"用它做开关与放大器件",h:"pn 结有单向导电性",to:null,kind:"weak",
+  truth:"双极型晶体管正是一个 pnp/npn 三明治结构。"},
+ {d:"用场效应而非电流控制",h:"如果靠电场控制，就不需要输入电流",to:null,kind:"weak",
+  truth:"MOS 晶体管正是这个思路，且更易微缩。"},
+ {d:"认为 pn 结的尺寸不能再小",h:"再小就违背物理",to:null,kind:"dead",
+  truth:"尺寸一缩再缩，直到 2010 年代才真正撞上物理极限。"},
+ {d:"研究击穿与雪崩效应",h:"反向电压过高会击穿",to:null,kind:"weak",
+  truth:"稳压二极管与雪崩光电二极管由此而来。"}
+],
+"磁芯存储":[
+ {d:"找更小、更快、更便宜的存储方式",h:"磁芯要手工穿线，成本极高",to:null,kind:"weak",
+  truth:"1966 DRAM 用电容存电荷，密度与成本全面胜出。"},
+ {d:"继续提高磁芯密度",h:"把环做小就能更密",to:null,kind:"weak",
+  truth:"磁芯做到极限后停止进步，最终被半导体存储取代。"},
+ {d:"用磁畴「泡」做存储",h:"磁畴也可以表示 0 和 1",to:"磁泡存储",kind:"weak",
+  truth:"磁泡存储确实做出来了，但被磁盘与闪存夹击，商业上失败。"},
+ {d:"认为机械存储（磁盘）无法与磁芯竞争",h:"磁盘有机械运动，太慢",to:null,kind:"dead",
+  truth:"磁盘通过密度提升反而胜出，统治了大容量存储三十年。"}
+],
+"存储程序":[
+ {d:"把处理器做在一颗芯片上",h:"如果整机可以缩小，CPU 也可以",to:"微处理器",kind:"ok",
+  truth:"1971 Intel 4004，计算机核心变成可批量生产的零件。"},
+ {d:"用更简单的指令集提高效率",h:"复杂指令执行慢、难流水线",to:"RISC",kind:"ok",
+  truth:"RISC 在移动与嵌入式领域最终胜出，复杂指令集靠兼容性守住桌面。"},
+ {d:"认为并行处理可以无限扩展",h:"多核就能一直变快",to:null,kind:"dead",
+  truth:"阿姆达尔定律与功耗墙限制了并行收益，多核并非线性加速。"},
+ {d:"研究存储层次结构",h:"内存与磁盘速度差太大",to:null,kind:"weak",
+  truth:"高速缓存与虚拟内存由此而来，是体系结构的核心。"}
+],
+"结型晶体管":[
+ {d:"把多个晶体管做在同一块芯片上",h:"分立器件之间的连线是瓶颈",to:"集成电路",kind:"ok",
+  truth:"1958 集成电路，连线也进了芯片。"},
+ {d:"找能在高温高频下工作的材料",h:"硅的性能有上限",to:"砷化镓",kind:"weak",
+  truth:"砷化镓在射频与光通信站稳，但从未取代硅。"},
+ {d:"认为晶体管无法做到亚微米尺寸",h:"再小就不工作了",to:null,kind:"dead",
+  truth:"事实上一直做到 3 纳米，跨了五个数量级。"},
+ {d:"用它做模拟电路与功率器件",h:"不是所有电路都要数字",to:null,kind:"weak",
+  truth:"模拟与功率器件至今仍大量使用双极型结构。"}
+],
+"MOS晶体管":[
+ {d:"用一个 MOS 加一个电容存一位",h:"结构最简单，一片能塞下更多",to:"DRAM",kind:"ok",
+  truth:"DRAM 正是这个组合，成为主存标准。"},
+ {d:"用它做低功耗逻辑",h:"MOS 静态时几乎不耗电",to:"CMOS",kind:"ok",
+  truth:"CMOS 成为所有数字电路的标准工艺。"},
+ {d:"把结构做成三维以继续微缩",h:"平面结构在短沟道下失控",to:"FinFET",kind:"ok",
+  truth:"2011 FinFET 量产，把微缩又延长了十几年。"},
+ {d:"认为 MOS 的界面态问题无解",h:"氧化层缺陷太多，无法稳定工作",to:null,kind:"dead",
+  truth:"热氧化硅工艺解决了它——这个「无解」判断让贝尔实验室耽误了十年。"}
+],
+"集成电路":[
+ {d:"把整个处理器集成进去",h:"元件越集越多，为什么不集成一整个 CPU",to:"微处理器",kind:"ok",
+  truth:"1971 微处理器，集成度跨过了关键门槛。"},
+ {d:"提高集成度并预测其趋势",h:"如果每两年翻一番，行业该怎么办",to:"摩尔定律",kind:"ok",
+  truth:"摩尔定律成为产业自我实现的路线图。"},
+ {d:"把不同功能的芯片做成一颗",h:"分立芯片之间的通信太慢",to:"SoC",kind:"ok",
+  truth:"SoC 让手机成为可能。"},
+ {d:"把大芯片拆成小芯粒再拼起来",h:"单芯片面积与良率都到极限",to:"Chiplet",kind:"ok",
+  truth:"物理极限（隧穿、散热、光刻波长）陆续撞墙，微缩在 2010 年代明显放缓。"}
+],
+"光刻":[
+ {d:"缩短光源波长以提高分辨率",h:"分辨率受波长限制",to:"深紫外光刻",kind:"ok",
+  truth:"从 436nm 到 193nm，每次换光源都续命十年。"},
+ {d:"用更短的波长（极紫外）",h:"193nm 也快到头了",to:"EUV",kind:"ok",
+  truth:"EUV 用了三十年、数十亿欧元才量产。"},
+ {d:"绕开光刻，用电子束直接写",h:"电子束波长极短",to:null,kind:"weak",
+  truth:"电子束直写太慢，只用于掩模制作与小批量。"},
+ {d:"认为光学光刻会在 1 微米处终止",h:"衍射极限不可逾越",to:null,kind:"dead",
+  truth:"浸没式、多重曝光、相移掩模等技巧把光学光刻推到了 7 纳米。"}
+],
+"微处理器":[
+ {d:"研究集成度与成本的关系，给出行业节奏",h:"如果每代都更便宜，行业就有了节奏",to:"摩尔定律",kind:"ok",
+  truth:"摩尔定律成为半导体行业四十年的节拍器。"},
+ {d:"把通用核换成专用电路",h:"通用处理器浪费太多晶体管",to:"AI加速器",kind:"ok",
+  truth:"GPU、TPU 等专用加速器成为算力增长的主力。"},
+ {d:"继续提高主频",h:"频率越高越快",to:null,kind:"dead",
+  truth:"2005 年前后撞上功耗墙（登纳德缩放失效），主频停在 4GHz 附近。这是最著名的「此路不通」。"},
+ {d:"用多核并行提高性能",h:"频率上不去，那就堆核",to:null,kind:"weak",
+  truth:"多核成为现实，但软件并行化的收益远低于预期。"}
+],
+"DRAM":[
+ {d:"把存储做成非易失",h:"断电就丢数据是硬伤",to:"闪存",kind:"ok",
+  truth:"闪存用浮栅保存电荷，断电不丢。"},
+ {d:"继续提高密度",h:"电容越做越小会漏电，那就往上叠",to:"3D NAND",kind:"ok",
+  truth:"三维电容与新材料延续了密度提升。"},
+ {d:"用磁性存储替代电荷存储",h:"磁畴不丢电",to:"磁泡存储",kind:"weak",
+  truth:"磁泡失败，但磁阻存储（MRAM）后来在特定场景立足。"},
+ {d:"认为 DRAM 会被一种全新存储取代",h:"刷新太麻烦",to:null,kind:"dead",
+  truth:"新型存储（相变、阻变）屡屡被寄予厚望，至今未取代 DRAM。"}
+],
+"CMOS":[
+ {d:"用它做所有数字电路",h:"功耗低、可微缩",to:"SoC",kind:"ok",
+  truth:"CMOS 成为唯一主流工艺，SoC 才能集成那么多功能。"},
+ {d:"继续缩小尺寸",h:"缩小就能更快更省",to:null,kind:"weak",
+  truth:"一直缩到 3 纳米，但漏电与散热成为主要障碍。"},
+ {d:"认为 CMOS 可以无限缩放",h:"登纳德缩放会一直成立",to:null,kind:"dead",
+  truth:"2005 年登纳德缩放失效——电压不能再降，功耗墙出现。这是整个行业的转折点。"},
+ {d:"用它做图像传感器",h:"光电二极管加 CMOS 读出",to:null,kind:"weak",
+  truth:"CMOS 图像传感器取代 CCD，成为手机摄像头的基础。"}
+],
+"摩尔定律":[
+ {d:"靠换光源继续缩小",h:"波长是主要障碍",to:"EUV",kind:"ok",
+  truth:"EUV 成为摩尔定律的最后凭据。"},
+ {d:"靠垂直堆叠提高密度",h:"平面缩不动了，那就往上长",to:"3D NAND",kind:"ok",
+  truth:"3D NAND 把层数堆到 200 层以上。"},
+ {d:"认为摩尔定律会永远成立",h:"过去五十年都成立",to:null,kind:"dead",
+  truth:"2010 年代后明显放缓，业界已普遍承认它不再是定律，而是历史现象。"},
+ {d:"靠架构创新而非工艺",h:"工艺红利吃完，就改架构",to:"Chiplet",kind:"ok",
+  truth:"芯粒与先进封装成为延续性能增长的新路径。"}
+],
+"RISC":[
+ {d:"把专用加速器做进系统",h:"通用核不够快，专用电路更快",to:"AI加速器",kind:"ok",
+  truth:"专用加速成为主流，RISC 核常作为控制器配合。"},
+ {d:"认为精简指令集不能做高性能计算",h:"复杂任务需要复杂指令",to:null,kind:"dead",
+  truth:"ARM 在手机与服务器上都证明了相反。这是最著名的架构误判之一。"},
+ {d:"用它做低功耗移动芯片",h:"指令简单，功耗低",to:null,kind:"ok",
+  truth:"ARM 统治移动端，是 RISC 思想最大的胜利。"},
+ {d:"继续扩展指令集",h:"加更多指令会更快",to:null,kind:"weak",
+  truth:"向量扩展确实有效，但无节制扩展会回到复杂指令集的老路。"}
+],
+"闪存":[
+ {d:"把闪存做成大容量固态盘",h:"没有机械部件，随机访问快",to:null,kind:"ok",
+  truth:"SSD 取代机械硬盘，数据中心与移动设备都因此改变。"},
+ {d:"平面微缩遇到极限，改为垂直堆叠",h:"线宽缩不动，就往上长",to:null,kind:"weak",
+  truth:"3D NAND 成为主流，层数逐年翻倍。"},
+ {d:"认为闪存的擦写寿命无法接受",h:"只能擦写几千次，太脆弱",to:null,kind:"dead",
+  truth:"磨损均衡与纠错把寿命问题工程化解决，绝大多数场景够用。"},
+ {d:"用闪存替代 DRAM",h:"如果不丢电，就不需要主存",to:null,kind:"dead",
+  truth:"速度差两个数量级，无法替代。存储层次依然存在。"}
+],
+"深紫外光刻":[
+ {d:"继续缩短波长到极紫外",h:"193nm 到头了，需要 13.5nm",to:"EUV",kind:"ok",
+  truth:"EUV 是唯一出路，代价是三十年研发。"},
+ {d:"用浸没式与多重曝光榨取 193nm",h:"不换光源也能提高分辨率",to:"摩尔定律",kind:"ok",
+  truth:"浸没式加多重曝光把 193nm 用到 7nm，为 EUV 争取了十五年。"},
+ {d:"改用纳米压印",h:"不靠光，靠模具压",to:null,kind:"weak",
+  truth:"纳米压印在特定领域（如存储、光学）有应用，但未进入主流逻辑芯片。"},
+ {d:"认为光学光刻已经走到终点",h:"物理极限到了",to:null,kind:"dead",
+  truth:"工程技巧不断延展「终点」，这句话被说了四十年，每次都被推翻。"}
+],
+"SoC":[
+ {d:"把 AI 加速单元集成进 SoC",h:"手机与边缘设备需要本地算力",to:"AI加速器",kind:"ok",
+  truth:"NPU 成为手机 SoC 的标配。"},
+ {d:"用先进封装把多个芯粒拼起来",h:"单芯片面积与良率都到极限",to:"Chiplet",kind:"ok",
+  truth:"芯粒成为高性能计算的主流架构。"},
+ {d:"认为集成度越高越好，全部塞进一颗",h:"集成省电、省空间",to:null,kind:"dead",
+  truth:"模拟、射频、高压部分难以集成，混合工艺成本高——「全集成」在现实中做不到。"},
+ {d:"用它做可穿戴与物联网",h:"低功耗、小体积",to:null,kind:"weak",
+  truth:"确实是主要市场，但技术上的突破有限。"}
+],
+"3D NAND":[
+ {d:"继续堆层并做更多台阶",h:"层数越多密度越高",to:null,kind:"ok",
+  truth:"层数从 32 层到 200 层以上，仍未见顶。"},
+ {d:"把 DRAM 也做成三维",h:"存储可以，内存也许可以",to:null,kind:"weak",
+  truth:"3D DRAM 在研，难度远高于 NAND。"},
+ {d:"用 3D NAND 替代 DRAM",h:"密度高、成本低",to:null,kind:"dead",
+  truth:"速度仍是硬伤，不可能替代内存。"},
+ {d:"把逻辑电路也做成三维堆叠",h:"存储能堆，逻辑也许能",to:"Chiplet",kind:"ok",
+  truth:"3D 堆叠逻辑（如 SoIC）成为先进封装的一部分。"}
+],
+"EUV":[
+ {d:"用更高数值孔径提高分辨率",h:"13.5nm 仍要继续缩小线宽",to:"高NA-EUV",kind:"ok",
+  truth:"High-NA EUV 已在推进，把单次曝光推向 8nm 以下。"},
+ {d:"绕开光刻，用新型图案化方法",h:"EUV 太贵太复杂",to:null,kind:"weak",
+  truth:"定向自组装等方向在研，尚未量产。"},
+ {d:"认为 EUV 永远无法量产",h:"光源功率太低、反射镜损耗太大",to:null,kind:"dead",
+  truth:"被说了二十年，2018 年量产。又一次「技术不可行」的误判。"},
+ {d:"用它支撑摩尔定律继续",h:"只有 EUV 能继续缩小",to:null,kind:"weak",
+  truth:"EUV 确实延命，但成本急剧上升，经济性成为新瓶颈。"}
+],
+"AI加速器":[
+ {d:"做更大规模的训练集群",h:"模型越大效果越好",to:null,kind:"ok",
+  truth:"集群规模成为算力竞争的核心指标。"},
+ {d:"做更专用的推理芯片",h:"推理比训练更接近落地",to:null,kind:"weak",
+  truth:"边缘推理芯片大量出现，但架构趋同。"},
+ {d:"认为通用 CPU 加编程优化就够",h:"不需要专用硬件",to:null,kind:"dead",
+  truth:"能效差一个数量级，专用化已不可逆。"},
+ {d:"用芯粒架构扩展规模",h:"单芯片面积受限",to:"Chiplet",kind:"ok",
+  truth:"大厂已用芯粒拼出超大芯片。"}
+],
+"Chiplet":[
+ {d:"做通用芯粒互连标准",h:"各家接口不统一",to:null,kind:"ok",
+  truth:"UCIe 等标准正在形成，生态是关键。"},
+ {d:"把存储也做成芯粒",h:"内存墙是主要瓶颈",to:null,kind:"weak",
+  truth:"HBM 堆叠已成熟，但仍是专用接口。"},
+ {d:"认为芯粒能解决所有成本问题",h:"拆开就便宜",to:null,kind:"dead",
+  truth:"先进封装本身极贵，且良率与测试复杂度上升。"},
+ {d:"用它延续摩尔定律",h:"物理微缩结束，靠拼装继续",to:null,kind:"weak",
+  truth:"业界确实这么定位，但性能增长已明显放缓。"}
+],
+"砷化镓":[{d:"把工艺成本降下来",h:"性能好但太贵",to:null,kind:"dead",truth:"衬底尺寸与缺陷密度始终无法与硅竞争，只在射频与光电器件立足。"}],
+"单电子晶体管":[{d:"在室温下工作",h:"必须在极低温才行",to:null,kind:"dead",truth:"室温单电子效应所需的尺寸远超工艺极限，至今只能作为物理研究。"}],
+"硅光":[{d:"把光源也集成到硅上",h:"硅不发光，光源得外置",to:null,kind:"weak",truth:"混合集成在推进，但「全硅光源」仍未实现。"}],
+"磁泡存储":[{d:"提高磁泡密度",h:"密度上去了也许就能赢",to:null,kind:"dead",truth:"被磁盘与闪存双双超越，1980 年代末停产。"}],
+"FinFET":[{d:"做环绕栅极（GAA）",h:"三面栅控还不够",to:null,kind:"ok",truth:"GAA 已在 3nm 节点量产。"}],
+"量子计算":[{d:"做容错量子计算",h:"比特数够了但没有纠错",to:null,kind:"weak",truth:"纠错所需物理比特数仍是天文数字。"}],
+"SRAM":[{d:"用更小面积存一位，但要定期刷新",h:"六管太占面积，能不能只用电容",to:"DRAM",kind:"ok",truth:"1966 DRAM 用一个晶体管加一个电容，密度提升十倍以上。"},
+ {d:"把它做进处理器当缓存",h:"速度要匹配 CPU",to:null,kind:"weak",truth:"缓存层次成为体系结构核心。"},
+ {d:"用 SRAM 做主存",h:"速度最快",to:null,kind:"dead",truth:"面积与成本太高，做主存不现实。"},
+ {d:"降低待机功耗",h:"静态也要耗电",to:null,kind:"weak",truth:"低功耗 SRAM 在移动端很关键。"}],
+"半导体激光":[{d:"用到光通信",h:"能在室温连续工作，就能当光源",to:null,kind:"ok",truth:"光纤通信的光源由此而来。"},
+ {d:"用到光盘与打印",h:"相干光可以聚焦到极小点",to:null,kind:"weak",truth:"CD/DVD 与激光打印机的核心器件。"},
+ {d:"做到可见光波段",h:"红外能做，可见光应该也行",to:null,kind:"ok",truth:"蓝光 LED/激光（1990s）为高密度存储与照明铺路。"},
+ {d:"用它替代电子做计算",h:"光更快",to:"硅光",kind:"weak",truth:"光互连有优势，光计算至今未成主流。"}],
+"高NA-EUV":[{d:"用它做 2nm 以下节点",h:"数值孔径提高就能继续缩",to:null,kind:"ok",truth:"已在推进，成本是主要障碍。"},
+ {d:"解决掩模与光刻胶的配套问题",h:"新波长需要新材料",to:null,kind:"weak",truth:"材料体系要重建，是量产的关键瓶颈。"},
+ {d:"认为光学光刻已到终点",h:"NA 0.55 已是极限",to:null,kind:"dead",truth:"这句话被说过多次，每次都被工程技巧推翻。"},
+ {d:"转向其他图案化方法",h:"EUV 太贵",to:null,kind:"weak",truth:"定向自组装等仍在研。"}]
+};
+
+const EDGE = [];
+for(const k in DIRS) DIRS[k].forEach(d=>{ if(d.to && d.kind!=="dead") EDGE.push([k,d.to,d.kind]); });
+const INDEG={}; EDGE.forEach(([a,b])=>{INDEG[b]=(INDEG[b]||0)+1});
+
+
+let cur=null, reveal=false, zoom=false;
+function lineage(k){
+  const up=new Set(), down=new Set();
+  (function u(x){ EDGE.filter(e=>e[1]===x).forEach(e=>{ if(!up.has(e[0])){up.add(e[0]);u(e[0])} }) })(k);
+  (function d(x){ EDGE.filter(e=>e[0]===x).forEach(e=>{ if(!down.has(e[1])){down.add(e[1]);d(e[1])} }) })(k);
+  return {up,down};
+}
+
+function depthOf(){
+  const L={};
+  function g(k,seen){
+    if(L[k]!==undefined) return L[k];
+    if(seen.has(k)){L[k]=0;return 0}
+    seen.add(k);
+    const ups=EDGE.filter(e=>e[1]===k).map(e=>e[0]);
+    L[k]=ups.length?1+Math.max(...ups.map(u=>g(u,new Set(seen)))):0;
+    return L[k];
+  }
+  Object.keys(N).forEach(k=>g(k,new Set()));
+  return L;
+}
+const DEPTH = depthOf();
+
+function render(){
+  const byLayer={};
+  Object.keys(N).forEach(k=>{ const L=DEPTH[k]; (byLayer[L]=byLayer[L]||[]).push(k) });
+  const maxL=Math.max(...Object.keys(byLayer).map(Number));
+  let html="";
+  for(let i=0;i<=maxL;i++){
+    const ks=(byLayer[i]||[]).sort((a,b)=>{
+      const am=N[a].name.includes("支线")?1:0, bm=N[b].name.includes("支线")?1:0;
+      return am-bm || N[a].y-N[b].y;
+    });
+    const mainCnt=ks.filter(k=>!N[k].name.includes("支线")).length;
+    html+=`<div class="layer"><div class="lh"><b>第 ${i+1} 层</b><span>${mainCnt} 个主线 · ${ks.length-mainCnt} 个支线</span></div><div class="grid">`;
+    ks.forEach(k=>{
+      const n=N[k], c=(DIRS[k]||[]).length;
+      html+=`<div class="card${cur===k?' sel':''}" data-k="${k}">
+        <div class="y">${n.y}</div><div class="nm">${n.name}</div><div class="tx">${n.t}</div>
+        ${c?`<span class="cnt">${c} 条</span>`:''}</div>`;
+    });
+    html+=`</div></div>`;
+  }
+  document.getElementById('list').innerHTML=html;
+  document.querySelectorAll('.card').forEach(el=>el.onclick=()=>open(el.dataset.k));
+}
+
+function open(k){
+  cur=k; const n=N[k];
+  document.getElementById('sTitle').textContent=n.name;
+  document.getElementById('sYear').textContent=`${n.y} · 第 ${DEPTH[k]+1} 层`;
+  document.getElementById('sFact').innerHTML=n.t+(n.why?`<span class="why">这意味着：${n.why}</span>`:'');
+  const ds=DIRS[k]||[];
+  document.getElementById('sDirs').innerHTML=ds.length?ds.map((d,i)=>`
+    <div class="dir ${d.kind}">
+      <div class="h">${i+1}. ${d.d}</div>
+      <div class="l">线索：${d.h}</div>
+      <div class="res">${d.kind==='ok'
+        ? `✓ 开新路${d.to?` → <span class="go" data-go="${d.to}">${N[d.to].name}</span>`:''}　${d.truth}`
+        : d.kind==='weak' ? `～ 收益有限${d.to?` → <span class="go" data-go="${d.to}">${N[d.to].name}</span>`:''}　${d.truth}`
+        : `✗ 走不通　${d.truth}`}</div>
+    </div>`).join('')
+    :'<div class="l" style="font-size:13px">这一层是终点，做完可以换一条分支继续。</div>';
+  document.querySelectorAll('[data-go]').forEach(el=>el.onclick=e=>{e.stopPropagation();open(el.dataset.go)});
+  document.querySelectorAll('.card').forEach(el=>el.classList.toggle('sel',el.dataset.k===k));
+  document.getElementById('sheet').classList.add('on');
+  document.body.classList.add('open');
+  document.getElementById('scrim').classList.add('on');
+  document.getElementById('sheet').scrollTop=0;
+  // 关系图视图下重绘，触发高亮
+  if(document.getElementById('graphWrap').style.display!=='none') drawGraph();
+}
+function close(){document.getElementById('sheet').classList.remove('on');
+  document.body.classList.remove('open');document.getElementById('scrim').classList.remove('on')}
+
+function drawGraph(){
+  const maxL=Math.max(...Object.values(DEPTH));
+  const rows={};
+  Object.keys(N).forEach(k=>{ (rows[DEPTH[k]]=rows[DEPTH[k]]||[]).push(k) });
+  const maxRow=Math.max(...Object.values(rows).map(r=>r.length));
+  const NW=124, GAP=14, rowH=108, padT=44, padL=20;
+  const W=Math.max(820, maxRow*(NW+GAP)+40);
+  const H=(maxL+1)*rowH+padT+30;
+  const pos={};
+  Object.keys(rows).forEach(L=>{
+    const arr=rows[L].sort((a,b)=>N[a].y-N[b].y);
+    const usable=W-padL*2-NW, n=arr.length;
+    arr.forEach((k,i)=>{
+      pos[k]={x:padL+NW/2+(n===1?usable/2:usable*i/(n-1)), y:padT+(+L)*rowH};
+    });
+  });
+  let s=`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}"><defs>
+    <marker id="a1" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7.5" markerHeight="7.5" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="var(--fg)"/></marker>
+    <marker id="a2" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs>`;
+  for(let i=0;i<=maxL;i++){
+    const y=padT+i*rowH;
+    s+=`<line x1="0" y1="${y}" x2="${W}" y2="${y}" stroke="var(--line)" stroke-width=".5" stroke-dasharray="2 8" opacity=".6"/>
+        <text x="4" y="${y-8}" font-size="9.5" fill="var(--muted)">L${i+1}</text>`;
+  }
+  const ln = cur ? lineage(cur) : null;
+  EDGE.forEach(([a,b,kind])=>{
+    if(!pos[a]||!pos[b]) return;
+    const hot = ln && (ln.up.has(a)&&(ln.up.has(b)||b===cur)) || (ln && (ln.down.has(b)&&(ln.down.has(a)||a===cur)));
+    const A=pos[a], B=pos[b], my=(A.y+B.y)/2;
+    const ok=kind==="ok";
+    s+=`<path d="M${A.x},${A.y+11} C${A.x},${my} ${B.x},${my} ${B.x},${B.y-11}"
+      fill="none" stroke="${hot?'var(--accent)':(ok?'var(--fg)':'var(--muted)')}" stroke-width="${hot?3:(ok?1.5:1.1)}"
+      ${ok?'':'stroke-dasharray="4 4"'} opacity="${hot?1:(ln?0.13:(ok?0.8:0.5))}" marker-end="url(#${ok?'a1':'a2'})"/>`;
+  });
+  Object.keys(N).forEach(k=>{
+    const n=N[k], q=pos[k]; if(!q) return;
+    const side=n.name.includes("支线");
+    const label=n.name.replace("（支线）","");
+    const txt=(label.length>8?label.slice(0,8)+"…":label);
+    const hub = (INDEG[k]||0)>=2;
+    const dim = ln && !(k===cur || ln.up.has(k) || ln.down.has(k));
+    if(hub) s+=`<rect x="${q.x-NW/2-4}" y="${q.y-15}" width="${NW+8}" height="30" rx="15"
+      fill="none" stroke="var(--warn)" stroke-width="2" opacity="${dim?0.12:0.95}"/>`;
+    s+=`<g data-k="${k}" style="cursor:pointer" opacity="${dim?0.2:1}">
+      <rect x="${q.x-NW/2}" y="${q.y-11}" width="${NW}" height="22" rx="11"
+        fill="${side?'var(--bg)':'var(--card)'}"
+        stroke="${side?'var(--muted)':'var(--accent)'}" stroke-width="${side?1:1.4}"
+        ${side?'stroke-dasharray="3 3"':''}/>
+      <text x="${q.x}" y="${q.y+4}" text-anchor="middle" font-size="10"
+        fill="${side?'var(--muted)':'var(--fg)'}">${n.y} ${txt}</text></g>`;
+  });
+  s+=`</svg>`;
+  document.getElementById('graph').innerHTML=
+    `<div style="font-size:11.5px;color:var(--muted);margin-bottom:8px;line-height:1.7">
+      实线箭头 = 开新路　虚线 = 收益有限（通到支线）　死路不画<br>
+      从上到下是依赖层数，不是年代。同一层可并行申报。<b style="color:var(--warn)">带橙环的节点是多条线汇合处</b>——那是交集。点任意节点会高亮它整条来路与去路。</div>`+s;
+  document.querySelectorAll('#graph [data-k]').forEach(el=>el.onclick=()=>open(el.dataset.k));
+}
+
+document.getElementById('sClose').onclick=close;
+document.getElementById('scrim').onclick=close;
+document.getElementById('btnReveal').onclick=e=>{
+  reveal=!reveal; document.body.classList.toggle('reveal',reveal);
+  e.target.classList.toggle('on',reveal);
+  e.target.textContent=reveal?'已揭晓（点此隐藏）':'揭晓真实结局';
+};
+document.getElementById('btnList').onclick=e=>{
+  document.getElementById('list').style.display='block';
+  document.getElementById('graphWrap').style.display='none';
+  e.target.classList.add('on'); document.getElementById('btnGraph').classList.remove('on');
+};
+document.getElementById('btnGraph').onclick=e=>{
+  document.getElementById('list').style.display='none';
+  document.getElementById('graphWrap').style.display='block';
+  e.target.classList.add('on'); document.getElementById('btnList').classList.remove('on');
+  drawGraph();
+};
+document.getElementById('btnZoom').onclick=e=>{
+  const g=document.getElementById('graphWrap');
+  zoom=!zoom; g.classList.toggle('zoom',zoom);
+  e.target.textContent=zoom?'缩回全貌':'放大看细节';
+};
+
+{
+  const ds=Object.values(DIRS).flat();
+  const c={ok:0,weak:0,dead:0}; ds.forEach(d=>c[d.kind]++);
+  document.getElementById('stat').textContent=
+    `${Object.keys(N).filter(k=>!N[k].name.includes("支线")).length} 个主线节点 · ${Object.keys(N).filter(k=>N[k].name.includes("支线")).length} 个支线 · ${Object.keys(DIRS).length} 个节点有方向 · ${ds.length} 条方向（${c.ok} 开新路 / ${c.weak} 收益有限 / ${c.dead} 不通）`;
+  document.getElementById('legend').innerHTML=
+    `默认不显示每条方向的结局，主持人结算时点「揭晓」才公布。<br>
+     <b style="color:var(--ok)">✓ 开新路</b>：通往下一层节点　<b>～ 收益有限</b>：通到支线或原地　
+     <b style="color:var(--warn)">✗ 不通</b>：结论被证伪<br>
+     <b>「不通」指结论被证伪，不指研究没有价值</b>：p53 被当成癌基因的那十年，正是这次误判催生了抑癌基因这个概念。`;
+}
+render();
+</script>
+</body>
+</html>

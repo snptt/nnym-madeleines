@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>癌症研究模拟 · 一棵树</title>
+<style>
+:root{--bg:#fbfbfa;--fg:#1a1a1a;--muted:#6b6b6b;--line:#e2e0dc;--card:#fff;
+  --accent:#2f6fb3;--accent-weak:#e8f0f9;--warn:#b3542f;--ok:#2f7d52;--okweak:#e6f2ea;
+  --radius:10px;--shadow:0 1px 2px rgba(0,0,0,.05)}
+@media (prefers-color-scheme: dark){:root{--bg:#141414;--fg:#e8e6e3;--muted:#9a9793;
+  --line:#2e2e2e;--card:#1c1c1c;--accent:#6fa8dc;--accent-weak:#1f2b38;--warn:#e08a63;
+  --ok:#7bc496;--okweak:#1e2c24;--shadow:0 1px 2px rgba(0,0,0,.4)}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--fg);
+  font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue","PingFang SC",sans-serif;
+  font-size:15px;line-height:1.55;-webkit-text-size-adjust:100%}
+header{position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:1px solid var(--line);
+  padding:12px 14px 10px;padding-top:calc(12px + env(safe-area-inset-top))}
+h1{margin:0;font-size:16px;font-weight:650}
+.sub{color:var(--muted);font-size:12.5px;margin-top:3px}
+.bar{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+button{font:inherit;font-size:13px;color:var(--fg);background:var(--card);border:1px solid var(--line);
+  border-radius:999px;padding:9px 14px;min-height:44px;cursor:pointer;display:inline-flex;align-items:center}
+button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+button.rev.on{background:var(--ok);border-color:var(--ok)}
+button.zm{font-size:12px;min-height:36px;padding:6px 12px}
+main{padding:14px 14px 90px;max-width:980px;margin:0 auto}
+.layer{margin-bottom:18px}
+.lh{display:flex;align-items:baseline;gap:8px;margin:0 0 8px;font-size:12px;color:var(--muted)}
+.lh b{color:var(--fg);font-size:13px}
+.grid{display:grid;gap:8px;grid-template-columns:1fr}
+@media(min-width:700px){.grid{grid-template-columns:1fr 1fr}}
+@media(min-width:1000px){.grid{grid-template-columns:1fr 1fr 1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:11px 13px;box-shadow:var(--shadow);cursor:pointer;position:relative}
+.card.sel{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-weak)}
+.card .y{font-size:11.5px;color:var(--muted)}
+.card .nm{font-weight:600;font-size:14.5px;margin:1px 0 2px}
+.card .tx{font-size:12.5px;color:var(--muted);padding-right:54px}
+.card .cnt{position:absolute;right:12px;top:11px;font-size:11px;color:var(--accent);
+  background:var(--accent-weak);border-radius:999px;padding:1px 7px}
+.wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:6px}
+#graph svg{display:block;width:100%;height:auto;max-width:none}
+#graphWrap.zoom #graph svg{width:1500px}
+#graphBar{display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap}
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.32);opacity:0;pointer-events:none;
+  transition:opacity .18s;z-index:40}
+.scrim.on{opacity:1;pointer-events:auto}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:50;background:var(--bg);
+  border-top:1px solid var(--line);border-radius:16px 16px 0 0;max-height:82vh;overflow-y:auto;
+  -webkit-overflow-scrolling:touch;transform:translateY(102%);transition:transform .22s ease;
+  padding:0 16px calc(28px + env(safe-area-inset-bottom))}
+.sheet.on{transform:translateY(0)}
+@media(min-width:820px){
+  .sheet{left:auto;top:0;bottom:0;right:0;width:470px;border-radius:0;border-left:1px solid var(--line);
+    border-top:none;max-height:100vh;transform:translateX(102%);box-shadow:-8px 0 24px rgba(0,0,0,.08)}
+  .sheet.on{transform:translateX(0)}
+  .grab{display:none}
+  body.open header, body.open main{padding-right:486px}
+  header,main{transition:padding-right .22s ease}
+}
+.grab{width:38px;height:4px;border-radius:2px;background:var(--line);margin:9px auto 4px}
+.sh{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;padding:6px 0 12px;
+  border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:2}
+.sh h2{margin:0;font-size:16px;font-weight:650;line-height:1.35}
+.sh .y{display:block;margin-top:2px;font-size:11.5px;color:var(--muted)}
+.close{border:none;background:none;font-size:24px;line-height:1;color:var(--muted);
+  width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:50%;flex:none}
+section{margin-top:14px}
+h3{font-size:12px;color:var(--muted);font-weight:650;margin:0 0 8px;letter-spacing:.04em}
+.fact{font-size:14.5px;line-height:1.6}
+.fact .why{display:block;margin-top:6px;font-size:13px;color:var(--muted)}
+.dir{border:1px solid var(--line);border-radius:9px;padding:10px 12px;margin-bottom:9px;background:var(--card)}
+.dir .h{font-weight:600;font-size:13.5px;margin-bottom:3px}
+.dir .l{font-size:12.5px;color:var(--muted)}
+.dir .res{margin-top:8px;font-size:12.5px;padding:7px 9px;border-radius:7px;display:none}
+body.reveal .dir .res{display:block}
+.dir.ok .res{background:var(--okweak);color:var(--ok);border:1px solid var(--ok)}
+.dir.weak .res{background:transparent;color:var(--fg);border:1px solid var(--line)}
+.dir.dead .res{background:transparent;color:var(--warn);border:1px dashed var(--warn)}
+.dir .go{color:var(--accent);text-decoration:underline;cursor:pointer}
+.legend{font-size:11.5px;color:var(--muted);margin-top:10px;line-height:1.7}
+</style>
+</head>
+<body>
+<header>
+  <h1>癌症研究模拟 <span style="color:var(--muted);font-weight:400">一棵树</span></h1>
+  <div class="sub" id="stat"></div>
+  <div class="bar">
+    <button id="btnList" class="on">分层列表</button>
+    <button id="btnGraph">关系图</button>
+    <button id="btnReveal" class="rev">揭晓真实结局</button>
+  </div>
+</header>
+<main>
+  <div id="list"></div>
+  <div id="graphWrap" class="wrap" style="display:none">
+    <div id="graphBar"><button id="btnZoom" class="zm">放大看细节</button>
+      <span style="font-size:11.5px;color:var(--muted)">默认一屏看全貌</span></div>
+    <div id="graph"></div>
+  </div>
+  <div class="legend" id="legend"></div>
+</main>
+
+<div class="scrim" id="scrim"></div>
+<div class="sheet" id="sheet">
+  <div class="grab"></div>
+  <div class="sh"><div><h2 id="sTitle"></h2><span class="y" id="sYear"></span></div>
+    <button class="close" id="sClose">×</button></div>
+  <section><h3>已确立的事实</h3><div class="fact" id="sFact"></div></section>
+  <section><h3>当时可以往哪问</h3><div id="sDirs"></div></section>
+</div>
+
+<script>
+const N = {
+// L0 四个根
+"染色体异常":{y:1902,name:"染色体异常",t:"肿瘤细胞的染色体数目与形态异常（Boveri）",why:"肿瘤可能是「看得见的基因事故」。"},
+"肿瘤可传递":{y:1911,name:"肿瘤可传递",t:"鸡的肉瘤磨碎、过滤掉细胞和细菌后，滤液仍能让健康鸡得同样的肉瘤（Rous）",why:"致病的不是细胞，也不是细菌，而是某种更小的东西。"},
+"克隆选择":{y:1957,name:"克隆选择",t:"每个淋巴细胞只产生一种抗体，抗原选择并扩增对应克隆（Burnet）",why:"免疫应答是「选」出来的，不是「教」出来的。"},
+"Sanger测序":{y:1977,name:"Sanger 测序",t:"双脱氧终止法可以逐位读出 DNA 的碱基顺序",why:"遗传信息第一次变成了可以逐字阅读的文本。"},
+// L1
+"费城染色体":{y:1960,name:"费城染色体",t:"CML 细胞里有一条异常小的 22 号染色体",why:"某种肿瘤对应某种特定的染色体异常。"},
+"逆转录酶":{y:1970,name:"逆转录酶",t:"病毒颗粒内存在以 RNA 为模板合成 DNA 的酶",why:"病毒基因可以写进宿主基因组。"},
+"单抗":{y:1975,name:"单克隆抗体",t:"杂交瘤既能无限增殖，又只分泌一种抗体",why:"可以对任意一个分子造出标准化的钥匙。"},
+"IL-2":{y:1976,name:"IL-2",t:"T 细胞生长因子可让 T 细胞在体外长期扩增",why:"免疫细胞第一次能被拿到体外大量培养、做实验、再输回去。"},
+"人类基因组":{y:2003,name:"人类基因组",t:"约 30 亿碱基的参考序列完成",why:"有了比对的标准答案，任何肿瘤的异常都可以查字典。"},
+// L2
+"BCR-ABL":{y:1984,name:"BCR-ABL",t:"9 号与 22 号断点处拼出一个新基因，其蛋白是持续激活的酪氨酸激酶",why:"染色体易位的分子后果被找到，而且是一个可抑制的酶。"},
+"src":{y:1976,name:"src",t:"正常鸡基因组里就存在与病毒癌基因 v-src 同源的序列 c-src",why:"致癌基因不是病毒独有的，宿主本来就有。"},
+"rituximab":{y:1997,name:"rituximab",t:"抗 CD20 抗体可清除 B 细胞，治疗 B 细胞淋巴瘤",why:"抗体第一次成为药，而不只是试剂。"},
+"CTLA-4阻断":{y:2011,name:"CTLA-4 阻断",t:"封阻 CTLA-4 可增强抗肿瘤免疫，部分晚期黑色素瘤长期缓解",why:"免疫系统的刹车可以被药物松开，而且能治癌。"},
+"TCGA":{y:2013,name:"泛癌图谱",t:"数千例肿瘤的突变谱，给出各癌种的驱动基因清单",why:"不同癌种共享同一批驱动基因。"},
+// L3
+"imatinib":{y:2001,name:"imatinib",t:"抑制 BCR-ABL 激酶可让 CML 患者达到细胞遗传学缓解",why:"一个分子靶点 + 一个小分子 = 一种病被控制。"},
+"RAS":{y:1982,name:"RAS",t:"人肿瘤里的 RAS 与正常版本只差第 12 位一个氨基酸",why:"不需要病毒，一个碱基的改变就足够。"},
+"PD-1阻断":{y:2014,name:"PD-1 阻断",t:"抗 PD-1 抗体应答率更高、免疫相关毒性更低",why:"检查点不止一个，更好的那个能覆盖更多癌种。"},
+"单细胞":{y:2018,name:"肿瘤异质性",t:"同一肿瘤内存在遗传上不同的亚克隆，且有层次结构",why:"一个肿瘤其实是一群肿瘤，这解释了耐药与复发。"},
+"CAR-T":{y:2017,name:"CAR-T",t:"把识别 CD19 的抗体片段与 T 细胞信号域拼成嵌合受体",why:"T 细胞的识别特异性可以被工程化改写。"},
+// L4
+"耐药":{y:2002,name:"耐药突变",t:"复发病例的 BCR-ABL 出现看门残基突变，药物无法结合",why:"靶向药不是一劳永逸，肿瘤会改写靶点。"},
+"p53抑癌":{y:1989,name:"p53 抑癌",t:"野生型 p53 抑制转化，肿瘤里的 p53 多是失活型突变",why:"存在一类「去掉才致瘤」的基因，与癌基因方向相反。"},
+"联合免疫":{y:2019,name:"联合免疫",t:"抗 PD-1 加抗 CTLA-4，响应率显著高于单药",why:"检查点可以叠加封锁。"},
+"液体活检":{y:2020,name:"液体活检",t:"血浆游离 DNA 可在影像之前检出肿瘤突变",why:"不必取组织就能反复采样。"},
+"ADC":{y:2013,name:"抗体偶联药物",t:"把毒素挂到抗体上，靶向递送扩大治疗窗口",why:"同一个靶点，换一种杀伤方式。"},
+// L5
+"癌基因成瘾":{y:2000,name:"癌基因成瘾",t:"关掉单一癌基因常使肿瘤消退",why:"肿瘤依赖它最强的那一个突变。"},
+"KRAS成药":{y:2021,name:"KRAS 成药",t:"KRAS G12C 可被共价抑制剂锁定在失活态",why:"被认定「不可成药」四十年的靶点，靠构象漏洞打开了。"},
+"新抗原疫苗":{y:2020,name:"新抗原疫苗",t:"个体化新抗原疫苗可诱导抗肿瘤 T 细胞",why:"每个肿瘤的突变都能变成它自己的标签。"},
+// 支线
+"二次打击":{y:1971,name:"二次打击（支线）",t:"视网膜母细胞瘤的年龄分布支持两次突变模型"},
+"化学致癌":{y:1940,name:"化学致癌（支线）",t:"煤焦油等化学物可诱发动物肿瘤"},
+"插入激活":{y:1982,name:"插入激活（支线）",t:"某些逆转录病毒靠插入宿主基因组激活邻近原癌基因"},
+"酪氨酸激酶":{y:1980,name:"酪氨酸激酶（支线）",t:"v-src 编码一种能把磷酸基加到酪氨酸上的激酶"},
+"Rb":{y:1986,name:"Rb（支线）",t:"Rb 两个等位都失活才致瘤——第一个抑癌基因"},
+"TIL":{y:1988,name:"TIL（支线）",t:"肿瘤浸润淋巴细胞扩增回输，可使部分黑色素瘤缩小"},
+"免疫编辑":{y:2000,name:"免疫编辑（支线）",t:"肿瘤在免疫压力下被编辑，存活的是逃逸克隆"},
+"二代TKI":{y:2006,name:"二代 TKI（支线）",t:"针对看门突变设计的新一代抑制剂有效"},
+"p53-p21":{y:1993,name:"p53–p21（支线）",t:"p53 是转录因子，启动 p21 使细胞停在 G1"},
+"空间组学":{y:2019,name:"空间组学（支线）",t:"保留组织原位位置信息的表达谱"},
+"双抗":{y:2015,name:"双特异性抗体（支线）",t:"一个分子同时结合两个靶点，可桥接 T 细胞与肿瘤"}
+};
+
+const DIRS = {
+"染色体异常":[
+ {d:"把「哪一条染色体出了问题」定位到具体位置",h:"只看到数目和形态异常，说不清是哪个基因",to:"费城染色体",kind:"ok",
+  truth:"1960 在 CML 里找到那条异常小的 22 号染色体——第一个被明确定位的肿瘤相关染色体。"},
+ {d:"统计各种肿瘤的染色体异常，建一张异常图谱",h:"如果每种癌有自己的异常，它就能当诊断标志",to:null,kind:"weak",
+  truth:"确实编出了核型图谱，但多数异常太杂乱，临床价值有限。要到显带技术之后才有用。"},
+ {d:"认为染色体异常只是细胞癌变的结果，不是原因",h:"癌变之后染色体自然会乱",to:null,kind:"dead",
+  truth:"这个因果方向在当时无法判定，但后来证明：特异性易位往往是驱动事件，而不是副产物。"},
+ {d:"用辐射或化学物人为打乱染色体，看能不能致癌",h:"既然异常与癌相关，那就制造异常",to:"化学致癌",kind:"weak",
+  truth:"确实能致癌，但机制指向突变而非染色体数目。这条路通向化学致癌，不通向易位。"}
+],
+"肿瘤可传递":[
+ {d:"把滤液里的东西进一步分离纯化，看它到底是什么",h:"能穿过滤菌器说明很小，但没人见过颗粒",to:"逆转录酶",kind:"ok",
+  truth:"1950s 电镜看到病毒颗粒；再往下才走到逆转录酶。走了四十年，方向对。"},
+ {d:"认为肿瘤是细胞自身的问题，与感染无关",h:"当时主流病理学家多持此说：肿瘤是细胞异常增殖",to:"化学致癌",kind:"weak",
+  truth:"这条线当时不被看好，却走出了另一条主干：化学致癌物 → 突变 → 癌基因。"},
+ {d:"换一种动物重做一次，看是否普遍",h:"如果能重复，就不太可能是鸡的特例",to:null,kind:"weak",
+  truth:"Shope 1933 在兔子上成功，但传几代后失去致癌性——能传不等于能致癌。"},
+ {d:"查人的肿瘤里有没有同样的传染因子",h:"既然动物肿瘤由病毒引起，人的大概也是",to:null,kind:"dead",
+  truth:"几十年只找到少数（EBV、HPV），绝大多数人肿瘤没有病毒。"}
+],
+"克隆选择":[
+ {d:"在体外长期培养单一淋巴细胞",h:"要验证克隆选择，得拿到纯的克隆",to:"单抗",kind:"ok",
+  truth:"杂交瘤技术实现了「一个细胞永生化并只产一种抗体」。"},
+ {d:"找能让 T 细胞持续增殖的因子",h:"B 细胞能融合，T 细胞不能，得靠生长因子",to:"IL-2",kind:"ok",
+  truth:"1976 纯化出 IL-2。免疫学从此可以在体外做定量实验。"},
+ {d:"研究抗体分子的化学结构",h:"既然一种克隆一种抗体，那抗体长什么样",to:null,kind:"weak",
+  truth:"1959 四链结构、1962 可变区恒定区——重要，但没开出治疗路径。"},
+ {d:"认为一个淋巴细胞可以同时产生多种抗体",h:"抗体种类太多，一个细胞只产一种似乎不够",to:null,kind:"dead",
+  truth:"被单细胞克隆实验直接否定。但正是为了检验这个错误假说，才做出了单抗技术。"}
+],
+"Sanger测序":[
+ {d:"把测序自动化、规模化",h:"读一条序列要几个月，太慢",to:"人类基因组",kind:"ok",
+  truth:"毛细管测序把通量提高两个数量级，直接催生了人类基因组计划。"},
+ {d:"测更多物种和基因，建数据库",h:"有序列就能比对",to:null,kind:"weak",
+  truth:"确实建了 GenBank 等数据库，是基础设施，不是发现。"},
+ {d:"测人类的全基因组",h:"如果能读一个基因，能不能读全部",to:"人类基因组",kind:"ok",
+  truth:"1990 立项、2003 完成。花 30 亿美元，被讥为烧钱，但它是后面一切的底座。"},
+ {d:"认为有了序列就能理解生命",h:"字母表都拿到了，剩下只是查表",to:null,kind:"dead",
+  truth:"最典型的过度乐观。30 亿碱基读完，只有约 2 万个编码基因——比线虫多不了多少。"}
+],
+"费城染色体":[
+ {d:"定位这条小染色体是哪两条拼起来的",h:"需要能识别每条染色体的技术",to:"BCR-ABL",kind:"ok",
+  truth:"显带技术确认 9 号与 22 号易位，再克隆断点得到 BCR-ABL。"},
+ {d:"看别的白血病有没有同样的异常",h:"如果只有 CML 有，可能是分型标志",to:null,kind:"weak",
+  truth:"确实只有 CML 有。诊断有用，但不通向治疗。"},
+ {d:"认为是长期接触化学物质造成的损伤",h:"CML 患者多有职业暴露史",to:null,kind:"dead",
+  truth:"几乎所有 CML 患者都带同一种易位，指向遗传机制而非外因。"},
+ {d:"用更强的化疗把带这条染色体的细胞杀干净",h:"异常染色体在，说明细胞有病",to:null,kind:"dead",
+  truth:"化疗能缓解但不能清除这个遗传学异常，复发是必然。"}
+],
+"逆转录酶":[
+ {d:"找病毒基因组里哪一段在致癌",h:"把病毒拆开做突变体，看哪一段坏掉就不致癌",to:"src",kind:"ok",
+  truth:"1976 定位到 v-src。癌基因研究真正的起点。"},
+ {d:"找宿主基因组里有没有对应的正常序列",h:"病毒基因总该有来处",to:"src",kind:"ok",
+  truth:"同年、同一篇论文：正常鸡就有 c-src。"},
+ {d:"认为病毒只是随机插入，激活了旁边的宿主基因",h:"有些逆转录病毒不带癌基因，却照样致瘤",to:"插入激活",kind:"weak",
+  truth:"部分正确——在禽白血病中是主要机制，但不是全部。"},
+ {d:"认为逆转录酶只是病毒复制的工具，与致癌无关",h:"酶是酶，致癌是另一回事",to:null,kind:"dead",
+  truth:"停在这里就走不到 src。不过它对：逆转录酶本身确实不致癌。"}
+],
+"单抗":[
+ {d:"把抗体做成治疗药物",h:"抗体能精准识别一个分子，能不能用来打靶",to:"rituximab",kind:"ok",
+  truth:"1997 rituximab 获批，第一个治疗性单抗。"},
+ {d:"用抗体做诊断试剂和实验工具",h:"识别特异分子的能力，检测上立刻能用",to:null,kind:"weak",
+  truth:"ELISA、Western、流式全靠它。极重要，但属于工具红利。"},
+ {d:"用抗体封阻免疫细胞表面的受体",h:"抗体能锁住分子，那就能关掉一个受体",to:"CTLA-4阻断",kind:"ok",
+  truth:"检查点抗体正是这么做的。免疫学在这里与抗体技术汇合。"},
+ {d:"认为鼠源抗体不能用于人体",h:"异种蛋白会引发强烈免疫反应",to:null,kind:"dead",
+  truth:"这个担心合理，但人源化技术在 1990s 解决了它。"}
+],
+"IL-2":[
+ {d:"用 IL-2 扩增患者自己的 T 细胞再输回去",h:"既然能在体外扩增，能不能扩增会杀肿瘤的那些",to:"TIL",kind:"ok",
+  truth:"1988 TIL 疗法在部分黑色素瘤患者身上见效。"},
+ {d:"研究 T 细胞活化的完整信号要求",h:"光有抗原不够，T 细胞还需要什么",to:"CTLA-4阻断",kind:"ok",
+  truth:"由此发现共刺激与共抑制受体。检查点治疗的源头在这里。"},
+ {d:"直接用大剂量 IL-2 治疗肿瘤",h:"IL-2 能激活免疫，那就直接打进去",to:null,kind:"weak",
+  truth:"高剂量确实能治愈少数患者，但毒性极大、有效率低。"},
+ {d:"认为 IL-2 只是营养因子，与治疗无关",h:"生长因子不是药物",to:null,kind:"dead",
+  truth:"它确实成了第一个免疫治疗药物（1992 获批），尽管疗效有限。"}
+],
+"人类基因组":[
+ {d:"在癌症里系统地找突变",h:"有了参考序列，肿瘤的差异就能逐位比对",to:"TCGA",kind:"ok",
+  truth:"TCGA 等计划由此展开。癌症第一次变成可以数的突变清单。"},
+ {d:"做全基因组关联分析，找疾病易感位点",h:"常见病可能由常见变异决定",to:null,kind:"weak",
+  truth:"GWAS 找到大量位点，但每个效应都很小。"},
+ {d:"研究非编码区",h:"只有 2% 编码蛋白，剩下 98% 在干什么",to:null,kind:"weak",
+  truth:"ENCODE 揭示大量调控元件，但垃圾 DNA 之争至今未平。"},
+ {d:"认为人类基因数量应该有十万个以上",h:"人这么复杂，基因总该比虫子多得多",to:null,kind:"dead",
+  truth:"实际约 2 万，与线虫接近。复杂性的来源是调控而非基因数量。"}
+],
+"BCR-ABL":[
+ {d:"针对这个异常激酶找小分子抑制剂",h:"它是持续激活的酶，抑制它细胞会不会停",to:"imatinib",kind:"ok",
+  truth:"这就是 imatinib 的由来，第一个真正意义上的靶向药。"},
+ {d:"查这个融合基因在别的癌种里有没有",h:"如果它是驱动基因，应该不止见于 CML",to:null,kind:"weak",
+  truth:"在部分急性淋巴细胞白血病里也有，扩大了适应证，但没有新机制。"},
+ {d:"认为断点位置因人而异，无法做通用药物",h:"不同患者的断点似乎不完全相同",to:null,kind:"dead",
+  truth:"断点确有差异，但激酶结构域是保守的。"},
+ {d:"先做诊断试剂，靠检出融合基因来分型",h:"治疗没把握，至少能诊断",to:null,kind:"weak",
+  truth:"确实成了标准诊断，但只是配套。"}
+],
+"src":[
+ {d:"找人的肿瘤里有没有同类的基因",h:"鸡有，人也该有",to:"RAS",kind:"ok",
+  truth:"1982 从人膀胱癌里钓出 RAS。从动物病毒跨到人类肿瘤的关键一步。"},
+ {d:"研究 v-src 蛋白到底在做什么",h:"知道功能，才知道它怎么把细胞搞坏",to:"酪氨酸激酶",kind:"ok",
+  truth:"1980 证明它是酪氨酸激酶——第一个被证明功能的癌基因产物。"},
+ {d:"反过来找「必须丢掉才致瘤」的基因",h:"有些家族性肿瘤不是多了坏基因，而是少了好基因",to:"Rb",kind:"ok",
+  truth:"1986 Rb 克隆。这条路当时不主流，却开出抑癌基因整个方向。"},
+ {d:"认为这只是鸡的病毒现象，不适用于人的肿瘤",h:"人肿瘤里一直找不到病毒",to:null,kind:"dead",
+  truth:"怀疑合理，但结论错了：人肿瘤没病毒，却有同源的癌基因。"}
+],
+"rituximab":[
+ {d:"把抗体和毒素连起来，做成「生物导弹」",h:"抗体能精准找到肿瘤细胞，那就能递送毒素",to:"ADC",kind:"ok",
+  truth:"2013 抗体偶联药物获批。同一条抗体技术路线分出的一支。"},
+ {d:"找更多适合做靶点的细胞表面标志",h:"CD20 只是一个例子",to:null,kind:"weak",
+  truth:"找到了 HER2、EGFR 等一批，但都是同一逻辑的复制。"},
+ {d:"做完全人源化的抗体，减少免疫排斥",h:"鼠源抗体在人体内会被清除",to:null,kind:"weak",
+  truth:"人源化成了标准工艺，是必要工程而非新机制。"},
+ {d:"认为单抗只能做诊断，做不了治疗",h:"抗体太大，进不了实体瘤",to:null,kind:"dead",
+  truth:"对实体瘤确实效果有限，但在血液肿瘤上极成功。一刀切地否定错了。"}
+],
+"CTLA-4阻断":[
+ {d:"找第二个、更好的抑制性受体",h:"CTLA-4 有效但毒性大、响应率低",to:"PD-1阻断",kind:"ok",
+  truth:"PD-1。响应率更高、毒性更低，如今是免疫治疗的基石。"},
+ {d:"研究为什么只有部分患者响应",h:"同一个药，有人好了有人没反应",to:"免疫编辑",kind:"ok",
+  truth:"肿瘤的免疫编辑与逃逸机制。生物标志物和联合治疗的根据。"},
+ {d:"把 CTLA-4 抗体推到所有癌种",h:"既然能治黑色素瘤，别的应该也行",to:null,kind:"weak",
+  truth:"多数实体瘤单药无效。广谱化的想法落空。"},
+ {d:"认为毒性可以靠减小剂量消除",h:"自身免疫副作用是剂量问题",to:null,kind:"dead",
+  truth:"减量降低了疗效却仍有毒性。这类毒性是机制性的。"}
+],
+"TCGA":[
+ {d:"看同一个肿瘤内部是不是均匀",h:"取一块测，能代表整个肿瘤吗",to:"单细胞",kind:"ok",
+  truth:"不均匀。亚克隆结构被发现，直接解释了耐药与复发。"},
+ {d:"把突变检测搬到血液里",h:"组织只能取一次，血可以反复取",to:"液体活检",kind:"ok",
+  truth:"ctDNA 让监测变成连续变量，并能在影像之前发现复发。组学线在这里与临床监测汇合。"},
+ {d:"找新的驱动基因，补充靶点清单",h:"测了这么多，应该能挖出一批新靶点",to:null,kind:"weak",
+  truth:"挖到的多是低频突变，可成药的很少。"},
+ {d:"认为测序能直接指导每个患者的用药",h:"有了突变谱，就能选药",to:null,kind:"dead",
+  truth:"多数突变没有对应药物。精准医学的承诺远未兑现。"}
+],
+"imatinib":[
+ {d:"研究为什么会复发——是药没吃够，还是靶点变了",h:"部分患者初期完全缓解，之后又恶化",to:"耐药",kind:"ok",
+  truth:"答案是靶点本身突变了。这个发现定义了此后所有靶向药的宿命。"},
+ {d:"把这个思路推广到其他驱动基因",h:"如果一种融合激酶能打，别的也能",to:null,kind:"weak",
+  truth:"推广了（EGFR、ALK、BRAF），但每个都很快撞上耐药。"},
+ {d:"认为长期吃药可以「治愈」CML",h:"患者达到完全分子学缓解了",to:null,kind:"dead",
+  truth:"多数患者停药会复发。这药是控制，不是治愈。"},
+ {d:"加化疗联合用药，把残留细胞清掉",h:"单药不够就联合",to:null,kind:"dead",
+  truth:"联合化疗反而增加毒性、未改善生存。"}
+],
+"RAS":[
+ {d:"研究 RAS 蛋白在细胞里干什么",h:"只知道它致癌不够，得知道它怎么工作",to:"酪氨酸激酶",kind:"weak",
+  truth:"1985 证明它是 GTP 酶，突变使其锁死在活化态。后面所有靶向药的立足点。"},
+ {d:"找与癌基因方向相反的基因：缺失才致瘤",h:"RAS 是多了坏的，那有没有少了好的",to:"p53抑癌",kind:"ok",
+  truth:"1989 p53 确认为抑癌基因，与癌基因线合流。"},
+ {d:"验证肿瘤是不是只依赖这一个癌基因",h:"如果关掉它就退，治疗只需打这一个",to:"癌基因成瘾",kind:"ok",
+  truth:"多数肿瘤确实依赖单一驱动基因——这是靶向治疗的立论基础。"},
+ {d:"直接针对 RAS 蛋白本身设计药物",h:"它是最常见的驱动基因，打掉它应该最有效",to:"KRAS成药",kind:"ok",
+  truth:"四十年无人做成，直到 2013 发现 G12C 旁的开关口袋，2021 sotorasib 获批。"},
+ {d:"查人的肿瘤里都带哪些癌基因突变",h:"知道有一个 RAS 不够，得知道全谱",to:"TCGA",kind:"ok",
+  truth:"这就是 TCGA 的起点：把已发现的驱动基因拿去大规模筛查。测序线在这里与癌基因线汇合。"},
+ {d:"怀疑点突变只是测序伪影",h:"1982 年测序不成熟，单碱基差异可能是假象",to:null,kind:"dead",
+  truth:"被多个实验室重复验证否定。但提出这个怀疑本身是对的。"}
+],
+"PD-1阻断":[
+ {d:"做联合用药",h:"单药响应率有限，能不能两个检查点一起打",to:"联合免疫",kind:"ok",
+  truth:"2019 联合方案显著提高响应率，成为部分癌种一线。"},
+ {d:"找能预测响应的标志物",h:"先知道谁会有效",to:null,kind:"weak",
+  truth:"PD-L1 表达、TMB 都有预测价值，但都不够准——这个问题至今没解决。"},
+ {d:"把 PD-1 抗体做成一线用药，替代化疗",h:"毒性更低、效果更好",to:null,kind:"weak",
+  truth:"在部分癌种实现，但多数仍要联合化疗。"},
+ {d:"认为 PD-1 之后不会再有更好的检查点",h:"最好的已经找到了",to:null,kind:"dead",
+  truth:"LAG-3、TIGIT、TIM-3 都在临床。判断到头了几乎总是错的。"}
+],
+"单细胞":[
+ {d:"保留空间信息，看细胞在组织里的位置",h:"解离成单细胞，位置就丢了",to:"空间组学",kind:"ok",
+  truth:"空间转录组把位置找回来了。微环境研究由此转向。"},
+ {d:"把突变检测搬到血液里，反复取样",h:"组织活检要穿刺、只能取一次",to:"液体活检",kind:"ok",
+  truth:"ctDNA 让监测变成连续变量，并能在影像之前发现复发。"},
+ {d:"用单细胞的突变谱设计个体化疫苗",h:"哪些突变是所有细胞都有的",to:"新抗原疫苗",kind:"ok",
+  truth:"克隆性新抗原成为疫苗的靶点，2020 年起进入临床。"},
+ {d:"认为单细胞能解决「肿瘤异质性」这个问题",h:"既然能逐细胞看，问题就解决了",to:null,kind:"dead",
+  truth:"单细胞给的是快照，动态演化仍看不清。工具变强不等于问题解决。"}
+],
+"CAR-T":[
+ {d:"把 CAR 用到实体瘤上",h:"血液肿瘤有效，实体瘤也该能",to:null,kind:"weak",
+  truth:"实体瘤缺特异抗原、微环境抑制强，至今进展有限。"},
+ {d:"做通用型 CAR-T，不再一人一份",h:"自体细胞制备太慢太贵",to:null,kind:"dead",
+  truth:"通用型的排异问题至今没有解决。这个方向还没走通。"},
+ {d:"用 TCR 代替 CAR，靶向胞内抗原",h:"CAR 只能识别表面抗原，多数肿瘤抗原在胞内",to:null,kind:"ok",
+  truth:"TCR-T 扩展了可靶向的抗原范围，已在滑膜肉瘤等病种见效。"},
+ {d:"把 CAR-T 和检查点抑制剂联用",h:"CAR-T 也会被微环境刹车",to:null,kind:"weak",
+  truth:"部分临床数据显示协同，但毒性叠加是限制。"}
+],
+"耐药":[
+ {d:"按突变体的结构重新设计药物",h:"看门残基变了，那换一个能绕开的分子",to:"二代TKI",kind:"ok",
+  truth:"二代 TKI 覆盖多数突变（T315I 除外），又把患者救回来一截。"},
+ {d:"按突变体的具体构象反推药物设计",h:"耐药说明构象决定结合，那反过来利用它",to:"KRAS成药",kind:"ok",
+  truth:"三十年后正是这套思路攻破了 KRAS：找到 G12C 突变特有的口袋。靶向线在这里与癌基因线汇合。"},
+ {d:"加大剂量，用浓度压过突变",h:"结合力弱了，那就多给一点",to:null,kind:"dead",
+  truth:"T315I 这类突变完全阻断结合，加量只增加毒性。"},
+ {d:"认为耐药是患者依从性问题",h:"也许患者没按时吃药",to:null,kind:"dead",
+  truth:"复发病例普遍带同一类突变，不是吃药不规律能解释的。"}
+],
+"p53抑癌":[
+ {d:"研究 p53 抑癌的具体机制",h:"它到底靠什么让细胞停下来",to:"p53-p21",kind:"ok",
+  truth:"1993 确认 p53 是转录因子，启动 p21 使细胞停在 G1。"},
+ {d:"再找更多抑癌基因",h:"Rb 和 p53 都成立，说明这是一类",to:"Rb",kind:"weak",
+  truth:"BRCA1/2 等陆续出现，清单变长，但都是同一逻辑的重复。"},
+ {d:"找能让肿瘤失去 p53 还活着的漏洞",h:"p53 失活的肿瘤靠什么存活",to:null,kind:"weak",
+  truth:"找到一批合成致死靶点，但临床转化仍在早期。"},
+ {d:"认为 p53 是癌基因（突变后促进肿瘤）",h:"它和 RAS 一起能转化细胞",to:null,kind:"dead",
+  truth:"错了整整十年。当年克隆到的几乎都是突变型 p53，1979–1989 整个领域的主流判断是反的。"}
+],
+"联合免疫":[
+ {d:"找能预测联合方案获益的标志物",h:"联合毒性更大，得挑人",to:null,kind:"weak",
+  truth:"TMB、PD-L1 都试过，仍不够准。"},
+ {d:"把联合方案提前到一线",h:"既然效果好，为什么不用在最早",to:null,kind:"ok",
+  truth:"部分癌种（如黑色素瘤、肾癌）已进入一线，但并非普遍适用。"},
+ {d:"再加第三个检查点",h:"两个不够，那就三个",to:null,kind:"dead",
+  truth:"三重联合毒性剧增而获益有限，多项试验终止。"},
+ {d:"认为联合一定能提高疗效",h:"多打一个靶点总不会更差",to:null,kind:"dead",
+  truth:"部分组合相互抵消，甚至缩短生存。联合不是加法。"}
+],
+"液体活检":[
+ {d:"用 ctDNA 监测治疗后残留、指导停药",h:"能定量看到肿瘤负荷",to:null,kind:"ok",
+  truth:"部分场景已进入指南（如结直肠癌术后）。目前最成熟的用途。"},
+ {d:"用 ctDNA 做早期筛查",h:"如果复发能提前查到，早期癌也许能",to:null,kind:"weak",
+  truth:"多癌种早筛在推进，但假阳性与过度诊断是真实难题。"},
+ {d:"认为一滴血可以查出所有癌症",h:"既然能测到突变",to:null,kind:"dead",
+  truth:"早期肿瘤释放的 ctDNA 极少，灵敏度是硬限制。过度宣传已造成实际损害。"},
+ {d:"用 ctDNA 完全替代组织活检",h:"不用穿刺，患者更愿意",to:null,kind:"dead",
+  truth:"脱落量不足时仍需组织。替代是有条件的。"}
+],
+"ADC":[
+ {d:"找更好的毒素和连接子",h:"现在的窗口还不够宽",to:null,kind:"ok",
+  truth:"新一代 ADC 用可裂解连接子和更强毒素，治疗窗口显著扩大。"},
+ {d:"把 ADC 用到更多靶点上",h:"HER2 只是一个例子",to:null,kind:"weak",
+  truth:"TROP2、Nectin-4 等陆续成药，但仍是同一逻辑。"},
+ {d:"认为 ADC 可以消除靶点依赖",h:"毒素够强，靶点不那么重要",to:null,kind:"dead",
+  truth:"脱靶毒性正是靠靶点选择控制的。去掉靶向性就退化成化疗。"},
+ {d:"用 ADC 替代化疗",h:"更精准、毒性更低",to:null,kind:"weak",
+  truth:"在部分癌种实现，但多数仍与化疗联用。"}
+],
+"癌基因成瘾":[
+ {d:"验证肿瘤是否真的只依赖一个癌基因",h:"如果关掉就退，那治疗只需打这一个",to:null,kind:"ok",
+  truth:"多数肿瘤确实依赖单一驱动基因，这是靶向治疗的立论基础。"},
+ {d:"找成瘾的例外：哪些肿瘤不依赖单一基因",h:"为什么有的肿瘤关掉癌基因也不退",to:null,kind:"weak",
+  truth:"找到了旁路激活和克隆演化两类原因。"},
+ {d:"认为成瘾意味着一定能被药物治愈",h:"既然依赖，打掉就行",to:null,kind:"dead",
+  truth:"靶点常不可成药（如 KRAS 四十年），且耐药克隆早已存在。"},
+ {d:"用成瘾性设计联合用药方案",h:"同时打主靶点和旁路",to:null,kind:"weak",
+  truth:"毒性和耐药仍是障碍，仅有少数组合成功。"}
+],
+"KRAS成药":[
+ {d:"按同样的构象思路打其他「不可成药」靶点",h:"如果 KRAS 能找到口袋，MYC、TP53 也许也行",to:null,kind:"ok",
+  truth:"正在发生：共价抑制、分子胶、PROTAC 都在试。当下最活跃的方向。"},
+ {d:"验证 G12C 之外的 KRAS 突变有没有类似口袋",h:"G12D、G12V 更常见",to:null,kind:"weak",
+  truth:"G12D 抑制剂已进临床，但口袋更浅、选择性更难。"},
+ {d:"认为 KRAS 突变型肿瘤靠单药就能控制",h:"既然靶点明确",to:null,kind:"dead",
+  truth:"单药缓解率有限、很快耐药。KRAS 不是 BCR-ABL 那样的单一驱动。"},
+ {d:"把 KRAS 抑制和免疫治疗联用",h:"抑制 RAS 通路可能改变微环境",to:null,kind:"weak",
+  truth:"早期数据支持，但尚未定论。"}
+],
+"新抗原疫苗":[
+ {d:"用 mRNA 做个体化疫苗",h:"每个肿瘤的突变不同，疫苗也要不同",to:null,kind:"ok",
+  truth:"2020 年起个体化 mRNA 疫苗进入临床试验，与 PD-1 抗体联用。"},
+ {d:"把新抗原做成通用型疫苗",h:"共享突变也许存在",to:null,kind:"weak",
+  truth:"共享新抗原极少（如 KRAS G12D），通用疫苗难以覆盖。"},
+ {d:"认为疫苗可以替代检查点治疗",h:"疫苗能主动诱导 T 细胞",to:null,kind:"dead",
+  truth:"单用疫苗应答弱，必须联合。免疫系统需要多重信号。"},
+ {d:"缩短制备周期，做到床边可用",h:"个体化疫苗做一次要几周",to:null,kind:"weak",
+  truth:"周期已压到数周，但成本与产能仍是瓶颈。"}
+],
+"二次打击":[{d:"从家族性病例定位缺失的区段",h:"假说预测存在被打击两次的基因",to:"Rb",kind:"ok",truth:"1986 Rb 克隆，第一个抑癌基因。"}],
+"化学致癌":[{d:"找出化学物作用于 DNA 的证据",h:"如果致癌物能改 DNA，就找到了机制",to:null,kind:"weak",truth:"证实多数致癌物是诱变剂，与癌基因突变线汇合。"}],
+"插入激活":[{d:"找被插入激活的宿主基因",h:"插入位点附近应该有可疑基因",to:null,kind:"weak",truth:"找到了一批（如 Myc），补充了癌基因的来源。"}],
+"酪氨酸激酶":[{d:"找更多激酶类癌基因产物",h:"如果一个是激酶，别的也可能是",to:null,kind:"weak",truth:"发现了整类受体酪氨酸激酶，成为靶向药的主要来源。"}],
+"Rb":[{d:"找下一个抑癌基因",h:"Rb 说明这条路成立",to:"p53抑癌",kind:"ok",truth:"p53 在 1989 年被确认为抑癌基因。"}],
+"TIL":[{d:"把识别肿瘤的受体克隆出来装到别的 T 细胞上",h:"如果能拿到特异的受体，就不必依赖患者自带抗肿瘤 T 细胞",to:"CAR-T",kind:"ok",truth:"CAR-T 与 TCR-T 由此发展。"}],
+"免疫编辑":[{d:"找免疫逃逸的机制",h:"为什么同一肿瘤有人能清掉",to:null,kind:"weak",truth:"发现 MHC 下调、PD-L1 上调等机制。"}],
+"二代TKI":[{d:"针对 T315I 设计三代药",h:"二代覆盖不了这个突变",to:null,kind:"ok",truth:"ponatinib 2012 年获批，覆盖 T315I。"}],
+"p53-p21":[{d:"找恢复 p53 功能的方法",h:"如果能把野生型 p53 装回去",to:null,kind:"weak",truth:"基因治疗与 p53 激活剂在研，尚无成熟疗法。"}],
+"空间组学":[{d:"把空间图谱用于指导治疗",h:"知道谁在哪里，也许能预测谁能获益",to:null,kind:"weak",truth:"正在探索，尚未进入临床决策。"}],
+"双抗":[{d:"做桥接 T 细胞的双抗",h:"把 T 细胞直接拉到肿瘤细胞上",to:null,kind:"ok",truth:"CD3×CD19 双抗已在白血病获批。"}]
+};
+
+// 只画 ok 的边构成树；weak 也画（虚线）到支线
+const EDGE = [];
+for(const k in DIRS) DIRS[k].forEach(d=>{ if(d.to && d.kind!=="dead") EDGE.push([k,d.to,d.kind]); });
+
+const INDEG={}; EDGE.forEach(([a,b])=>{INDEG[b]=(INDEG[b]||0)+1});
+let cur=null, reveal=false, zoom=false;
+function lineage(k){
+  const up=new Set(), down=new Set();
+  (function u(x){ EDGE.filter(e=>e[1]===x).forEach(e=>{ if(!up.has(e[0])){up.add(e[0]);u(e[0])} }) })(k);
+  (function d(x){ EDGE.filter(e=>e[0]===x).forEach(e=>{ if(!down.has(e[1])){down.add(e[1]);d(e[1])} }) })(k);
+  return {up,down};
+}
+
+function depthOf(){
+  const L={};
+  function g(k,seen){
+    if(L[k]!==undefined) return L[k];
+    if(seen.has(k)){L[k]=0;return 0}
+    seen.add(k);
+    const ups=EDGE.filter(e=>e[1]===k).map(e=>e[0]);
+    L[k]=ups.length?1+Math.max(...ups.map(u=>g(u,new Set(seen)))):0;
+    return L[k];
+  }
+  Object.keys(N).forEach(k=>g(k,new Set()));
+  return L;
+}
+const DEPTH = depthOf();
+
+function render(){
+  const byLayer={};
+  Object.keys(N).forEach(k=>{ const L=DEPTH[k]; (byLayer[L]=byLayer[L]||[]).push(k) });
+  const maxL=Math.max(...Object.keys(byLayer).map(Number));
+  let html="";
+  for(let i=0;i<=maxL;i++){
+    const ks=(byLayer[i]||[]).sort((a,b)=>{
+      const am=N[a].name.includes("支线")?1:0, bm=N[b].name.includes("支线")?1:0;
+      return am-bm || N[a].y-N[b].y;
+    });
+    const mainCnt=ks.filter(k=>!N[k].name.includes("支线")).length;
+    html+=`<div class="layer"><div class="lh"><b>第 ${i+1} 层</b><span>${mainCnt} 个主线 · ${ks.length-mainCnt} 个支线</span></div><div class="grid">`;
+    ks.forEach(k=>{
+      const n=N[k], c=(DIRS[k]||[]).length;
+      html+=`<div class="card${cur===k?' sel':''}" data-k="${k}">
+        <div class="y">${n.y}</div><div class="nm">${n.name}</div><div class="tx">${n.t}</div>
+        ${c?`<span class="cnt">${c} 条</span>`:''}</div>`;
+    });
+    html+=`</div></div>`;
+  }
+  document.getElementById('list').innerHTML=html;
+  document.querySelectorAll('.card').forEach(el=>el.onclick=()=>open(el.dataset.k));
+}
+
+function open(k){
+  cur=k; const n=N[k];
+  document.getElementById('sTitle').textContent=n.name;
+  document.getElementById('sYear').textContent=`${n.y} · 第 ${DEPTH[k]+1} 层`;
+  document.getElementById('sFact').innerHTML=n.t+(n.why?`<span class="why">这意味着：${n.why}</span>`:'');
+  const ds=DIRS[k]||[];
+  document.getElementById('sDirs').innerHTML=ds.length?ds.map((d,i)=>`
+    <div class="dir ${d.kind}">
+      <div class="h">${i+1}. ${d.d}</div>
+      <div class="l">线索：${d.h}</div>
+      <div class="res">${d.kind==='ok'
+        ? `✓ 开新路${d.to?` → <span class="go" data-go="${d.to}">${N[d.to].name}</span>`:''}　${d.truth}`
+        : d.kind==='weak' ? `～ 收益有限${d.to?` → <span class="go" data-go="${d.to}">${N[d.to].name}</span>`:''}　${d.truth}`
+        : `✗ 走不通　${d.truth}`}</div>
+    </div>`).join('')
+    :'<div class="l" style="font-size:13px">这一层是终点，做完可以换一条分支继续。</div>';
+  document.querySelectorAll('[data-go]').forEach(el=>el.onclick=e=>{e.stopPropagation();open(el.dataset.go)});
+  document.querySelectorAll('.card').forEach(el=>el.classList.toggle('sel',el.dataset.k===k));
+  document.getElementById('sheet').classList.add('on');
+  document.body.classList.add('open');
+  document.getElementById('scrim').classList.add('on');
+  document.getElementById('sheet').scrollTop=0;
+  // 关系图视图下重绘，触发高亮
+  if(document.getElementById('graphWrap').style.display!=='none') drawGraph();
+}
+function close(){document.getElementById('sheet').classList.remove('on');
+  document.body.classList.remove('open');document.getElementById('scrim').classList.remove('on')}
+
+function drawGraph(){
+  const maxL=Math.max(...Object.values(DEPTH));
+  const rows={};
+  Object.keys(N).forEach(k=>{ (rows[DEPTH[k]]=rows[DEPTH[k]]||[]).push(k) });
+  const maxRow=Math.max(...Object.values(rows).map(r=>r.length));
+  const NW=124, GAP=14, rowH=108, padT=44, padL=20;
+  const W=Math.max(820, maxRow*(NW+GAP)+40);
+  const H=(maxL+1)*rowH+padT+30;
+  const pos={};
+  Object.keys(rows).forEach(L=>{
+    const arr=rows[L].sort((a,b)=>N[a].y-N[b].y);
+    const usable=W-padL*2-NW, n=arr.length;
+    arr.forEach((k,i)=>{
+      pos[k]={x:padL+NW/2+(n===1?usable/2:usable*i/(n-1)), y:padT+(+L)*rowH};
+    });
+  });
+  let s=`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}"><defs>
+    <marker id="a1" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7.5" markerHeight="7.5" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="var(--fg)"/></marker>
+    <marker id="a2" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs>`;
+  for(let i=0;i<=maxL;i++){
+    const y=padT+i*rowH;
+    s+=`<line x1="0" y1="${y}" x2="${W}" y2="${y}" stroke="var(--line)" stroke-width=".5" stroke-dasharray="2 8" opacity=".6"/>
+        <text x="4" y="${y-8}" font-size="9.5" fill="var(--muted)">L${i+1}</text>`;
+  }
+  const ln = cur ? lineage(cur) : null;
+  EDGE.forEach(([a,b,kind])=>{
+    if(!pos[a]||!pos[b]) return;
+    const hot = ln && (ln.up.has(a)&&(ln.up.has(b)||b===cur)) || (ln && (ln.down.has(b)&&(ln.down.has(a)||a===cur)));
+    const A=pos[a], B=pos[b], my=(A.y+B.y)/2;
+    const ok=kind==="ok";
+    s+=`<path d="M${A.x},${A.y+11} C${A.x},${my} ${B.x},${my} ${B.x},${B.y-11}"
+      fill="none" stroke="${hot?'var(--accent)':(ok?'var(--fg)':'var(--muted)')}" stroke-width="${hot?3:(ok?1.5:1.1)}"
+      ${ok?'':'stroke-dasharray="4 4"'} opacity="${hot?1:(ln?0.13:(ok?0.8:0.5))}" marker-end="url(#${ok?'a1':'a2'})"/>`;
+  });
+  Object.keys(N).forEach(k=>{
+    const n=N[k], q=pos[k]; if(!q) return;
+    const side=n.name.includes("支线");
+    const label=n.name.replace("（支线）","");
+    const txt=(label.length>8?label.slice(0,8)+"…":label);
+    const hub = (INDEG[k]||0)>=2;
+    const dim = ln && !(k===cur || ln.up.has(k) || ln.down.has(k));
+    if(hub) s+=`<rect x="${q.x-NW/2-4}" y="${q.y-15}" width="${NW+8}" height="30" rx="15"
+      fill="none" stroke="var(--warn)" stroke-width="2" opacity="${dim?0.12:0.95}"/>`;
+    s+=`<g data-k="${k}" style="cursor:pointer" opacity="${dim?0.2:1}">
+      <rect x="${q.x-NW/2}" y="${q.y-11}" width="${NW}" height="22" rx="11"
+        fill="${side?'var(--bg)':'var(--card)'}"
+        stroke="${side?'var(--muted)':'var(--accent)'}" stroke-width="${side?1:1.4}"
+        ${side?'stroke-dasharray="3 3"':''}/>
+      <text x="${q.x}" y="${q.y+4}" text-anchor="middle" font-size="10"
+        fill="${side?'var(--muted)':'var(--fg)'}">${n.y} ${txt}</text></g>`;
+  });
+  s+=`</svg>`;
+  document.getElementById('graph').innerHTML=
+    `<div style="font-size:11.5px;color:var(--muted);margin-bottom:8px;line-height:1.7">
+      实线箭头 = 开新路　虚线 = 收益有限（通到支线）　死路不画<br>
+      从上到下是依赖层数，不是年代。同一层可并行申报。<b style="color:var(--warn)">带橙环的节点是多条线汇合处</b>——那是交集。点任意节点会高亮它整条来路与去路。</div>`+s;
+  document.querySelectorAll('#graph [data-k]').forEach(el=>el.onclick=()=>open(el.dataset.k));
+}
+
+document.getElementById('sClose').onclick=close;
+document.getElementById('scrim').onclick=close;
+document.getElementById('btnReveal').onclick=e=>{
+  reveal=!reveal; document.body.classList.toggle('reveal',reveal);
+  e.target.classList.toggle('on',reveal);
+  e.target.textContent=reveal?'已揭晓（点此隐藏）':'揭晓真实结局';
+};
+document.getElementById('btnList').onclick=e=>{
+  document.getElementById('list').style.display='block';
+  document.getElementById('graphWrap').style.display='none';
+  e.target.classList.add('on'); document.getElementById('btnGraph').classList.remove('on');
+};
+document.getElementById('btnGraph').onclick=e=>{
+  document.getElementById('list').style.display='none';
+  document.getElementById('graphWrap').style.display='block';
+  e.target.classList.add('on'); document.getElementById('btnList').classList.remove('on');
+  drawGraph();
+};
+document.getElementById('btnZoom').onclick=e=>{
+  const g=document.getElementById('graphWrap');
+  zoom=!zoom; g.classList.toggle('zoom',zoom);
+  e.target.textContent=zoom?'缩回全貌':'放大看细节';
+};
+
+{
+  const ds=Object.values(DIRS).flat();
+  const c={ok:0,weak:0,dead:0}; ds.forEach(d=>c[d.kind]++);
+  document.getElementById('stat').textContent=
+    `${Object.keys(N).filter(k=>!N[k].name.includes("支线")).length} 个主线节点 · ${Object.keys(N).filter(k=>N[k].name.includes("支线")).length} 个支线 · ${Object.keys(DIRS).length} 个节点有方向 · ${ds.length} 条方向（${c.ok} 开新路 / ${c.weak} 收益有限 / ${c.dead} 不通）`;
+  document.getElementById('legend').innerHTML=
+    `默认不显示每条方向的结局，主持人结算时点「揭晓」才公布。<br>
+     <b style="color:var(--ok)">✓ 开新路</b>：通往下一层节点　<b>～ 收益有限</b>：通到支线或原地　
+     <b style="color:var(--warn)">✗ 不通</b>：结论被证伪<br>
+     <b>「不通」指结论被证伪，不指研究没有价值</b>：p53 被当成癌基因的那十年，正是这次误判催生了抑癌基因这个概念。`;
+}
+render();
+</script>
+</body>
+</html>

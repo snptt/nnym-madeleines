@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>细胞生物学 · 一棵树</title>
+<style>
+:root{--bg:#fbfbfa;--fg:#1a1a1a;--muted:#6b6b6b;--line:#e2e0dc;--card:#fff;
+  --accent:#2f6fb3;--accent-weak:#e8f0f9;--warn:#b3542f;--ok:#2f7d52;--okweak:#e6f2ea;
+  --radius:10px;--shadow:0 1px 2px rgba(0,0,0,.05)}
+@media (prefers-color-scheme: dark){:root{--bg:#141414;--fg:#e8e6e3;--muted:#9a9793;
+  --line:#2e2e2e;--card:#1c1c1c;--accent:#6fa8dc;--accent-weak:#1f2b38;--warn:#e08a63;
+  --ok:#7bc496;--okweak:#1e2c24;--shadow:0 1px 2px rgba(0,0,0,.4)}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--fg);
+  font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue","PingFang SC",sans-serif;
+  font-size:15px;line-height:1.55;-webkit-text-size-adjust:100%}
+header{position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:1px solid var(--line);
+  padding:12px 14px 10px;padding-top:calc(12px + env(safe-area-inset-top))}
+h1{margin:0;font-size:16px;font-weight:650}
+.sub{color:var(--muted);font-size:12.5px;margin-top:3px}
+.bar{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+button{font:inherit;font-size:13px;color:var(--fg);background:var(--card);border:1px solid var(--line);
+  border-radius:999px;padding:9px 14px;min-height:44px;cursor:pointer;display:inline-flex;align-items:center}
+button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+button.rev.on{background:var(--ok);border-color:var(--ok)}
+button.zm{font-size:12px;min-height:36px;padding:6px 12px}
+main{padding:14px 14px 90px;max-width:980px;margin:0 auto}
+.layer{margin-bottom:18px}
+.lh{display:flex;align-items:baseline;gap:8px;margin:0 0 8px;font-size:12px;color:var(--muted)}
+.lh b{color:var(--fg);font-size:13px}
+.grid{display:grid;gap:8px;grid-template-columns:1fr}
+@media(min-width:700px){.grid{grid-template-columns:1fr 1fr}}
+@media(min-width:1000px){.grid{grid-template-columns:1fr 1fr 1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:11px 13px;box-shadow:var(--shadow);cursor:pointer;position:relative}
+.card.sel{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-weak)}
+.card .y{font-size:11.5px;color:var(--muted)}
+.card .nm{font-weight:600;font-size:14.5px;margin:1px 0 2px}
+.card .tx{font-size:12.5px;color:var(--muted);padding-right:54px}
+.card .cnt{position:absolute;right:12px;top:11px;font-size:11px;color:var(--accent);
+  background:var(--accent-weak);border-radius:999px;padding:1px 7px}
+.wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:6px}
+#graph svg{display:block;width:100%;height:auto;max-width:none}
+#graphWrap.zoom #graph svg{width:1500px}
+#graphBar{display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap}
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.32);opacity:0;pointer-events:none;
+  transition:opacity .18s;z-index:40}
+.scrim.on{opacity:1;pointer-events:auto}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:50;background:var(--bg);
+  border-top:1px solid var(--line);border-radius:16px 16px 0 0;max-height:82vh;overflow-y:auto;
+  -webkit-overflow-scrolling:touch;transform:translateY(102%);transition:transform .22s ease;
+  padding:0 16px calc(28px + env(safe-area-inset-bottom))}
+.sheet.on{transform:translateY(0)}
+@media(min-width:820px){
+  .sheet{left:auto;top:0;bottom:0;right:0;width:470px;border-radius:0;border-left:1px solid var(--line);
+    border-top:none;max-height:100vh;transform:translateX(102%);box-shadow:-8px 0 24px rgba(0,0,0,.08)}
+  .sheet.on{transform:translateX(0)}
+  .grab{display:none}
+  body.open header, body.open main{padding-right:486px}
+  header,main{transition:padding-right .22s ease}
+}
+.grab{width:38px;height:4px;border-radius:2px;background:var(--line);margin:9px auto 4px}
+.sh{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;padding:6px 0 12px;
+  border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:2}
+.sh h2{margin:0;font-size:16px;font-weight:650;line-height:1.35}
+.sh .y{display:block;margin-top:2px;font-size:11.5px;color:var(--muted)}
+.close{border:none;background:none;font-size:24px;line-height:1;color:var(--muted);
+  width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:50%;flex:none}
+section{margin-top:14px}
+h3{font-size:12px;color:var(--muted);font-weight:650;margin:0 0 8px;letter-spacing:.04em}
+.fact{font-size:14.5px;line-height:1.6}
+.fact .why{display:block;margin-top:6px;font-size:13px;color:var(--muted)}
+.dir{border:1px solid var(--line);border-radius:9px;padding:10px 12px;margin-bottom:9px;background:var(--card)}
+.dir .h{font-weight:600;font-size:13.5px;margin-bottom:3px}
+.dir .l{font-size:12.5px;color:var(--muted)}
+.dir .res{margin-top:8px;font-size:12.5px;padding:7px 9px;border-radius:7px;display:none}
+body.reveal .dir .res{display:block}
+.dir.ok .res{background:var(--okweak);color:var(--ok);border:1px solid var(--ok)}
+.dir.weak .res{background:transparent;color:var(--fg);border:1px solid var(--line)}
+.dir.dead .res{background:transparent;color:var(--warn);border:1px dashed var(--warn)}
+.dir .go{color:var(--accent);text-decoration:underline;cursor:pointer}
+.legend{font-size:11.5px;color:var(--muted);margin-top:10px;line-height:1.7}
+</style>
+</head>
+<body>
+<header>
+  <h1>细胞生物学 <span style="color:var(--muted);font-weight:400">一棵树</span></h1>
+  <div class="sub" id="stat"></div>
+  <div class="bar">
+    <button id="btnList" class="on">分层列表</button>
+    <button id="btnGraph">关系图</button>
+    <button id="btnBg">显示背景层</button>
+    <button id="btnReveal" class="rev">揭晓真实结局</button>
+  </div>
+</header>
+<main>
+  <div id="list"></div>
+  <div id="graphWrap" class="wrap" style="display:none">
+    <div id="graphBar"><button id="btnZoom" class="zm">放大看细节</button>
+      <span style="font-size:11.5px;color:var(--muted)">默认一屏看全貌</span></div>
+    <div id="graph"></div>
+  </div>
+  <div class="legend" id="legend"></div>
+</main>
+
+<div class="scrim" id="scrim"></div>
+<div class="sheet" id="sheet">
+  <div class="grab"></div>
+  <div class="sh"><div><h2 id="sTitle"></h2><span class="y" id="sYear"></span></div>
+    <button class="close" id="sClose">×</button></div>
+  <section><h3>已确立的事实</h3><div class="fact" id="sFact"></div></section>
+  <section><h3>当时可以往哪问</h3><div id="sDirs"></div></section>
+</div>
+
+<script>
+const N = {
+// 五个根
+"细胞学说":{y:1838,name:"细胞学说",t:"所有生物都由细胞构成，细胞是生命的基本单位（Schleiden & Schwann）",why:"生命第一次被还原成一个可数的单位。"},
+"细胞膜":{y:1855,name:"细胞膜的存在",t:"脂溶性物质容易进入细胞，推测表面有一层脂质（Overton）",why:"细胞有「边界」——这个边界决定什么能进、什么不能。"},
+"线粒体":{y:1890,name:"线粒体",t:"细胞质中有能被特定染料染色的颗粒（Altmann）",why:"细胞内部不是一锅汤，而是有结构的分区。"},
+"高尔基体":{y:1898,name:"高尔基体",t:"用银染在神经细胞中看到一套网状结构（Golgi）",why:"细胞内存在专门处理与分选物质的装置。"},
+"染色体遗传":{y:1902,name:"染色体遗传",t:"染色体行为与孟德尔因子分离一致（Boveri & Sutton）",why:"遗传的物质基础被定位到细胞核里的具体结构。"},
+// L2
+"脂双层":{y:1925,name:"脂双层",t:"红细胞膜的面积与提取出的脂质单分子层面积之比约为 2:1（Gorter & Grendel）",why:"膜是双分子层——这个几何关系第一次给出了定量证据。"},
+"分级分离":{y:1945,name:"细胞器分级分离",t:"用差速离心把细胞打碎后按密度分开各组分（Claude）",why:"细胞器可以被分离、单独研究——生物化学与细胞学从此合流。"},
+"肌动蛋白":{y:1942,name:"肌动蛋白",t:"从肌肉中分离出构成细丝的蛋白（Straub）",why:"收缩与运动有了分子层面的主角。"},
+"膜电位":{y:1902,name:"膜电位",t:"细胞内外存在电位差，兴奋时去极化（Bernstein）",why:"细胞的电学行为可以用物理量描述。"},
+// L3
+"流动镶嵌":{y:1972,name:"流动镶嵌模型",t:"膜是流动的脂双层，蛋白镶嵌其中并可侧向移动（Singer & Nicolson）",why:"膜不是静态夹心，而是动态的二维流体——这解释了膜的许多行为。"},
+"溶酶体":{y:1955,name:"溶酶体",t:"含有多种酸性水解酶的细胞器（de Duve）",why:"细胞内有专门的「消化车间」，降解是被组织起来的。"},
+"微管":{y:1952,name:"微管与纺锤体",t:"细胞分裂时染色体由纺锤丝牵引",why:"细胞内的力学过程第一次被看见。"},
+"膜片钳":{y:1976,name:"膜片钳与离子通道",t:"可以记录单个离子通道的开关（Neher & Sakmann）",why:"膜上的分子机器第一次可以被逐个「听见」。"},
+"细胞周期":{y:1951,name:"细胞周期",t:"用同位素标记发现 DNA 合成只发生在间期的特定阶段（Howard & Pelc）",why:"细胞分裂不是一个瞬间，而是一段有阶段的过程。"},
+// L4
+"囊泡运输":{y:1975,name:"囊泡运输",t:"分泌蛋白经内质网→高尔基体→囊泡定向运输（Palade）",why:"细胞内的物流有路线、有分拣、有目的地。"},
+"G蛋白":{y:1980,name:"G 蛋白信号",t:"受体激活后通过 G 蛋白传递信号到胞内酶（Gilman & Rodbell）",why:"外界信号如何穿过膜并放大，机制被找到。"},
+"马达蛋白":{y:1985,name:"马达蛋白",t:"驱动蛋白沿微管定向行走，把货物运到细胞各处（Vale & Sheetz）",why:"细胞内的运输有「发动机」。"},
+"周期调控":{y:1980,name:"细胞周期调控",t:"cdc 基因与周期蛋白控制细胞周期推进（Hartwell & Nurse）",why:"周期有开关，且开关可以被研究、被干预。"},
+"受体激酶":{y:1982,name:"受体酪氨酸激酶",t:"生长因子受体自身带激酶活性，配体结合后自磷酸化",why:"生长信号如何进入细胞有了分子机制。"},
+// L5
+"细胞凋亡":{y:1990,name:"程序性细胞死亡",t:"发育中大量细胞按程序死亡，由特定基因控制（Horvitz 等）",why:"「死亡」也是细胞主动执行的一种命运，而非失败。"},
+"自噬":{y:1993,name:"自噬",t:"细胞把自身成分包进双层膜泡送去降解（Ohsumi）",why:"细胞有一套「回收」系统，与疾病的联系极广。"},
+"骨架动力学":{y:1990,name:"细胞骨架动力学",t:"微管与肌动蛋白丝持续组装与解聚，动态不稳定",why:"骨架不是支撑架，而是可以快速重排的系统。"},
+"细胞极性":{y:1990,name:"细胞极性",t:"细胞能建立并维持前后、上下方向的差异",why:"一个细胞如何「知道自己朝哪边」，是发育的基本问题。"},
+// L6
+"重编程":{y:2006,name:"细胞重编程",t:"四个转录因子可把成体细胞变回多能干细胞（Yamanaka）",why:"细胞命运不是不可逆的单行道。"},
+"类器官":{y:2009,name:"类器官",t:"从干细胞自组织出具有结构的微型器官（Sato & Clevers）",why:"「在体外造一个器官」从幻想变成常规技术。"},
+"相分离":{y:2009,name:"液-液相分离（支线）",t:"无膜细胞器由蛋白质与 RNA 的相分离形成",why:"细胞内的分区不必都有膜——这是一个新范式。"},
+"单细胞组学":{y:2015,name:"单细胞组学",t:"逐细胞解析转录组、蛋白组与空间位置",why:"「一群细胞」的生物学第一次可以被拆到个体。"},
+// 支线（含失败路线）
+"夹心模型":{y:1935,name:"夹心模型（支线）",t:"膜是脂双层两面各铺一层蛋白（Danielli-Davson）"},
+"内共生":{y:1967,name:"内共生学说（支线）",t:"线粒体与叶绿体源自被吞入的细菌（Margulis）"},
+"膜是筛子":{y:1900,name:"膜是分子筛（支线）",t:"膜上只有固定大小的孔，小分子随便过"},
+"骨架只是支撑":{y:1960,name:"骨架只是支撑（支线）",t:"细胞骨架只提供机械强度"},
+"干细胞全能":{y:1995,name:"干细胞全能（支线）",t:"干细胞可以变成任何细胞类型"},
+"相分离万能":{y:2018,name:"相分离万能（支线）",t:"几乎所有无膜结构都由相分离形成"}
+};
+
+const DIRS = {
+"细胞学说":[
+ {d:"问细胞内部有没有结构",h:"如果细胞是基本单位，它内部应该还有分工",to:"线粒体",kind:"ok",
+  truth:"线粒体、高尔基体等细胞器陆续被发现。"},
+ {d:"问细胞如何分裂产生新细胞",h:"细胞来自细胞，那分裂过程是什么",to:"细胞周期",kind:"ok",
+  truth:"有丝分裂与纺锤体机制被逐步阐明。"},
+ {d:"认为细胞只是「一袋原生质」",h:"内部看起来没有结构",to:null,kind:"dead",
+  truth:"电镜与离心证明内部高度分区。这个判断被工具进步直接推翻。"},
+ {d:"问细胞如何运动和改变形状",h:"单细胞生物要移动，一定有分子机器",to:"肌动蛋白",kind:"ok",
+  truth:"细胞连接与基质生物学由此发展。"}
+],
+"细胞膜":[
+ {d:"问膜是什么化学组成的",h:"如果能溶出脂质，就能分析",to:"脂双层",kind:"ok",
+  truth:"脂双层被定量证实。"},
+ {d:"问膜为什么能让电信号通过",h:"细胞的电学行为一定有物质基础",to:"膜电位",kind:"ok",
+  truth:"膜电位与离子通道是同一件事的两面。"},
+ {d:"认为膜只靠大小做筛子",h:"小分子过、大分子不过",to:"膜是筛子",kind:"weak",
+  truth:"部分正确，但无法解释带电离子、糖、水各自的专用通道。"},
+ {d:"认为膜是静态的固定结构",h:"结构应该稳定",to:null,kind:"dead",
+  truth:"膜是流动的二维流体，蛋白可侧向扩散——静态观点在 1972 年被取代。"}
+],
+"线粒体":[
+ {d:"问线粒体到底做什么",h:"细胞器一定承担具体功能",to:"分级分离",kind:"ok",
+  truth:"分级分离让呼吸链与氧化磷酸化被定位到线粒体。"},
+ {d:"问它从哪里来",h:"它有环状 DNA，像细菌",to:"内共生",kind:"ok",
+  truth:"内共生学说成为共识。"},
+ {d:"认为它只是「能量工厂」",h:"功能就是供能",to:null,kind:"dead",
+  truth:"它还调控钙、凋亡、活性氧——单功能模型过于简单。"},
+ {d:"研究它的形态变化与融合分裂",h:"线粒体不是固定的",to:null,kind:"weak",
+  truth:"线粒体动力学成为重要方向。"}
+],
+"高尔基体":[
+ {d:"问物质如何从一处被送到另一处",h:"有装置就该有路线",to:"囊泡运输",kind:"ok",
+  truth:"Palade 用放射性示踪画出分泌通路，2013 年诺奖。"},
+ {d:"问它如何修饰蛋白",h:"经过这里的东西变了",to:null,kind:"weak",
+  truth:"糖基化修饰被逐步阐明。"},
+ {d:"认为它是固定、单一的堆叠结构",h:"看起来像一个静态的架子",to:null,kind:"dead",
+  truth:"它是动态的、边加工边移动的。「静态结构」的直觉在活细胞成像后被推翻。"},
+ {d:"研究它在植物细胞中的特殊形式",h:"植物也应该有",to:null,kind:"weak",
+  truth:"植物高尔基体形态差异很大。"}
+],
+"染色体遗传":[
+ {d:"问染色体如何决定性状",h:"如果基因在染色体上，位置就应该可测",to:"分级分离",kind:"weak",
+  truth:"基因定位与减数分裂机制被阐明。"},
+ {d:"问细胞分裂时染色体如何精确分配",h:"分裂出错会怎样",to:"微管",kind:"ok",
+  truth:"纺锤体检查点机制被阐明。"},
+ {d:"认为基因是染色体上的固定颗粒",h:"一个基因一个位点",to:null,kind:"dead",
+  truth:"基因可重组、可变剪接，不是不可分的颗粒。"},
+ {d:"研究染色体异常与疾病",h:"数目异常会导致疾病",to:null,kind:"weak",
+  truth:"唐氏综合征等染色体病被确认。"}
+],
+"脂双层":[
+ {d:"问蛋白在哪里、怎么排列",h:"双层只有脂质，蛋白呢",to:"流动镶嵌",kind:"ok",
+  truth:"Singer-Nicolson 用各种证据推翻夹心模型，提出流动镶嵌。"},
+ {d:"问膜的不对称性",h:"内外两侧成分不同",to:null,kind:"ok",
+  truth:"脂质不对称分布与翻转酶被发现。"},
+ {d:"认为膜是三层夹心（蛋白-脂-蛋白）",h:"电镜看到两条深色带一个浅带",to:"夹心模型",kind:"weak",
+  truth:"这个解释当时最符合电镜照片，但错在把蛋白画在表面。1972 年被推翻。"},
+ {d:"研究膜的相变与流动性",h:"温度会改变膜的性质",to:null,kind:"weak",
+  truth:"膜脂的相变温度与胆固醇作用被阐明。"}
+],
+"分级分离":[
+ {d:"问被分出来的各个组分各自做什么",h:"分开了就能逐个研究",to:"溶酶体",kind:"ok",
+  truth:"de Duve 正是用这种方法发现溶酶体。"},
+ {d:"问细胞器之间有物质交换吗",h:"如果分开，怎么交流",to:"囊泡运输",kind:"ok",
+  truth:"囊泡运输把各细胞器连成网络。"},
+ {d:"认为分离后的细胞器仍保持原样",h:"离心只要够温和",to:null,kind:"dead",
+  truth:"分离过程本身会破坏结构与相互作用，「纯化」是有代价的。"},
+ {d:"研究细胞器的生化组成",h:"成分分析是基础",to:null,kind:"weak",
+  truth:"蛋白质组学方法与细胞器富集结合。"}
+],
+"肌动蛋白":[
+ {d:"问肌肉收缩如何产生力",h:"有细丝就该有粗丝与马达",to:"马达蛋白",kind:"ok",
+  truth:"肌球蛋白沿肌动蛋白滑行——肌肉收缩机制被阐明。"},
+ {d:"问非肌细胞里有没有类似结构",h:"如果到处都是，就不只是肌肉",to:"骨架动力学",kind:"ok",
+  truth:"肌动蛋白遍布所有真核细胞，负责运动与形态。"},
+ {d:"认为它只负责收缩",h:"功能就是力",to:null,kind:"dead",
+  truth:"它还参与内吞、分裂、迁移、信号——功能远超收缩。"},
+ {d:"研究它与疾病的关系",h:"突变会导致肌肉病",to:null,kind:"weak",
+  truth:"肌动蛋白病被确认。"}
+],
+"膜电位":[
+ {d:"问电位是由什么分子承载的",h:"离子要过膜，得有通道",to:"膜片钳",kind:"ok",
+  truth:"离子通道被逐个记录到。"},
+ {d:"问细胞如何维持内外差异",h:"有电位就有泵",to:null,kind:"ok",
+  truth:"钠钾泵被发现有。"},
+ {d:"认为膜电位只是被动扩散的结果",h:"不需要主动运输",to:null,kind:"dead",
+  truth:"若没有主动泵，梯度会迅速消散。这个判断漏掉了能量消耗。"},
+ {d:"研究电信号与细胞行为的关系",h:"电位变化可能调控别的过程",to:null,kind:"weak",
+  truth:"电生理与细胞命运的联系正在显现。"}
+],
+"流动镶嵌":[
+ {d:"问膜蛋白如何被分选与运输",h:"如果蛋白能移动，那它怎么到正确位置",to:"囊泡运输",kind:"ok",
+  truth:"膜蛋白分选信号与囊泡靶向机制被阐明。"},
+ {d:"问膜的组成如何影响功能",h:"不同膜的脂质比例不同",to:null,kind:"weak",
+  truth:"脂筏与膜异质性被提出（争议至今）。"},
+ {d:"认为蛋白均匀分布在膜里",h:"既然是流体，应该均匀",to:null,kind:"dead",
+  truth:"蛋白并非均匀分布，而是被细胞骨架锚定成区域。流体不等于均匀。"},
+ {d:"问膜如何参与信号接收",h:"蛋白在膜上，应该会接收信号",to:"G蛋白",kind:"ok",
+  truth:"受体-G 蛋白耦联信号通路被发现。"}
+],
+"溶酶体":[
+ {d:"问细胞如何清除自身损坏的部分",h:"如果只有降解物，那谁是垃圾",to:"自噬",kind:"ok",
+  truth:"自噬把细胞自身成分送进溶酶体，Ohsumi 因此获诺奖。"},
+ {d:"问溶酶体如何接收到货物",h:"降解物怎么被送进来",to:"囊泡运输",kind:"ok",
+  truth:"内吞与自噬两条通路都指向溶酶体。"},
+ {d:"认为溶酶体只负责「处理垃圾」",h:"功能就是降解",to:null,kind:"dead",
+  truth:"它还是信号枢纽与营养感应中心（mTORC1 就在其表面）。"},
+ {d:"研究溶酶体储存病",h:"酶缺陷会堆积底物",to:null,kind:"weak",
+  truth:"数十种溶酶体贮积症被阐明。"}
+],
+"微管":[
+ {d:"问什么力量让染色体移动",h:"一定有马达",to:"马达蛋白",kind:"ok",
+  truth:"驱动蛋白与动力蛋白被发现有。"},
+ {d:"问微管的组装与解聚如何被控制",h:"它是动态的",to:"骨架动力学",kind:"ok",
+  truth:"动态不稳定现象被阐明。"},
+ {d:"认为微管只负责分裂",h:"有丝分裂时才出现",to:null,kind:"dead",
+  truth:"它还负责运输、形态维持、纤毛运动——远不止分裂。"},
+ {d:"用微管抑制剂做抗癌药",h:"既然分裂需要它",to:null,kind:"weak",
+  truth:"紫杉醇与长春碱都是微管药物。"}
+],
+"膜片钳":[
+ {d:"问通道的分子身份",h:"能记录就该能克隆",to:"受体激酶",kind:"weak",
+  truth:"通道与受体的基因被陆续克隆。"},
+ {d:"问通道如何被调控",h:"开关受什么控制",to:null,kind:"ok",
+  truth:"门控机制（电压、配体、机械）被阐明。"},
+ {d:"认为通道都是简单的孔",h:"反正只是让小离子过",to:null,kind:"dead",
+  truth:"通道有选择性、门控、失活、调制，是复杂的分子机器。"},
+ {d:"把膜片钳用到所有细胞类型",h:"技术可以推广",to:null,kind:"weak",
+  truth:"成为电生理的标准方法。"}
+],
+"细胞周期":[
+ {d:"问周期如何被控制",h:"阶段分明，应该有开关",to:"周期调控",kind:"ok",
+  truth:"cdc 基因与周期蛋白被阐明，2001 年诺奖。"},
+ {d:"问细胞何时决定死亡",h:"周期之外还有别的命运",to:"细胞凋亡",kind:"ok",
+  truth:"凋亡与周期是两条相互对话的程序。"},
+ {d:"认为周期只是「长了就分裂」",h:"没有专门的调控",to:null,kind:"dead",
+  truth:"存在明确的检查点与开关，「大小到了就分裂」不成立。"},
+ {d:"研究周期与癌症的关系",h:"失控就是癌",to:null,kind:"weak",
+  truth:"CDK 抑制剂已成为药物。"}
+],
+"囊泡运输":[
+ {d:"问囊泡如何被定向送到正确目的地",h:"如果是物流，就该有地址",to:null,kind:"ok",
+  truth:"SNARE 复合物与 Rab 蛋白机制被阐明（2013 诺奖）。"},
+ {d:"问自噬体如何与溶酶体融合",h:"两者都是囊泡，机制可能相似",to:"自噬",kind:"ok",
+  truth:"自噬体-溶酶体融合机制被阐明。"},
+ {d:"认为运输是随机扩散",h:"细胞那么小，扩散应该够",to:null,kind:"dead",
+  truth:"大分子扩散极慢，必须靠囊泡与马达主动运输。"},
+ {d:"研究分泌与内吞的平衡",h:"进和出要守恒",to:null,kind:"weak",
+  truth:"膜循环的定量研究由此展开。"}
+],
+"G蛋白":[
+ {d:"问生长信号如何进入细胞",h:"有些受体不是 G 蛋白耦联的",to:"受体激酶",kind:"ok",
+  truth:"受体酪氨酸激酶是第二条主通路。"},
+ {d:"问信号的放大与终止",h:"激素浓度极低，怎么放大",to:null,kind:"ok",
+  truth:"级联放大与脱敏机制被阐明。"},
+ {d:"认为信号是线性的、单向的",h:"A 激活 B，B 激活 C",to:null,kind:"dead",
+  truth:"信号网络有交叉、反馈、震荡——线性模型是最常见的过度简化。"},
+ {d:"用 G 蛋白耦联受体做药物靶点",h:"三分之一以上的药都作用在这里",to:null,kind:"weak",
+  truth:"确实是最重要的药物靶点家族。"}
+],
+"马达蛋白":[
+ {d:"问它是如何把化学能变成力的",h:"一定有 ATP 水解步骤",to:null,kind:"ok",
+  truth:"机械化学耦联机制被阐明。"},
+ {d:"问细胞内运输如何被调控",h:"货物怎么被正确地装载",to:null,kind:"weak",
+  truth:"接头蛋白与调控机制大量被发现。"},
+ {d:"认为马达是唯一产生力的方式",h:"细胞运动全靠它",to:null,kind:"dead",
+  truth:"还有聚合驱动（actin 推进）、渗透驱动等多种力学机制。"},
+ {d:"研究它与神经退行性疾病的关系",h:"运输失败会导致轴突退化",to:null,kind:"weak",
+  truth:"轴突运输障碍与 ALS、AD 相关。"}
+],
+"周期调控":[
+ {d:"问失控如何导致癌症",h:"如果周期有开关，开关坏了就出事",to:null,kind:"ok",
+  truth:"CDK 通路是肿瘤学的核心靶点。"},
+ {d:"问检查点如何感知损伤",h:"分裂前要检查什么",to:null,kind:"ok",
+  truth:"DNA 损伤与纺锤体检查点被阐明。"},
+ {d:"认为只要有周期蛋白就能驱动周期",h:"一个开关一个结果",to:null,kind:"dead",
+  truth:"周期依赖多个 CDK-cyclin 组合与抑制因子的平衡，单因子模型不成立。"},
+ {d:"问细胞命运能否被主动改变",h:"如果周期能被调控，命运也许能",to:"细胞重编程",kind:"ok",
+  truth:"G0 期与终末分化机制被研究。"}
+],
+"受体激酶":[
+ {d:"问它如何被内化与降解",h:"激活之后要关掉",to:null,kind:"weak",
+  truth:"受体内吞与溶酶体降解是标准的下调机制。"},
+ {d:"问它的突变如何致癌",h:"持续激活就会癌变",to:null,kind:"ok",
+  truth:"EGFR、HER2 等成为靶向药靶点（见癌症树）。"},
+ {d:"认为受体只在膜上静止不动",h:"激活是局部的",to:null,kind:"dead",
+  truth:"受体可侧向扩散、聚集成簇、被内化到不同区室——空间组织决定信号。"},
+ {d:"研究受体交叉对话",h:"不同通路会互相影响",to:null,kind:"weak",
+  truth:"信号串扰是系统生物学的核心问题。"}
+],
+"细胞凋亡":[
+ {d:"问凋亡如何被线粒体调控",h:"线粒体释放细胞色素 c",to:null,kind:"ok",
+  truth:"凋亡的内在通路被阐明。"},
+ {d:"问清除凋亡细胞的机制",h:"死细胞怎么被清走",to:null,kind:"weak",
+  truth:"efferocytosis 机制被研究。"},
+ {d:"认为死亡就是被动的失败",h:"细胞死了就是坏了",to:null,kind:"dead",
+  truth:"凋亡是主动执行的程序，需要能量与基因表达。被动死亡与程序性死亡是两回事。"},
+ {d:"用凋亡做抗癌策略",h:"如果能诱导凋亡",to:null,kind:"ok",
+  truth:"BH3 模拟物 venetoclax 已获批。"}
+],
+"自噬":[
+ {d:"问选择性自噬如何被决定",h:"细胞怎么知道该吃掉哪个细胞器",to:null,kind:"ok",
+  truth:"线粒体自噬、内质网自噬的选择机制被阐明。"},
+ {d:"问自噬与疾病的联系",h:"垃圾处理坏了会怎样",to:null,kind:"weak",
+  truth:"神经退行、肿瘤、免疫都与其相关。"},
+ {d:"认为自噬总是保护性的",h:"清除垃圾当然有益",to:null,kind:"dead",
+  truth:"肿瘤中自噬可促存活也可抑癌，具有双向性。单一立场是常见误判。"},
+ {d:"研究自噬的诱导信号",h:"饥饿能诱导，机制是什么",to:null,kind:"weak",
+  truth:"mTOR-AMPK 轴被阐明。"}
+],
+"骨架动力学":[
+ {d:"问细胞如何建立方向性",h:"有了动态骨架，就能有极性",to:"细胞极性",kind:"ok",
+  truth:"Rho 家族 GTP 酶与极性复合物被阐明。"},
+ {d:"问细胞如何移动",h:"运动一定靠骨架重排",to:null,kind:"ok",
+  truth:"片状伪足的推进机制被阐明（2013 年相关诺贝尔奖曾涉及囊泡，运动机制另有突破）。"},
+ {d:"认为骨架只是被动支撑",h:"看起来像支架",to:"骨架只是支撑",kind:"weak",
+  truth:"骨架参与力传递、信号、核定位——远不止支撑。"},
+ {d:"研究骨架与核力学的关系",h:"力怎么传到细胞核",to:null,kind:"weak",
+  truth:"力学信号转导成为热点。"}
+],
+"细胞极性":[
+ {d:"问极性如何在发育中被继承",h:"单个细胞的极性如何影响组织",to:"类器官",kind:"ok",
+  truth:"类器官的自组织正是极性与细胞命运协同的结果。"},
+ {d:"问不对称分裂如何产生不同命运",h:"如果极性能传给子细胞",to:"重编程",kind:"weak",
+  truth:"不对称分裂与寿命因子分配被研究。"},
+ {d:"认为极性是位置决定的被动结果",h:"细胞在哪儿就有哪个方向",to:null,kind:"dead",
+  truth:"极性可以自发建立并自我维持，不依赖外部坐标。"},
+ {d:"研究极性与癌的关系",h:"失去极性会上皮-间质转化",to:null,kind:"weak",
+  truth:"EMT 与极性的关系被广泛研究。"}
+],
+"重编程":[
+ {d:"问能否直接转化细胞类型（不做多能性）",h:"中间状态可能不安全",to:null,kind:"ok",
+  truth:"转分化（如成纤维→神经元）已实现。"},
+ {d:"问重编程与疾病建模",h:"如果能从患者细胞造出模型",to:"类器官",kind:"ok",
+  truth:"iPSC 疾病模型与类器官结合成为标准方法。"},
+ {d:"认为重编程安全、可用于常规治疗",h:"四个因子就够了",to:null,kind:"dead",
+  truth:"致瘤性、病毒载体、效率低——这些问题至今未完全解决。"},
+ {d:"研究重编程的分子屏障",h:"为什么效率那么低",to:null,kind:"weak",
+  truth:"表观遗传屏障被逐步阐明。"}
+],
+"类器官":[
+ {d:"问能否重建结构而不只是细胞团",h:"自组织能走多远",to:null,kind:"ok",
+  truth:"肠、脑、肾等多种类器官被造出。"},
+ {d:"问它能否替代动物实验",h:"如果够真实",to:null,kind:"weak",
+  truth:"部分药物毒性测试已用类器官，但无法完全替代。"},
+ {d:"认为类器官能长成完整器官",h:"既然是「微型器官」",to:null,kind:"dead",
+  truth:"缺血管、免疫、神经支配，尺寸受限——目前只能模拟部分结构与功能。"},
+ {d:"逐个细胞解析类器官的异质性",h:"同一个类器官里细胞真的都一样吗",to:"单细胞组学",kind:"ok",
+  truth:"血管化类器官在推进。"}
+],
+"相分离":[
+ {d:"问相分离如何调控与解耦",h:"如果它会失控",to:null,kind:"ok",
+  truth:"病理性的相分离与 ALS 等疾病相关。"},
+ {d:"问相分离能否解释膜受体信号",h:"受体也会成簇",to:null,kind:"weak",
+  truth:"信号凝聚体是活跃的研究方向。"},
+ {d:"认为所有无膜结构都是相分离",h:"看起来很象",to:"相分离万能",kind:"weak",
+  truth:"部分结构并非相分离形成，「万能」是典型的概念过度推广。"},
+ {d:"研究相分离的药物干预",h:"如果能调节它",to:null,kind:"weak",
+  truth:"相分离调节剂在研。"}
+],
+"单细胞组学":[
+ {d:"问空间信息如何被保留",h:"解离后位置丢了",to:null,kind:"ok",
+  truth:"空间转录组技术迅速发展。"},
+ {d:"问细胞状态如何随时间变化",h:"需要动力学",to:null,kind:"weak",
+  truth:"谱系追踪与 RNA 速率分析被应用。"},
+ {d:"认为单细胞能代表整个组织",h:"逐细胞更精确",to:null,kind:"dead",
+  truth:"解离有偏倚、丢失空间，样本不代表器官全貌。"},
+ {d:"研究细胞图谱的构建",h:"先把类型目录建起来",to:null,kind:"weak",
+  truth:"人类细胞图谱计划推进中。"}
+],
+"夹心模型":[{d:"用冷冻断裂电镜看膜内部",h:"如果有蛋白层，断裂面应该能看到",to:null,kind:"dead",truth:"断裂面显示蛋白颗粒镶嵌在脂层内，夹心模型被推翻。"}],
+"内共生":[{d:"找更直接的基因组证据",h:"如果来自细菌，基因应该像细菌",to:null,kind:"weak",truth:"线粒体基因组测序支持内共生。"}],
+"膜是筛子":[{d:"发现特定离子的专用通道",h:"如果只是筛子，不该有选择性",to:null,kind:"dead",truth:"离子通道高度选择，筛子模型被否定。"}],
+"骨架只是支撑":[{d:"发现骨架参与信号传导",h:"它不只是被动结构",to:null,kind:"dead",truth:"骨架参与力学信号、极性、免疫突触——远超支撑。"}],
+"干细胞全能":[{d:"证明谱系限制",h:"全能性真有那么强吗",to:null,kind:"dead",truth:"成体干细胞多为多能或单能，全能性只属于早期胚胎细胞。"}],
+"相分离万能":[{d:"逐例验证相分离证据",h:"看起来像不等于机制是",to:null,kind:"dead",truth:"多项曾被归因于相分离的结构被重新解释——「看起来像」是常见的证据不足。"}]
+};
+
+const EDGE = [];
+for(const k in DIRS) DIRS[k].forEach(d=>{ if(d.to && d.kind!=="dead") EDGE.push([k,d.to,d.kind]); });
+const INDEG={}; EDGE.forEach(([a,b])=>{INDEG[b]=(INDEG[b]||0)+1});
+const OKEDGE = EDGE.filter(e=>e[2]==="ok");
+
+
+let cur=null, reveal=false, zoom=false;
+function lineage(k){
+  const up=new Set(), down=new Set();
+  (function u(x){ EDGE.filter(e=>e[1]===x).forEach(e=>{ if(!up.has(e[0])){up.add(e[0]);u(e[0])} }) })(k);
+  (function d(x){ EDGE.filter(e=>e[0]===x).forEach(e=>{ if(!down.has(e[1])){down.add(e[1]);d(e[1])} }) })(k);
+  return {up,down};
+}
+
+function depthOf(){
+  const L={};
+  function g(k,seen){
+    if(L[k]!==undefined) return L[k];
+    if(seen.has(k)){L[k]=0;return 0}
+    seen.add(k);
+    const ups=OKEDGE.filter(e=>e[1]===k).map(e=>e[0]);
+    L[k]=ups.length?1+Math.max(...ups.map(u=>g(u,new Set(seen)))):0;
+    return L[k];
+  }
+  Object.keys(N).forEach(k=>g(k,new Set()));
+  return L;
+}
+const DEPTH = depthOf();
+
+function render(){
+  const byLayer={};
+  Object.keys(N).forEach(k=>{ if(N[k].bg && !window.__showBg) return; const L=DEPTH[k]; (byLayer[L]=byLayer[L]||[]).push(k) });
+  const maxL=Math.max(...Object.keys(byLayer).map(Number));
+  let html="";
+  for(let i=0;i<=maxL;i++){
+    const ks=(byLayer[i]||[]).sort((a,b)=>{
+      const am=N[a].name.includes("支线")?1:0, bm=N[b].name.includes("支线")?1:0;
+      return am-bm || N[a].y-N[b].y;
+    });
+    const mainCnt=ks.filter(k=>!N[k].name.includes("支线")).length;
+    html+=`<div class="layer"><div class="lh"><b>第 ${i+1} 层</b><span>${mainCnt} 个主线 · ${ks.length-mainCnt} 个支线</span></div><div class="grid">`;
+    ks.forEach(k=>{
+      const n=N[k], c=(DIRS[k]||[]).length;
+      html+=`<div class="card${cur===k?' sel':''}" data-k="${k}">
+        <div class="y">${n.y}</div><div class="nm">${n.name}</div><div class="tx">${n.t}</div>
+        ${c?`<span class="cnt">${c} 条</span>`:''}</div>`;
+    });
+    html+=`</div></div>`;
+  }
+  document.getElementById('list').innerHTML=html;
+  document.querySelectorAll('.card').forEach(el=>el.onclick=()=>open(el.dataset.k));
+}
+
+function open(k){
+  cur=k; const n=N[k];
+  document.getElementById('sTitle').textContent=n.name;
+  document.getElementById('sYear').textContent=`${n.y} · 第 ${DEPTH[k]+1} 层`;
+  document.getElementById('sFact').innerHTML=n.t+(n.why?`<span class="why">这意味着：${n.why}</span>`:'');
+  const ds=DIRS[k]||[];
+  document.getElementById('sDirs').innerHTML=ds.length?ds.map((d,i)=>`
+    <div class="dir ${d.kind}">
+      <div class="h">${i+1}. ${d.d}</div>
+      <div class="l">线索：${d.h}</div>
+      <div class="res">${d.kind==='ok'
+        ? `✓ 开新路${d.to?` → <span class="go" data-go="${d.to}">${N[d.to].name}</span>`:''}　${d.truth}`
+        : d.kind==='weak' ? `～ 收益有限${d.to?` → <span class="go" data-go="${d.to}">${N[d.to].name}</span>`:''}　${d.truth}`
+        : `✗ 走不通　${d.truth}`}</div>
+    </div>`).join('')
+    :'<div class="l" style="font-size:13px">这一层是终点，做完可以换一条分支继续。</div>';
+  document.querySelectorAll('[data-go]').forEach(el=>el.onclick=e=>{e.stopPropagation();open(el.dataset.go)});
+  document.querySelectorAll('.card').forEach(el=>el.classList.toggle('sel',el.dataset.k===k));
+  document.getElementById('sheet').classList.add('on');
+  document.body.classList.add('open');
+  document.getElementById('scrim').classList.add('on');
+  document.getElementById('sheet').scrollTop=0;
+  // 关系图视图下重绘，触发高亮
+  if(document.getElementById('graphWrap').style.display!=='none') drawGraph();
+}
+function close(){document.getElementById('sheet').classList.remove('on');
+  document.body.classList.remove('open');document.getElementById('scrim').classList.remove('on')}
+
+function drawGraph(){
+  const maxL=Math.max(...Object.values(DEPTH));
+  const rows={};
+  Object.keys(N).forEach(k=>{ (rows[DEPTH[k]]=rows[DEPTH[k]]||[]).push(k) });
+  const maxRow=Math.max(...Object.values(rows).map(r=>r.length));
+  const NW=124, GAP=14, rowH=108, padT=44, padL=20;
+  const W=Math.max(820, maxRow*(NW+GAP)+40);
+  const H=(maxL+1)*rowH+padT+30;
+  const pos={};
+  Object.keys(rows).forEach(L=>{
+    const arr=rows[L].sort((a,b)=>N[a].y-N[b].y);
+    const usable=W-padL*2-NW, n=arr.length;
+    arr.forEach((k,i)=>{
+      pos[k]={x:padL+NW/2+(n===1?usable/2:usable*i/(n-1)), y:padT+(+L)*rowH};
+    });
+  });
+  let s=`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}"><defs>
+    <marker id="a1" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7.5" markerHeight="7.5" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="var(--fg)"/></marker>
+    <marker id="a2" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs>`;
+  for(let i=0;i<=maxL;i++){
+    const y=padT+i*rowH;
+    s+=`<line x1="0" y1="${y}" x2="${W}" y2="${y}" stroke="var(--line)" stroke-width=".5" stroke-dasharray="2 8" opacity=".6"/>
+        <text x="4" y="${y-8}" font-size="9.5" fill="var(--muted)">L${i+1}</text>`;
+  }
+  const ln = cur ? lineage(cur) : null;
+  EDGE.forEach(([a,b,kind])=>{
+    if(!pos[a]||!pos[b]) return;
+    const hot = ln && (ln.up.has(a)&&(ln.up.has(b)||b===cur)) || (ln && (ln.down.has(b)&&(ln.down.has(a)||a===cur)));
+    const A=pos[a], B=pos[b], my=(A.y+B.y)/2;
+    const ok=kind==="ok";
+    s+=`<path d="M${A.x},${A.y+11} C${A.x},${my} ${B.x},${my} ${B.x},${B.y-11}"
+      fill="none" stroke="${hot?'var(--accent)':(ok?'var(--fg)':'var(--muted)')}" stroke-width="${hot?3:(ok?1.5:1.1)}"
+      ${ok?'':'stroke-dasharray="4 4"'} opacity="${hot?1:(ln?0.13:(ok?0.8:0.5))}" marker-end="url(#${ok?'a1':'a2'})"/>`;
+  });
+  Object.keys(N).forEach(k=>{
+    const n=N[k], q=pos[k]; if(!q) return;
+    const side=n.name.includes("支线");
+    const label=n.name.replace("（支线）","");
+    const txt=(label.length>8?label.slice(0,8)+"…":label);
+    const hub = (INDEG[k]||0)>=2;
+    const dim = ln && !(k===cur || ln.up.has(k) || ln.down.has(k));
+    if(hub) s+=`<rect x="${q.x-NW/2-4}" y="${q.y-15}" width="${NW+8}" height="30" rx="15"
+      fill="none" stroke="var(--warn)" stroke-width="2" opacity="${dim?0.12:0.95}"/>`;
+    s+=`<g data-k="${k}" style="cursor:pointer" opacity="${dim?0.2:1}">
+      <rect x="${q.x-NW/2}" y="${q.y-11}" width="${NW}" height="22" rx="11"
+        fill="${side?'var(--bg)':'var(--card)'}"
+        stroke="${side?'var(--muted)':'var(--accent)'}" stroke-width="${side?1:1.4}"
+        ${side?'stroke-dasharray="3 3"':''}/>
+      <text x="${q.x}" y="${q.y+4}" text-anchor="middle" font-size="10"
+        fill="${side?'var(--muted)':'var(--fg)'}">${n.y} ${txt}</text></g>`;
+  });
+  s+=`</svg>`;
+  document.getElementById('graph').innerHTML=
+    `<div style="font-size:11.5px;color:var(--muted);margin-bottom:8px;line-height:1.7">
+      实线箭头 = 开新路　虚线 = 收益有限（通到支线）　死路不画<br>
+      从上到下是依赖层数，不是年代。同一层可并行申报。<b style="color:var(--warn)">带橙环的节点是多条线汇合处</b>——那是交集。点任意节点会高亮它整条来路与去路。</div>`+s;
+  document.querySelectorAll('#graph [data-k]').forEach(el=>el.onclick=()=>open(el.dataset.k));
+}
+
+document.getElementById('sClose').onclick=close;
+document.getElementById('scrim').onclick=close;
+document.getElementById('btnReveal').onclick=e=>{
+  reveal=!reveal; document.body.classList.toggle('reveal',reveal);
+  e.target.classList.toggle('on',reveal);
+  e.target.textContent=reveal?'已揭晓（点此隐藏）':'揭晓真实结局';
+};
+document.getElementById('btnList').onclick=e=>{
+  document.getElementById('list').style.display='block';
+  document.getElementById('graphWrap').style.display='none';
+  e.target.classList.add('on'); document.getElementById('btnGraph').classList.remove('on');
+};
+document.getElementById('btnGraph').onclick=e=>{
+  document.getElementById('list').style.display='none';
+  document.getElementById('graphWrap').style.display='block';
+  e.target.classList.add('on'); document.getElementById('btnList').classList.remove('on');
+  drawGraph();
+};
+document.getElementById('btnZoom').onclick=e=>{
+  const g=document.getElementById('graphWrap');
+  zoom=!zoom; g.classList.toggle('zoom',zoom);
+  e.target.textContent=zoom?'缩回全貌':'放大看细节';
+};
+
+{
+  const ds=Object.values(DIRS).flat();
+  const c={ok:0,weak:0,dead:0}; ds.forEach(d=>c[d.kind]++);
+  document.getElementById('stat').textContent=
+    `${Object.keys(N).filter(k=>!N[k].name.includes("支线")).length} 个主线节点 · ${Object.keys(N).filter(k=>N[k].name.includes("支线")).length} 个支线 · ${Object.keys(DIRS).length} 个节点有方向 · ${ds.length} 条方向（${c.ok} 开新路 / ${c.weak} 收益有限 / ${c.dead} 不通）`;
+  document.getElementById('legend').innerHTML=
+    `默认不显示每条方向的结局，主持人结算时点「揭晓」才公布。<br>
+     <b style="color:var(--ok)">✓ 开新路</b>：通往下一层节点　<b>～ 收益有限</b>：通到支线或原地　
+     <b style="color:var(--warn)">✗ 不通</b>：结论被证伪<br>
+     <b>「不通」指结论被证伪，不指研究没有价值</b>：p53 被当成癌基因的那十年，正是这次误判催生了抑癌基因这个概念。`;
+}
+document.getElementById('btnBg').onclick=e=>{
+  window.__showBg=!window.__showBg;
+  e.target.classList.toggle('on',window.__showBg);
+  e.target.textContent=window.__showBg?'隐藏背景层':'显示背景层';
+  render();
+  if(document.getElementById('graphWrap').style.display!=='none') drawGraph();
+};
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>科研模拟 · 五棵候选树</title>
+<style>
+:root{--bg:#fbfbfa;--fg:#1a1a1a;--muted:#6b6b6b;--line:#e2e0dc;--card:#fff;
+  --accent:#2f6fb3;--accent-weak:#e8f0f9;--warn:#b3542f;--ok:#2f7d52;
+  --radius:12px;--shadow:0 1px 3px rgba(0,0,0,.06)}
+@media (prefers-color-scheme: dark){:root{--bg:#141414;--fg:#e8e6e3;--muted:#9a9793;
+  --line:#2e2e2e;--card:#1c1c1c;--accent:#6fa8dc;--accent-weak:#1f2b38;--warn:#e08a63;
+  --ok:#7bc496;--shadow:0 1px 3px rgba(0,0,0,.4)}}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--fg);
+  font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue","PingFang SC",sans-serif;
+  font-size:16px;line-height:1.6;-webkit-text-size-adjust:100%}
+.wrap{max-width:960px;margin:0 auto;padding:36px 20px 80px}
+h1{font-size:22px;font-weight:700;margin:0 0 8px}
+.lead{color:var(--muted);font-size:14px;margin:0 0 28px;line-height:1.7}
+.grid{display:grid;gap:14px;grid-template-columns:1fr}
+@media(min-width:700px){.grid{grid-template-columns:1fr 1fr}}
+.card{display:block;text-decoration:none;color:inherit;background:var(--card);
+  border:1px solid var(--line);border-radius:var(--radius);padding:18px 18px 16px;
+  box-shadow:var(--shadow);transition:border-color .15s,transform .15s}
+.card:hover{border-color:var(--accent);transform:translateY(-1px)}
+.card .tag{display:inline-block;font-size:11px;color:var(--accent);background:var(--accent-weak);
+  border-radius:999px;padding:2px 8px;margin-bottom:8px}
+.card h2{margin:0 0 4px;font-size:17px;font-weight:650}
+.card .sub{color:var(--muted);font-size:12.5px;margin-bottom:12px}
+.card dl{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;margin:0 0 12px;font-size:13px}
+.card dt{color:var(--muted)}
+.card dd{margin:0;font-variant-numeric:tabular-nums}
+.card .note{font-size:12.5px;color:var(--muted);border-top:1px solid var(--line);padding-top:10px;line-height:1.55}
+.card .go{display:inline-block;margin-top:10px;font-size:13px;color:var(--accent);font-weight:600}
+h3{font-size:14px;margin:36px 0 10px;font-weight:650}
+ul{padding-left:20px;margin:0 0 8px;font-size:14px;line-height:1.75}
+li{margin-bottom:4px}
+.law{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;
+  font-size:13.5px;color:var(--muted);line-height:1.7}
+.law b{color:var(--fg)}
+.depth{display:flex;gap:2px;align-items:flex-end;height:22px;margin-top:4px}
+.depth i{display:block;width:8px;background:var(--accent);border-radius:1px;opacity:.75}
+footer{margin-top:40px;font-size:12px;color:var(--muted);border-top:1px solid var(--line);padding-top:14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>科研模拟活动 · 五棵候选树</h1>
+  <p class="lead">
+    每棵都是一张可点的关系图：点节点看「已确立的事实 + 由它引出的 3–4 条方向」，<br>
+    点右上「揭晓真实结局」才显示每条方向是通、收益有限、还是不通。<br>
+    大家看完选一棵，或者指出哪棵的问题在哪。
+  </p>
+
+  <div class="grid">
+    <a class="card" href="./cancer.html">
+      <span class="tag">交汇型</span>
+      <h2>癌症分子生物学</h2>
+      <div class="sub">七层 · 五个真实交汇点</div>
+      <dl>
+        <dt>主线 / 支线</dt><dd>27 / 11</dd>
+        <dt>方向</dt><dd>121（47 通 · 42 有限 · 32 不通）</dd>
+        <dt>层数</dt><dd>7</dd>
+      </dl>
+      <div class="note">癌基因、靶向、免疫、组学四条线在一棵树上交会。死路最出名：p53 被当成癌基因整整十年。</div>
+      <span class="go">进入 →</span>
+    </a>
+
+    <a class="card" href="./neuro.html">
+      <span class="tag">发现型</span>
+      <h2>神经科学 · 学习与记忆</h2>
+      <div class="sub">五层 · 最短</div>
+      <dl>
+        <dt>主线 / 支线</dt><dd>25 / 8</dd>
+        <dt>方向</dt><dd>105（36 通 · 43 有限 · 26 不通）</dd>
+        <dt>层数</dt><dd>5</dd>
+      </dl>
+      <div class="note">从神经元学说走到记忆痕迹细胞。死路很扎心：涡虫「记忆转移」实验无法重复，整个化学记忆路线塌掉。</div>
+      <span class="go">进入 →</span>
+    </a>
+
+    <a class="card" href="./cell.html">
+      <span class="tag">发现 + 工具</span>
+      <h2>细胞生物学</h2>
+      <div class="sub">六层 · 汇合点多</div>
+      <dl>
+        <dt>主线 / 支线</dt><dd>26 / 7</dd>
+        <dt>方向</dt><dd>114（47 通 · 38 有限 · 29 不通）</dd>
+        <dt>层数</dt><dd>6</dd>
+      </dl>
+      <div class="note">细胞膜、细胞器、骨架、信号、周期五条线。死路是「看起来很像」型的：夹心模型、膜是筛子、相分离万能。</div>
+      <span class="go">进入 →</span>
+    </a>
+
+    <a class="card" href="./semi.html">
+      <span class="tag">工艺堆叠</span>
+      <h2>半导体与计算</h2>
+      <div class="sub">八层 · 层级最清晰</div>
+      <dl>
+        <dt>主线 / 支线</dt><dd>28 / 7</dd>
+        <dt>方向</dt><dd>122（50 通 · 41 有限 · 31 不通）</dd>
+        <dt>层数</dt><dd>8</dd>
+      </dl>
+      <div class="note">从布尔代数到 EUV 光刻。死路是工程史最硬的教训：砷化镓取代硅、单电子晶体管、继续提高主频（2005 撞墙）。</div>
+      <span class="go">进入 →</span>
+    </a>
+
+    <a class="card" href="./molbio.html">
+      <span class="tag">信息流</span>
+      <h2>分子生物学</h2>
+      <div class="sub">九层 · 早期已作背景层</div>
+      <dl>
+        <dt>主线 / 支线</dt><dd>28 / 6</dd>
+        <dt>方向</dt><dd>121（56 通 · 36 有限 · 29 不通）</dd>
+        <dt>层数</dt><dd>9（前 3 层默认折叠）</dd>
+      </dl>
+      <div class="note">DNA → RNA → 蛋白 → 工具 → 编辑，单线递进所以最深。死路：四核苷酸假说、蛋白质才是遗传物质、中心法则不可逆。</div>
+      <span class="go">进入 →</span>
+    </a>
+  </div>
+
+  <h3>怎么选：三个判断</h3>
+  <ul>
+    <li><b>层数要和现场对得上。</b>不答辩的推进轮只要两三分钟，两小时能跑十几到二十轮，所以八层九层也不算长。</li>
+    <li><b>死路比例要够。</b>五棵的不通都是 26–32 条，都在同一档，这一项不构成差别。</li>
+    <li><b>大家熟不熟。</b>熟＝答辩时能真判断；不熟＝只能靠线索硬推，更像赌。这一项差别最大。</li>
+  </ul>
+
+  <h3>目前的差别只有一处</h3>
+  <div class="law">
+    层数由学科的累积方式决定，不是谁做得好：<br>
+    <b>发现型</b>（神经）能跳层 → 5 层；<br>
+    <b>交汇型</b>（癌症）几条线并行后汇合 → 7 层；<br>
+    <b>工艺 / 信息流型</b>（半导体、分子）每代都依赖上一代的工具 → 8–9 层，压不平。
+  </div>
+
+  <footer>
+    每页都在手机上可用：卡片单列、点按区够大、关系图可横向滑动。<br>
+    树里的年份与人名取自公开史料，但「每条方向在当时是否讲得通」是按领域逻辑填的，需要人过一遍。
+  </footer>
+</div>
+</body>
+</html>

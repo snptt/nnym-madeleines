@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>分子生物学 · 一棵树</title>
+<style>
+:root{--bg:#fbfbfa;--fg:#1a1a1a;--muted:#6b6b6b;--line:#e2e0dc;--card:#fff;
+  --accent:#2f6fb3;--accent-weak:#e8f0f9;--warn:#b3542f;--ok:#2f7d52;--okweak:#e6f2ea;
+  --radius:10px;--shadow:0 1px 2px rgba(0,0,0,.05)}
+@media (prefers-color-scheme: dark){:root{--bg:#141414;--fg:#e8e6e3;--muted:#9a9793;
+  --line:#2e2e2e;--card:#1c1c1c;--accent:#6fa8dc;--accent-weak:#1f2b38;--warn:#e08a63;
+  --ok:#7bc496;--okweak:#1e2c24;--shadow:0 1px 2px rgba(0,0,0,.4)}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--fg);
+  font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue","PingFang SC",sans-serif;
+  font-size:15px;line-height:1.55;-webkit-text-size-adjust:100%}
+header{position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:1px solid var(--line);
+  padding:12px 14px 10px;padding-top:calc(12px + env(safe-area-inset-top))}
+h1{margin:0;font-size:16px;font-weight:650}
+.sub{color:var(--muted);font-size:12.5px;margin-top:3px}
+.bar{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+button{font:inherit;font-size:13px;color:var(--fg);background:var(--card);border:1px solid var(--line);
+  border-radius:999px;padding:9px 14px;min-height:44px;cursor:pointer;display:inline-flex;align-items:center}
+button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+button.rev.on{background:var(--ok);border-color:var(--ok)}
+button.zm{font-size:12px;min-height:36px;padding:6px 12px}
+main{padding:14px 14px 90px;max-width:980px;margin:0 auto}
+.layer{margin-bottom:18px}
+.lh{display:flex;align-items:baseline;gap:8px;margin:0 0 8px;font-size:12px;color:var(--muted)}
+.lh b{color:var(--fg);font-size:13px}
+.grid{display:grid;gap:8px;grid-template-columns:1fr}
+@media(min-width:700px){.grid{grid-template-columns:1fr 1fr}}
+@media(min-width:1000px){.grid{grid-template-columns:1fr 1fr 1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:11px 13px;box-shadow:var(--shadow);cursor:pointer;position:relative}
+.card.sel{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-weak)}
+.card .y{font-size:11.5px;color:var(--muted)}
+.card .nm{font-weight:600;font-size:14.5px;margin:1px 0 2px}
+.card .tx{font-size:12.5px;color:var(--muted);padding-right:54px}
+.card .cnt{position:absolute;right:12px;top:11px;font-size:11px;color:var(--accent);
+  background:var(--accent-weak);border-radius:999px;padding:1px 7px}
+.wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:6px}
+#graph svg{display:block;width:100%;height:auto;max-width:none}
+#graphWrap.zoom #graph svg{width:1500px}
+#graphBar{display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap}
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.32);opacity:0;pointer-events:none;
+  transition:opacity .18s;z-index:40}
+.scrim.on{opacity:1;pointer-events:auto}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:50;background:var(--bg);
+  border-top:1px solid var(--line);border-radius:16px 16px 0 0;max-height:82vh;overflow-y:auto;
+  -webkit-overflow-scrolling:touch;transform:translateY(102%);transition:transform .22s ease;
+  padding:0 16px calc(28px + env(safe-area-inset-bottom))}
+.sheet.on{transform:translateY(0)}
+@media(min-width:820px){
+  .sheet{left:auto;top:0;bottom:0;right:0;width:470px;border-radius:0;border-left:1px solid var(--line);
+    border-top:none;max-height:100vh;transform:translateX(102%);box-shadow:-8px 0 24px rgba(0,0,0,.08)}
+  .sheet.on{transform:translateX(0)}
+  .grab{display:none}
+  body.open header, body.open main{padding-right:486px}
+  header,main{transition:padding-right .22s ease}
+}
+.grab{width:38px;height:4px;border-radius:2px;background:var(--line);margin:9px auto 4px}
+.sh{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;padding:6px 0 12px;
+  border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:2}
+.sh h2{margin:0;font-size:16px;font-weight:650;line-height:1.35}
+.sh .y{display:block;margin-top:2px;font-size:11.5px;color:var(--muted)}
+.close{border:none;background:none;font-size:24px;line-height:1;color:var(--muted);
+  width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:50%;flex:none}
+section{margin-top:14px}
+h3{font-size:12px;color:var(--muted);font-weight:650;margin:0 0 8px;letter-spacing:.04em}
+.fact{font-size:14.5px;line-height:1.6}
+.fact .why{display:block;margin-top:6px;font-size:13px;color:var(--muted)}
+.dir{border:1px solid var(--line);border-radius:9px;padding:10px 12px;margin-bottom:9px;background:var(--card)}
+.dir .h{font-weight:600;font-size:13.5px;margin-bottom:3px}
+.dir .l{font-size:12.5px;color:var(--muted)}
+.dir .res{margin-top:8px;font-size:12.5px;padding:7px 9px;border-radius:7px;display:none}
+body.reveal .dir .res{display:block}
+.dir.ok .res{background:var(--okweak);color:var(--ok);border:1px solid var(--ok)}
+.dir.weak .res{background:transparent;color:var(--fg);border:1px solid var(--line)}
+.dir.dead .res{background:transparent;color:var(--warn);border:1px dashed var(--warn)}
+.dir .go{color:var(--accent);text-decoration:underline;cursor:pointer}
+.legend{font-size:11.5px;color:var(--muted);margin-top:10px;line-height:1.7}
+</style>
+</head>
+<body>
+<header>
+  <h1>分子生物学 <span style="color:var(--muted);font-weight:400">一棵树</span></h1>
+  <div class="sub" id="stat"></div>
+  <div class="bar">
+    <button id="btnList" class="on">分层列表</button>
+    <button id="btnGraph">关系图</button>
+    <button id="btnBg">显示背景层</button>
+    <button id="btnReveal" class="rev">揭晓真实结局</button>
+  </div>
+</header>
+<main>
+  <div id="list"></div>
+  <div id="graphWrap" class="wrap" style="display:none">
+    <div id="graphBar"><button id="btnZoom" class="zm">放大看细节</button>
+      <span style="font-size:11.5px;color:var(--muted)">默认一屏看全貌</span></div>
+    <div id="graph"></div>
+  </div>
+  <div class="legend" id="legend"></div>
+</main>
+
+<div class="scrim" id="scrim"></div>
+<div class="sheet" id="sheet">
+  <div class="grab"></div>
+  <div class="sh"><div><h2 id="sTitle"></h2><span class="y" id="sYear"></span></div>
+    <button class="close" id="sClose">×</button></div>
+  <section><h3>已确立的事实</h3><div class="fact" id="sFact"></div></section>
+  <section><h3>当时可以往哪问</h3><div id="sDirs"></div></section>
+</div>
+
+<script>
+const N = {
+// 五个根
+"孟德尔定律":{y:1865,bg:1,name:"孟德尔定律",t:"性状由成对的遗传因子决定，分离与自由组合",why:"遗传第一次变成了可以计算的东西——但没人知道因子是什么。"},
+"酶是蛋白质":{y:1926,bg:1,name:"酶是蛋白质",t:"脲酶被结晶出来，证明生物催化剂的化学本质是蛋白质（Sumner）",why:"生命过程可以被还原成具体的分子反应。"},
+"肺炎球菌转化":{y:1944,bg:1,name:"肺炎球菌转化",t:"死菌的某种物质能让活菌获得新的遗传性状，且这种物质是 DNA（Avery）",why:"遗传物质可能是 DNA——但当时几乎没人愿意相信。"},
+"噬菌体小组":{y:1943,bg:1,name:"噬菌体小组",t:"用噬菌体做定量遗传学实验（Delbrück & Luria）",why:"找到了最简单的遗传系统，基因研究从此可以「数」而不是「看」。"},
+"碱基组成":{y:1950,bg:1,name:"碱基组成规律",t:"A=T、G=C，且不同物种比例不同（Chargaff）",why:"DNA 不是四种碱基等量的重复聚合物——它携带信息的可能出现了。"},
+// L2
+"一个基因一个酶":{y:1941,bg:1,name:"一个基因一个酶",t:"链孢霉的营养突变说明每个基因对应一个酶（Beadle & Tatum）",why:"基因的作用被具体化为「负责一个化学反应」。"},
+"DNA双螺旋":{y:1953,name:"DNA 双螺旋",t:"两条互补链反向平行，碱基在内侧配对（Watson & Crick）",why:"结构本身解释了复制：一条链就是另一条的模板。"},
+"半保留复制":{y:1958,name:"半保留复制",t:"用重氮标记证明复制时每条子链保留一条母链（Meselson & Stahl）",why:"双螺旋模型的核心预测被验证——结构真的能解释功能。"},
+"细菌接合":{y:1946,name:"细菌接合",t:"细菌之间可以传递遗传物质（Lederberg & Tatum）",why:"原核生物也有有性过程，遗传学有了可操作的实验体系。"},
+"限制修饰":{y:1953,bg:1,name:"限制与修饰",t:"细菌能识别并切割外源 DNA，同时保护自己的 DNA",why:"「序列特异性的剪刀」这个概念第一次出现。"},
+// L3
+"遗传密码":{y:1961,name:"遗传密码",t:"三联体密码，用人工合成的 RNA 可以指定氨基酸（Nirenberg）",why:"核酸的四字母语言与蛋白质的二十字母语言之间有了字典。"},
+"操纵子":{y:1961,name:"操纵子模型",t:"一组相关基因受同一个开关控制（Jacob & Monod）",why:"基因不是一直开着的，而是被调控的——这是「程序」的概念。"},
+"DNA聚合酶":{y:1956,name:"DNA 聚合酶",t:"从大肠杆菌中分离出合成 DNA 的酶（Kornberg）",why:"复制从「现象」变成了「可以在试管里重演的化学反应」。"},
+"核糖体":{y:1960,name:"核糖体与翻译",t:"蛋白质在核糖体上按 mRNA 的指令合成",why:"信息流有了明确的场所和机器。"},
+"T4遗传图谱":{y:1955,bg:1,name:"基因的精细结构",t:"基因内部可以重组，不是不可分割的单位（Benzer）",why:"「基因」这个单位的定义开始松动。"},
+// L4
+"限制酶":{y:1970,name:"限制性内切酶",t:"在特定序列处切开 DNA 的酶（Smith & Arber）",why:"DNA 第一次可以在指定位置被剪开——分子克隆的前提。"},
+"逆转录酶":{y:1970,name:"逆转录酶",t:"以 RNA 为模板合成 DNA 的酶（Baltimore & Temin）",why:"信息流可以反向走，中心法则被改写。"},
+"RNA剪接":{y:1977,name:"RNA 剪接",t:"基因里的片段被转录后切掉，外显子拼接（Sharp & Roberts）",why:"一个基因不等于一条多肽——「一个基因一个酶」开始失效。"},
+"Sanger测序":{y:1977,name:"Sanger 测序",t:"用双脱氧终止法逐位读出 DNA 序列",why:"遗传信息第一次变成可以逐字阅读的文本。"},
+"PCR":{y:1983,name:"PCR",t:"用热稳定聚合酶在体外指数扩增 DNA 片段（Mullis）",why:"极微量的 DNA 也能被放大到可分析——「取一点就能查」。"},
+// L5
+"重组DNA":{y:1972,name:"重组 DNA",t:"把外源片段接进载体，在细菌里扩增（Boyer & Cohen）",why:"任何一段 DNA 都可以被克隆、保存、改造。"},
+"RNAi":{y:1998,name:"RNA 干扰",t:"双链 RNA 可特异性地沉默对应基因（Fire & Mello）",why:"基因功能第一次有了「关掉」的通用手段。"},
+"转录调控":{y:1985,name:"转录因子与增强子",t:"基因的表达由组合的调控蛋白决定",why:"同一套基因组能造出几百种细胞，靠的是调控而非基因。"},
+"基因治疗":{y:1990,name:"基因治疗",t:"把正常基因导入患者细胞以补偿缺陷",why:"遗传病第一次有了「治本」的可能——但代价惨重。"},
+// L6
+"人类基因组":{y:2003,name:"人类基因组",t:"约 30 亿碱基的参考序列完成",why:"有了标准答案，任何个体的差异都能被定位。"},
+"CRISPR":{y:2012,name:"CRISPR",t:"用向导 RNA 引导 Cas9 定点切割任意 DNA 序列（Doudna & Charpentier）",why:"编辑基因组变成了「改一段文字」。"},
+"单细胞测序":{y:2013,name:"单细胞测序",t:"逐个细胞解析基因表达",why:"组织是一群异质细胞，平均值掩盖了真相。"},
+"碱基编辑":{y:2016,name:"碱基编辑",t:"不切断双链，直接把一个碱基改成另一个（Liu）",why:"编辑从「剪切」变成「替换」，安全性提高。"},
+// 支线
+"四核苷酸假说":{y:1910,name:"四核苷酸假说（支线）",t:"DNA 由四种碱基等量重复，太简单不可能携带信息"},
+"蛋白质遗传":{y:1940,name:"蛋白质是遗传物质（支线）",t:"蛋白质有二十种氨基酸，复杂度足以携带信息"},
+"中心法则不可逆":{y:1958,name:"中心法则不可逆（支线）",t:"信息只能 DNA→RNA→蛋白质，不会反向"},
+"朊病毒":{y:1982,name:"朊病毒（支线）",t:"仅由蛋白质构象传递的致病因子，不含核酸"},
+"表观遗传":{y:1996,name:"表观遗传（支线）",t:"DNA 甲基化与组蛋白修饰可遗传，但不改变序列"},
+"合成生物学":{y:2000,name:"合成生物学（支线）",t:"用标准化元件设计生物回路"}
+};
+
+const DIRS = {
+"孟德尔定律":[
+ {d:"找出「遗传因子」的化学本质",h:"如果因子是实物，它一定在细胞里",to:"肺炎球菌转化",kind:"ok",
+  truth:"Avery 1944 证明转化因子是 DNA。这条路走了八十年。"},
+ {d:"把遗传学与细胞学结合，找因子在染色体上的位置",h:"染色体的行为与因子分离惊人相似",to:"T4遗传图谱",kind:"ok",
+  truth:"Morgan 的果蝇实验室确立了染色体理论；更精细的定位后来到 1955 年 Benzer。"},
+ {d:"认为遗传是融合式的，子代是父母性状的混合",h:"子代确实像父母各一半",to:null,kind:"dead",
+  truth:"融合遗传无法解释隔代重现。孟德尔的数据直接否定了它。"},
+ {d:"把遗传学用于育种改良",h:"规律知道了就能用",to:null,kind:"weak",
+  truth:"确实推动了育种，但没有触及机制。"}
+],
+"酶是蛋白质":[
+ {d:"弄清基因如何决定一个具体的化学反应",h:"酶是蛋白质，那基因大概在管酶的合成",to:"一个基因一个酶",kind:"ok",
+  truth:"Beadle & Tatum 用链孢霉营养突变证实。"},
+ {d:"研究蛋白质如何折叠成有活性的形状",h:"酶的活性来自结构",to:null,kind:"weak",
+  truth:"通向蛋白质折叠问题，Anfinsen 与后续的 AlphaFold 都在这条线上。"},
+ {d:"认为酶可以自我复制，遗传物质就是酶",h:"酶能催化反应，似乎也能复制自己",to:"蛋白质遗传",kind:"weak",
+  truth:"酶不能自我复制，但这条思路把研究者推向了「遗传物质是什么」的真问题。"},
+ {d:"找催化之外的功能蛋白",h:"不是所有蛋白都是酶",to:null,kind:"weak",
+  truth:"结构蛋白、调控蛋白陆续被发现。"}
+],
+"肺炎球菌转化":[
+ {d:"把转化因子纯化，确认它到底是什么化学物质",h:"只要足够纯，成分就能测",to:"DNA双螺旋",kind:"ok",
+  truth:"Avery 的结论是 DNA，但被普遍怀疑；直到 1953 年结构出现才被接受。"},
+ {d:"用噬菌体做更干净的实验",h:"只有 DNA 和蛋白质两种成分的系统最干净",to:null,kind:"weak",
+  truth:"Hershey-Chase 1952 用同位素标记，干净地证明了 DNA 是遗传物质。"},
+ {d:"认为转化是蛋白质引起的",h:"蛋白质功能多样，更可能是遗传物质",to:"蛋白质遗传",kind:"weak",
+  truth:"这个判断在 1940 年代是主流，但错了。"},
+ {d:"认为转化因子是细胞碎片带来的营养作用",h:"死菌的成分被活菌吃掉了",to:null,kind:"dead",
+  truth:"剂量-反应关系与可遗传性排除了这个解释。"}
+],
+"噬菌体小组":[
+ {d:"用同位素标记区分 DNA 与蛋白质",h:"如果知道哪个进入细胞，就知道谁是遗传物质",to:"DNA双螺旋",kind:"ok",
+  truth:"Hershey-Chase 1952：只有 DNA 进入细菌。"},
+ {d:"用噬菌体做基因的精细定位",h:"如果基因内部可重组，就能画更细的图",to:"T4遗传图谱",kind:"ok",
+  truth:"Benzer 1955 证明基因内部可重组，「基因」不再是最小单位。"},
+ {d:"认为噬菌体太简单，不足以代表真实遗传",h:"它只有几个基因",to:null,kind:"dead",
+  truth:"正因为它简单，才让定量遗传学成为可能。这个「太简单」的判断错得彻底。"},
+ {d:"研究溶原性与裂解的选择",h:"病毒有时潜伏有时裂解，为什么",to:"操纵子",kind:"ok",
+  truth:"由此发展出基因调控的核心概念。"}
+],
+"碱基组成":[
+ {d:"用碱基配对解释 A=T、G=C",h:"等量关系一定对应某种结构",to:"DNA双螺旋",kind:"ok",
+  truth:"Watson & Crick 用互补配对解释了它——这是结构模型的关键证据。"},
+ {d:"测更多物种的碱基组成",h:"不同物种比例不同，能否据此分类",to:null,kind:"weak",
+  truth:"GC 含量差异确实反映亲缘关系，但粗糙。"},
+ {d:"认为碱基比例只是化学组成，与信息无关",h:"组成不等于含义",to:null,kind:"dead",
+  truth:"序列就是信息，比例只是它的统计特征。"},
+ {d:"用 X 射线衍射研究 DNA 结构",h:"结构问题要靠结构方法",to:"DNA双螺旋",kind:"ok",
+  truth:"Franklin 的衍射图是双螺旋的直接证据。"}
+],
+"一个基因一个酶":[
+ {d:"找基因与蛋白之间的一对一关系是否普遍",h:"如果是普遍规律，就能据此预测",to:null,kind:"weak",
+  truth:"密码的解读证实了「基因→蛋白」的线性关系——但后来发现有一基因多蛋白。"},
+ {d:"研究基因如何被打开和关闭",h:"如果每个基因一个酶，那开关在哪",to:"操纵子",kind:"ok",
+  truth:"Jacob & Monod 的操纵子模型给出了第一个基因开关。"},
+ {d:"认为一个基因只产生一种蛋白",h:"一对一听起来很干净",to:null,kind:"dead",
+  truth:"剪接与翻译后修饰让一个基因能产生多种蛋白。这个简化统治了三十年。"},
+ {d:"用它解释人类的代谢病",h:"酶缺陷导致代谢病",to:null,kind:"weak",
+  truth:"苯丙酮尿症等确实如此，是医学遗传学的起点。"}
+],
+"DNA双螺旋":[
+ {d:"证明复制是按这个模型进行的",h:"模型预测半保留复制，可以测",to:"半保留复制",kind:"ok",
+  truth:"Meselson-Stahl 1958 用重氮密度梯度直接看到了半保留。"},
+ {d:"找出合成 DNA 的酶",h:"如果链是模板，就需要一个聚合酶",to:"DNA聚合酶",kind:"ok"},
+ {d:"读出三联体密码与氨基酸的对应",h:"核酸只有四个字母，蛋白有二十个字母，一定要分组",to:"遗传密码",kind:"ok",truth:"Nirenberg 用人工 RNA 破解了第一批密码子。",
+  truth:"Kornberg 1956 分离出 DNA 聚合酶 I。"},
+ {d:"找出序列特异性的切割工具",h:"如果能切开特定位置，就能研究序列",to:"限制酶",kind:"ok",
+  truth:"1970 限制性内切酶被发现，分子克隆有了剪刀。"},
+ {d:"问 RNA 病毒为什么不按中心法则复制",h:"有些病毒只有 RNA，却能稳定遗传",to:"逆转录酶",kind:"ok",
+  truth:"逆转录酶 1970 年被发现，中心法则被改写。"},
+ {d:"认为结构一解，剩下的只是细节",h:"结构就是答案",to:null,kind:"dead",
+  truth:"结构解决了复制，但没解决调控、剪接、表观——「结构即答案」是最常见的过度乐观。"}
+],
+"半保留复制":[
+ {d:"把它变成可以在试管里重复的反应",h:"如果能体外复制，就能研究机制",to:"DNA聚合酶",kind:"ok",
+  truth:"体外复制体系促成了聚合酶的纯化与机制研究。"},
+ {d:"研究复制如何开始与终止",h:"半保留没说起点在哪",to:null,kind:"weak",
+  truth:"复制起点与原核复制叉结构被陆续阐明。"},
+ {d:"认为复制是完全均等、无差错的",h:"模板复制应该很精确",to:null,kind:"dead",
+  truth:"复制错误率约十亿分之一，靠的是校对与修复——不是「不发生错误」，而是「错误被纠正」。"},
+ {d:"研究不同生物的复制速度差异",h:"真核基因组大得多",to:null,kind:"weak",
+  truth:"多起点复制等机制被阐明。"}
+],
+"细菌接合":[
+ {d:"研究基因如何被调控",h:"细菌能传递基因，那表达呢",to:"操纵子",kind:"ok",
+  truth:"接合体系让 Jacob & Monod 得以做顺反子实验。"},
+ {d:"找细菌的「限制」现象",h:"为什么有些外源 DNA 进不去",to:"限制修饰",kind:"ok",
+  truth:"限制-修饰系统被发现，是限制酶的源头。"},
+ {d:"认为细菌没有有性过程",h:"细菌是无性分裂的",to:null,kind:"dead",
+  truth:"接合、转化、转导都证明细菌有基因交换。"},
+ {d:"用它做基因定位",h:"接合频率与基因距离有关",to:null,kind:"weak",
+  truth:"大肠杆菌的环状染色体图谱由此画出。"}
+],
+"限制修饰":[
+ {d:"找出切割外源 DNA 的酶",h:"如果能分离出来，就能在体外切",to:"限制酶",kind:"ok",
+  truth:"1970 Smith 分离出 HindII，Arber 提出概念。"},
+ {d:"研究细菌如何保护自己",h:"自己的 DNA 为什么不被切",to:null,kind:"weak",
+  truth:"甲基化修饰解释了自我保护机制。"},
+ {d:"认为限制酶只能切固定的一种序列",h:"工具应该很有限",to:null,kind:"dead",
+  truth:"已发现数千种，识别序列从 4 到 8 bp 不等。低估工具多样性是常见误判。"},
+ {d:"把它当作细菌的免疫系统研究",h:"这是细菌的防御",to:"CRISPR",kind:"weak",
+  truth:"CRISPR 确实是另一套细菌免疫系统——三十年后才被理解。"}
+],
+"遗传密码":[
+ {d:"确认密码是三联体且不重叠",h:"如果每三个碱基一个氨基酸，就能算",to:"核糖体",kind:"ok",
+  truth:"三联体、简并、不重叠、连续——四项性质全部被证实。"},
+ {d:"找负责翻译的机器",h:"密码要在某个场所被读出",to:"核糖体",kind:"ok",
+  truth:"核糖体结构与 2009 年诺奖都在这条线上。"},
+ {d:"认为密码因物种而异",h:"不同生物差别那么大",to:null,kind:"dead",
+  truth:"密码几乎完全通用——这成了共同祖先的最强证据之一。"},
+ {d:"研究密码的起源与演化",h:"为什么是这套对应关系",to:null,kind:"weak",
+  truth:"至今没有定论，是演化生物学的硬问题。"}
+],
+"操纵子":[
+ {d:"研究真核生物是否也有同样的开关",h:"如果细菌有，复杂生物也该有",to:"转录调控",kind:"ok",
+  truth:"增强子、沉默子、组合调控——机制更复杂，逻辑相同。"},
+ {d:"用它做基因表达的工程控制",h:"开关可以被装进别的系统",to:"合成生物学",kind:"ok",
+  truth:"诱导型启动子成为合成生物学的基础元件。"},
+ {d:"认为基因表达只有「开」和「关」两种状态",h:"操纵子像个开关",to:null,kind:"dead",
+  truth:"表达是连续的、可调的、有噪声的——二元开关模型过于粗糙。"},
+ {d:"研究小分子如何调节蛋白活性",h:"开关分子本身也要研究",to:null,kind:"weak",
+  truth:"变构调控理论由此发展。"}
+],
+"DNA聚合酶":[
+ {d:"找能切开 DNA 的酶",h:"研究序列需要切割工具",to:"限制酶",kind:"ok",
+  truth:"限制酶与聚合酶共同构成分子克隆的工具箱。"},
+ {d:"找能在体外大量扩增片段的方法",h:"如果能反复复制同一段",to:"PCR",kind:"ok",
+  truth:"PCR 用的是热稳定聚合酶——直接来自这份工作。"},
+ {d:"认为聚合酶只能沿 5'→3' 合成",h:"方向是固定的",to:null,kind:"weak",
+  truth:"确实如此，但后随链的不连续合成需要引物酶与连接酶配合。"},
+ {d:"用「让合成在这里停下」来读序列",h:"如果合成能被特定碱基终止，就能读出顺序",to:"Sanger测序",kind:"ok",
+  truth:"双脱氧终止法正是这个原理，Sanger 因此获得第二个诺奖。"},
+ {d:"认为所有聚合酶都一样",h:"反正都是合成 DNA",to:null,kind:"dead",
+  truth:"已发现多家族，功能从复制到修复到跨损伤合成各不相同。"}
+],
+"核糖体":[
+ {d:"研究剪接——为什么基因与蛋白不对应",h:"如果转录后还有加工，密码不是终点",to:"RNA剪接",kind:"ok",
+  truth:"1977 剪接被发现，直接推翻了「一个基因一个蛋白」。"},
+ {d:"问外源双链 RNA 为什么能让基因沉默",h:"注射双链 RNA 后，对应蛋白消失了",to:"RNAi",kind:"ok",
+  truth:"RNAi 由此被发现，并引出 miRNA 这一整类调控分子。"},
+ {d:"认为 rRNA 只是结构支架",h:"催化应该由蛋白质完成",to:null,kind:"dead",
+  truth:"核酶证明 rRNA 才是催化核心——「蛋白质才催化」的直觉错了。"},
+ {d:"用核糖体做抗生素靶点",h:"细菌核糖体与人的不同",to:null,kind:"weak",
+  truth:"大量抗生素正作用于核糖体。"}
+],
+"T4遗传图谱":[
+ {d:"研究基因内部到底有什么",h:"如果可重组，基因内部有结构",to:"遗传密码",kind:"ok",
+  truth:"密码子层面的解读给出了答案。"},
+ {d:"找基因表达的最小单位",h:"顺反子是什么",to:"操纵子",kind:"ok",
+  truth:"Benzer 的顺反子概念直接启发了 Jacob & Monod。"},
+ {d:"认为基因是不可分割的最小单位",h:"孟德尔的因子是整体的",to:null,kind:"dead",
+  truth:"「基因」的边界是功能定义的，物理上可重组、可拆分。"},
+ {d:"用它做基因定位与突变谱",h:"精细结构图有用",to:null,kind:"weak",
+  truth:"成为经典遗传学的标准工具。"}
+],
+"限制酶":[
+ {d:"用它把不同来源的 DNA 拼起来",h:"如果能切，也就能接",to:"重组DNA",kind:"ok",
+  truth:"1972 Boyer-Cohen 实验，分子克隆诞生。"},
+ {d:"找 CRISPR——另一种序列特异性切割",h:"细菌还有别的防御系统",to:"CRISPR",kind:"ok",
+  truth:"CRISPR-Cas9 成为第三代基因编辑工具。"},
+ {d:"认为切开的 DNA 会立刻被降解",h:"断裂是致命的",to:null,kind:"dead",
+  truth:"细胞有修复机制，这正是基因编辑能工作的前提。"},
+ {d:"找识别更短序列的酶",h:"4 bp 切得更频繁",to:null,kind:"weak",
+  truth:"确实有，但对大基因组不适用——特异性不足。"}
+],
+"逆转录酶":[
+ {d:"用它把 mRNA 变成 cDNA",h:"如果 RNA 能变 DNA，就能研究表达",to:"重组DNA",kind:"ok",
+  truth:"cDNA 克隆成为研究基因表达的标准方法。"},
+ {d:"用它做 RNA 的检测与定量",h:"RNA 也能被测序",to:"Sanger测序",kind:"ok",
+  truth:"RT-PCR 与 RNA-seq 都建立在这个酶上。"},
+ {d:"认为中心法则是单向的、不可逆",h:"信息只能 DNA→RNA→蛋白",to:"中心法则不可逆",kind:"weak",
+  truth:"这个「法则」被逆转录酶直接推翻——它是被写在教科书里半个世纪的错。"},
+ {d:"研究逆转录病毒如何致癌",h:"它能把基因插进宿主",to:null,kind:"weak",
+  truth:"癌基因研究由此展开（见癌症树）。"}
+],
+"RNA剪接":[
+ {d:"研究剪接如何被调控",h:"如果同一个基因能剪出不同产物",to:null,kind:"ok",
+  truth:"可变剪接被证实，一个基因可产生上千种异构体。"},
+ {d:"找剪接的机器",h:"一定有 RNA-蛋白复合物",to:null,kind:"weak",
+  truth:"剪接体结构在 2015 年后被冷冻电镜解析。"},
+ {d:"认为剪接只发生在真核生物",h:"细菌没有细胞核",to:null,kind:"dead",
+  truth:"细菌也有自剪接内含子——「真核才有剪接」不成立。"},
+ {d:"研究剪接错误导致的疾病",h:"剪错会出问题",to:null,kind:"weak",
+  truth:"脊髓性肌萎缩症等正是剪接相关，反义寡核苷酸药物已上市。"}
+],
+"Sanger测序":[
+ {d:"把测序自动化、规模化",h:"手工读胶太慢",to:"人类基因组",kind:"ok",
+  truth:"毛细管测序把通量提高两个数量级，人类基因组计划才可能。"},
+ {d:"用它读病原与个体的差异",h:"序列差异就是遗传差异",to:null,kind:"weak",
+  truth:"成为诊断与法医的标准工具。"},
+ {d:"认为测序一次就能给出完整答案",h:"读到序列就懂了",to:null,kind:"dead",
+  truth:"序列只是字母表，功能、调控、结构仍要另做实验。"},
+ {d:"用它验证编辑结果",h:"编辑之后要看序列变没变",to:"CRISPR",kind:"ok",
+  truth:"测序成为基因编辑的必备验证手段。"}
+],
+"PCR":[
+ {d:"用 PCR 做基因分型与诊断",h:"极微量就能扩增",to:null,kind:"ok",
+  truth:"成为分子诊断的基石，包括新冠检测。"},
+ {d:"用它扩增古代 DNA",h:"化石里也有微量 DNA",to:null,kind:"weak",
+  truth:"古基因组学由此起步，但污染控制极难。"},
+ {d:"认为 PCR 能扩增任何东西",h:"只要给引物就行",to:null,kind:"dead",
+  truth:"需要已知序列设计引物，未知序列扩不出来——这是「PCR 万能」的误判。"},
+ {d:"用它做定量",h:"扩增曲线也许能反映起始量",to:null,kind:"ok",
+  truth:"实时定量 PCR 成为表达分析的标准方法。"}
+],
+"重组DNA":[
+ {d:"用它做基因治疗",h:"如果能导入基因，就能治病",to:"基因治疗",kind:"ok",
+  truth:"1990 首例基因治疗，但 1999 年出现死亡事故。"},
+ {d:"用它表达人胰岛素等药物",h:"把人的基因放进细菌",to:null,kind:"ok",
+  truth:"重组胰岛素 1982 上市，生物制药产业由此开始。"},
+ {d:"认为重组 DNA 极度危险，应全面禁止",h:"人造生物可能逃逸",to:null,kind:"weak",
+  truth:"1975 阿西洛马会议确立了生物安全规范——恐惧推动了制度，而不是终止研究。"},
+ {d:"认为克隆一个基因就能知道它的功能",h:"拿到序列就懂了",to:null,kind:"dead",
+  truth:"序列只是开始，功能要靠敲除、表达、定位一系列实验。"}
+],
+"RNAi":[
+ {d:"用它做基因功能筛选",h:"如果能关掉任意基因，就能系统筛",to:"单细胞测序",kind:"weak",
+  truth:"全基因组 siRNA 筛选成为标准工具。"},
+ {d:"找它的天然功能",h:"细胞为什么自带这套机制",to:null,kind:"ok",
+  truth:"miRNA 调控被发现，是非编码 RNA 领域的开端。"},
+ {d:"把它做成药物",h:"如果能特异沉默致病基因",to:null,kind:"ok",
+  truth:"patisiran 2018 获批，RNA 药物成为现实。"},
+ {d:"认为 RNAi 在哺乳动物里不工作",h:"植物与线虫才有",to:null,kind:"dead",
+  truth:"2001 在哺乳动物细胞中实现，判断错误但当时证据不足。"}
+],
+"转录调控":[
+ {d:"研究同一个基因组如何造出不同细胞",h:"如果基因都一样，差异一定在调控",to:null,kind:"ok",
+  truth:"细胞命运由转录因子网络决定，这是发育生物学的核心。"},
+ {d:"研究非编码 DNA 的功能",h:"98% 不编码蛋白，那是什么",to:null,kind:"weak",
+  truth:"增强子、绝缘子等调控元件被大量注释。"},
+ {d:"认为调控只在转录层面",h:"控制表达就够了",to:null,kind:"dead",
+  truth:"翻译、剪接、修饰、降解各层都有调控——单层模型不完整。"},
+ {d:"用转录因子做细胞重编程",h:"如果因子决定命运，改因子就能改细胞",to:"基因治疗",kind:"weak",
+  truth:"iPSC 正是这个思路（山中因子）。"}
+],
+"基因治疗":[
+ {d:"改进载体安全性",h:"病毒载体有插入突变风险",to:"碱基编辑",kind:"ok",
+  truth:"编辑工具从「剪切」走向「替换」，安全性提高。"},
+ {d:"用它治疗单基因病",h:"单基因病机制最清楚",to:null,kind:"ok",
+  truth:"脊髓性肌萎缩、镰状细胞病已有获批疗法。"},
+ {d:"认为导入正常基因就能治好",h:"补上缺的就行",to:null,kind:"dead",
+  truth:"1999 年 Gelsinger 死亡事故暴露：免疫反应、载体毒性、表达调控都是硬问题。"},
+ {d:"做体内直接注射",h:"不用取出细胞更方便",to:null,kind:"weak",
+  truth:"部分疗法已实现体内给药，但靶向性与剂量仍是难题。"}
+],
+"人类基因组":[
+ {d:"在疾病里系统地找突变",h:"有了参考序列就能比对",to:null,kind:"ok",
+  truth:"全外显子测序成为罕见病诊断的常规手段。"},
+ {d:"问「一个基因组」能不能代表一个个体",h:"同一个人的不同细胞，基因组真的都一样吗",to:"单细胞测序",kind:"ok",
+  truth:"单细胞测序发现体细胞突变与表达异质性——「一个基因组」是平均值。"},
+ {d:"认为基因数量决定复杂度",h:"人这么复杂，基因该很多",to:null,kind:"dead",
+  truth:"只有约 2 万个编码基因，与线虫接近。复杂性的来源是调控与剪接。"},
+ {d:"用它做基因编辑的参考",h:"要知道改哪里，先要知道正常是什么样",to:"CRISPR",kind:"ok",
+  truth:"参考基因组是编辑的基础设施。"}
+],
+"CRISPR":[
+ {d:"把它做成更精确的编辑",h:"双链断裂会引发不可控修复",to:"碱基编辑",kind:"ok",
+  truth:"碱基编辑与先导编辑都在解决这个问题。"},
+ {d:"用到临床治疗",h:"如果能改造血干细胞",to:null,kind:"ok",
+  truth:"镰状细胞病的 CRISPR 疗法 2023 年获批。"},
+ {d:"认为它只会脱靶，不可能用于人",h:"编辑错了就是灾难",to:null,kind:"dead",
+  truth:"脱靶率可以测量与控制，已有获批疗法。又一次「技术不可行」的误判。"},
+ {d:"用它做全基因组筛选",h:"能关掉每个基因",to:null,kind:"ok",
+  truth:"CRISPR 筛选成为功能基因组学的标准工具。"}
+],
+"单细胞测序":[
+ {d:"把它用于发育与疾病",h:"组织是异质的，平均值掩盖真相",to:null,kind:"ok",
+  truth:"细胞图谱计划全面展开。"},
+ {d:"保留空间信息",h:"解离后位置丢了",to:null,kind:"ok",
+  truth:"空间转录组成为新的前沿。"},
+ {d:"认为单细胞能代替组织学",h:"逐细胞看更精确",to:null,kind:"dead",
+  truth:"单细胞丢失形态与位置，二者互补而非替代。"},
+ {d:"降低通量与成本",h:"现在太贵",to:null,kind:"weak",
+  truth:"成本已下降两个数量级。"}
+],
+"碱基编辑":[
+ {d:"做先导编辑（search-and-replace）",h:"碱基编辑只能转换，不能插入",to:null,kind:"ok",
+  truth:"先导编辑 2019 年实现任意小片段替换。"},
+ {d:"用到临床",h:"不切断双链，安全性更高",to:null,kind:"ok",
+  truth:"已有临床试验在进行。"},
+ {d:"认为它能修复所有致病突变",h:"如果什么都能改",to:null,kind:"dead",
+  truth:"编辑窗口有限，大片段插入与结构变异仍做不到。"},
+ {d:"解决递送问题",h:"编辑工具进不到细胞里",to:null,kind:"weak",
+  truth:"AAV 与 LNP 递送各有局限，是当前最大瓶颈。"}
+],
+"四核苷酸假说":[{d:"重新测定碱基比例",h:"如果等量，比例应该固定",to:null,kind:"dead",truth:"Chargaff 测出 A=T、G=C，等量假说被推翻。"}],
+"蛋白质遗传":[{d:"用更干净的系统区分 DNA 与蛋白质",h:"需要只有两者的实验",to:null,kind:"dead",truth:"噬菌体实验证明 DNA 才是遗传物质。"}],
+"中心法则不可逆":[{d:"找信息反向流动的证据",h:"也许有例外",to:null,kind:"dead",truth:"逆转录酶与朊病毒都证明「不可逆」是过度概括。"}],
+"朊病毒":[{d:"找其他构象传递的蛋白",h:"如果蛋白质能传递构象信息",to:null,kind:"weak",truth:"α-synuclein 等朊病毒样传播被发现。"}],
+"表观遗传":[{d:"研究环境如何改变基因表达",h:"既然序列不变，调控在变",to:null,kind:"weak",truth:"表观遗传标记与疾病、衰老的联系被大量研究。"}],
+"合成生物学":[{d:"造一个最小基因组",h:"到底多少基因才够活",to:null,kind:"weak",truth:"JCVI-syn3.0 有 473 个基因，仍有一批功能未知。"}]
+};
+
+const EDGE = [];
+for(const k in DIRS) DIRS[k].forEach(d=>{ if(d.to && d.kind!=="dead") EDGE.push([k,d.to,d.kind]); });
+const INDEG={}; EDGE.forEach(([a,b])=>{INDEG[b]=(INDEG[b]||0)+1});
+const OKEDGE = EDGE.filter(e=>e[2]==="ok");
+
+
+let cur=null, reveal=false, zoom=false;
+function lineage(k){
+  const up=new Set(), down=new Set();
+  (function u(x){ EDGE.filter(e=>e[1]===x).forEach(e=>{ if(!up.has(e[0])){up.add(e[0]);u(e[0])} }) })(k);
+  (function d(x){ EDGE.filter(e=>e[0]===x).forEach(e=>{ if(!down.has(e[1])){down.add(e[1]);d(e[1])} }) })(k);
+  return {up,down};
+}
+
+function depthOf(){
+  const L={};
+  function g(k,seen){
+    if(L[k]!==undefined) return L[k];
+    if(seen.has(k)){L[k]=0;return 0}
+    seen.add(k);
+    const ups=OKEDGE.filter(e=>e[1]===k).map(e=>e[0]);
+    L[k]=ups.length?1+Math.max(...ups.map(u=>g(u,new Set(seen)))):0;
+    return L[k];
+  }
+  Object.keys(N).forEach(k=>g(k,new Set()));
+  return L;
+}
+const DEPTH = depthOf();
+
+function render(){
+  const byLayer={};
+  Object.keys(N).forEach(k=>{ if(N[k].bg && !window.__showBg) return; const L=DEPTH[k]; (byLayer[L]=byLayer[L]||[]).push(k) });
+  const maxL=Math.max(...Object.keys(byLayer).map(Number));
+  let html="";
+  for(let i=0;i<=maxL;i++){
+    const ks=(byLayer[i]||[]).sort((a,b)=>{
+      const am=N[a].name.includes("支线")?1:0, bm=N[b].name.includes("支线")?1:0;
+      return am-bm || N[a].y-N[b].y;
+    });
+    const mainCnt=ks.filter(k=>!N[k].name.includes("支线")).length;
+    html+=`<div class="layer"><div class="lh"><b>第 ${i+1} 层</b><span>${mainCnt} 个主线 · ${ks.length-mainCnt} 个支线</span></div><div class="grid">`;
+    ks.forEach(k=>{
+      const n=N[k], c=(DIRS[k]||[]).length;
+      html+=`<div class="card${cur===k?' sel':''}" data-k="${k}">
+        <div class="y">${n.y}</div><div class="nm">${n.name}</div><div class="tx">${n.t}</div>
+        ${c?`<span class="cnt">${c} 条</span>`:''}</div>`;
+    });
+    html+=`</div></div>`;
+  }
+  document.getElementById('list').innerHTML=html;
+  document.querySelectorAll('.card').forEach(el=>el.onclick=()=>open(el.dataset.k));
+}
+
+function open(k){
+  cur=k; const n=N[k];
+  document.getElementById('sTitle').textContent=n.name;
+  document.getElementById('sYear').textContent=`${n.y} · 第 ${DEPTH[k]+1} 层`;
+  document.getElementById('sFact').innerHTML=n.t+(n.why?`<span class="why">这意味着：${n.why}</span>`:'');
+  const ds=DIRS[k]||[];
+  document.getElementById('sDirs').innerHTML=ds.length?ds.map((d,i)=>`
+    <div class="dir ${d.kind}">
+      <div class="h">${i+1}. ${d.d}</div>
+      <div class="l">线索：${d.h}</div>
+      <div class="res">${d.kind==='ok'
+        ? `✓ 开新路${d.to?` → <span class="go" data-go="${d.to}">${N[d.to].name}</span>`:''}　${d.truth}`
+        : d.kind==='weak' ? `～ 收益有限${d.to?` → <span class="go" data-go="${d.to}">${N[d.to].name}</span>`:''}　${d.truth}`
+        : `✗ 走不通　${d.truth}`}</div>
+    </div>`).join('')
+    :'<div class="l" style="font-size:13px">这一层是终点，做完可以换一条分支继续。</div>';
+  document.querySelectorAll('[data-go]').forEach(el=>el.onclick=e=>{e.stopPropagation();open(el.dataset.go)});
+  document.querySelectorAll('.card').forEach(el=>el.classList.toggle('sel',el.dataset.k===k));
+  document.getElementById('sheet').classList.add('on');
+  document.body.classList.add('open');
+  document.getElementById('scrim').classList.add('on');
+  document.getElementById('sheet').scrollTop=0;
+  // 关系图视图下重绘，触发高亮
+  if(document.getElementById('graphWrap').style.display!=='none') drawGraph();
+}
+function close(){document.getElementById('sheet').classList.remove('on');
+  document.body.classList.remove('open');document.getElementById('scrim').classList.remove('on')}
+
+function drawGraph(){
+  const maxL=Math.max(...Object.values(DEPTH));
+  const rows={};
+  Object.keys(N).forEach(k=>{ (rows[DEPTH[k]]=rows[DEPTH[k]]||[]).push(k) });
+  const maxRow=Math.max(...Object.values(rows).map(r=>r.length));
+  const NW=124, GAP=14, rowH=108, padT=44, padL=20;
+  const W=Math.max(820, maxRow*(NW+GAP)+40);
+  const H=(maxL+1)*rowH+padT+30;
+  const pos={};
+  Object.keys(rows).forEach(L=>{
+    const arr=rows[L].sort((a,b)=>N[a].y-N[b].y);
+    const usable=W-padL*2-NW, n=arr.length;
+    arr.forEach((k,i)=>{
+      pos[k]={x:padL+NW/2+(n===1?usable/2:usable*i/(n-1)), y:padT+(+L)*rowH};
+    });
+  });
+  let s=`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}"><defs>
+    <marker id="a1" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7.5" markerHeight="7.5" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="var(--fg)"/></marker>
+    <marker id="a2" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs>`;
+  for(let i=0;i<=maxL;i++){
+    const y=padT+i*rowH;
+    s+=`<line x1="0" y1="${y}" x2="${W}" y2="${y}" stroke="var(--line)" stroke-width=".5" stroke-dasharray="2 8" opacity=".6"/>
+        <text x="4" y="${y-8}" font-size="9.5" fill="var(--muted)">L${i+1}</text>`;
+  }
+  const ln = cur ? lineage(cur) : null;
+  EDGE.forEach(([a,b,kind])=>{
+    if(!pos[a]||!pos[b]) return;
+    const hot = ln && (ln.up.has(a)&&(ln.up.has(b)||b===cur)) || (ln && (ln.down.has(b)&&(ln.down.has(a)||a===cur)));
+    const A=pos[a], B=pos[b], my=(A.y+B.y)/2;
+    const ok=kind==="ok";
+    s+=`<path d="M${A.x},${A.y+11} C${A.x},${my} ${B.x},${my} ${B.x},${B.y-11}"
+      fill="none" stroke="${hot?'var(--accent)':(ok?'var(--fg)':'var(--muted)')}" stroke-width="${hot?3:(ok?1.5:1.1)}"
+      ${ok?'':'stroke-dasharray="4 4"'} opacity="${hot?1:(ln?0.13:(ok?0.8:0.5))}" marker-end="url(#${ok?'a1':'a2'})"/>`;
+  });
+  Object.keys(N).forEach(k=>{
+    const n=N[k], q=pos[k]; if(!q) return;
+    const side=n.name.includes("支线");
+    const label=n.name.replace("（支线）","");
+    const txt=(label.length>8?label.slice(0,8)+"…":label);
+    const hub = (INDEG[k]||0)>=2;
+    const dim = ln && !(k===cur || ln.up.has(k) || ln.down.has(k));
+    if(hub) s+=`<rect x="${q.x-NW/2-4}" y="${q.y-15}" width="${NW+8}" height="30" rx="15"
+      fill="none" stroke="var(--warn)" stroke-width="2" opacity="${dim?0.12:0.95}"/>`;
+    s+=`<g data-k="${k}" style="cursor:pointer" opacity="${dim?0.2:1}">
+      <rect x="${q.x-NW/2}" y="${q.y-11}" width="${NW}" height="22" rx="11"
+        fill="${side?'var(--bg)':'var(--card)'}"
+        stroke="${side?'var(--muted)':'var(--accent)'}" stroke-width="${side?1:1.4}"
+        ${side?'stroke-dasharray="3 3"':''}/>
+      <text x="${q.x}" y="${q.y+4}" text-anchor="middle" font-size="10"
+        fill="${side?'var(--muted)':'var(--fg)'}">${n.y} ${txt}</text></g>`;
+  });
+  s+=`</svg>`;
+  document.getElementById('graph').innerHTML=
+    `<div style="font-size:11.5px;color:var(--muted);margin-bottom:8px;line-height:1.7">
+      实线箭头 = 开新路　虚线 = 收益有限（通到支线）　死路不画<br>
+      从上到下是依赖层数，不是年代。同一层可并行申报。<b style="color:var(--warn)">带橙环的节点是多条线汇合处</b>——那是交集。点任意节点会高亮它整条来路与去路。</div>`+s;
+  document.querySelectorAll('#graph [data-k]').forEach(el=>el.onclick=()=>open(el.dataset.k));
+}
+
+document.getElementById('sClose').onclick=close;
+document.getElementById('scrim').onclick=close;
+document.getElementById('btnReveal').onclick=e=>{
+  reveal=!reveal; document.body.classList.toggle('reveal',reveal);
+  e.target.classList.toggle('on',reveal);
+  e.target.textContent=reveal?'已揭晓（点此隐藏）':'揭晓真实结局';
+};
+document.getElementById('btnList').onclick=e=>{
+  document.getElementById('list').style.display='block';
+  document.getElementById('graphWrap').style.display='none';
+  e.target.classList.add('on'); document.getElementById('btnGraph').classList.remove('on');
+};
+document.getElementById('btnGraph').onclick=e=>{
+  document.getElementById('list').style.display='none';
+  document.getElementById('graphWrap').style.display='block';
+  e.target.classList.add('on'); document.getElementById('btnList').classList.remove('on');
+  drawGraph();
+};
+document.getElementById('btnZoom').onclick=e=>{
+  const g=document.getElementById('graphWrap');
+  zoom=!zoom; g.classList.toggle('zoom',zoom);
+  e.target.textContent=zoom?'缩回全貌':'放大看细节';
+};
+
+{
+  const ds=Object.values(DIRS).flat();
+  const c={ok:0,weak:0,dead:0}; ds.forEach(d=>c[d.kind]++);
+  document.getElementById('stat').textContent=
+    `${Object.keys(N).filter(k=>!N[k].name.includes("支线")).length} 个主线节点 · ${Object.keys(N).filter(k=>N[k].name.includes("支线")).length} 个支线 · ${Object.keys(DIRS).length} 个节点有方向 · ${ds.length} 条方向（${c.ok} 开新路 / ${c.weak} 收益有限 / ${c.dead} 不通）`;
+  document.getElementById('legend').innerHTML=
+    `默认不显示每条方向的结局，主持人结算时点「揭晓」才公布。<br>
+     <b style="color:var(--ok)">✓ 开新路</b>：通往下一层节点　<b>～ 收益有限</b>：通到支线或原地　
+     <b style="color:var(--warn)">✗ 不通</b>：结论被证伪<br>
+     <b>「不通」指结论被证伪，不指研究没有价值</b>：p53 被当成癌基因的那十年，正是这次误判催生了抑癌基因这个概念。`;
+}
+document.getElementById('btnBg').onclick=e=>{
+  window.__showBg=!window.__showBg;
+  e.target.classList.toggle('on',window.__showBg);
+  e.target.textContent=window.__showBg?'隐藏背景层':'显示背景层';
+  render();
+  if(document.getElementById('graphWrap').style.display!=='none') drawGraph();
+};
+render();
+</script>
+</body>
+</html>
